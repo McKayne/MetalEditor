@@ -27,4 +27,8 @@
 
 - (void)completeSavedImage:(UIImage *)_image didFinishSavingWithError:(NSError *)_error contextInfo:(void *)_contextInfo;
 
+- (void)handleAsset;
+- (void)setView:(UIViewController *)view;
+- (void)test:(UIView *)view;
+
 @end

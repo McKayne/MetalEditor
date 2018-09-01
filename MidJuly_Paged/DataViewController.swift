@@ -9,11 +9,6 @@
 import UIKit
 import simd
 
-struct Vertex {
-    var position: float4
-    var normal: float4
-}
-
 struct Uniforms {
     var modelViewProjectionMatrix: float4x4
     var modelViewMatrix: float4x4
@@ -21,6 +16,8 @@ struct Uniforms {
 }
 
 class DataViewController: UIViewController {
+    
+    static var mainView: UIView!
     
     var contr: ViewController = ViewController()
     
@@ -429,7 +426,7 @@ class DataViewController: UIViewController {
         
         var vertices: [Vertex] = []
         for i in 0..<36 {
-            vertices.append(Vertex(position: position[i], normal: normal[i]))
+            vertices.append(Vertex(position: position[i], normal: normal[i], customColor: position[i]))
         }
         
         
@@ -441,8 +438,15 @@ class DataViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        contr.customMetalLayer(self.view.layer, bounds: self.view.bounds)
+        //DataViewController.mainView = self.view
         
+        contr.customMetalLayer(self.view.layer, bounds: self.view.bounds)
+        contr.setView(self)
+        
+        
+        var objcTest = customVertex(position: customFloat4(x: 1, y: 2, z: 3, w: 4), normal: customFloat4(x: 1, y: 2, z: 3, w: 4), customColor: customFloat4(x: 1, y: 2, z: 3, w: 4))
+        
+        contr.testBridge(objcTest)
         
         //self.renderer = Renderer(self.view.layer);
         //metalLayer = self.view.layer

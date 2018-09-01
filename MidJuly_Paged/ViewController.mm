@@ -40,9 +40,18 @@ static float DegToRad(float deg)
 
 @property (nonatomic, assign) int totalIndices;
 
+@property (nonatomic, strong) UIViewController *mainView;
+
 @end
 
 @implementation ViewController
+
+- (void)testBridge:(customVertex)v {
+    NSLog(@"X = %f", v.position.x);
+    NSLog(@"Y = %f", v.position.y);
+    NSLog(@"Z = %f", v.position.z);
+    NSLog(@"W = %f", v.position.w);
+}
 
 - (void)customMetalLayer:(CALayer *)layer bounds:(CGRect)bounds {
     NSLog(@"It works");
@@ -1061,12 +1070,23 @@ void makeFace(simd::float4* position, simd::float3 a, simd::float3 b, simd::floa
     }
 }
 
+simd::float4 positionAt(float radius, float angle, float segmentAngle, float offsetX, float offsetY) {
+    float x = offsetX + static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * radius);
+    float y;
+    float z;
+    return simd::float4{0, 0, 0, 1.0f};
+}
+
 - (void)appendGear:(float)x y:(float)y z:(float)z radius:(float)radius height:(float)height red:(int)red green:(int)green blue:(int)blue {
     int segments = 36;
     
     float segmentAngle = 360.0 / segments;
     
-    simd::float4 position[segments * 3 * 2];
+    simd::float4 position[segments * 3 * 2 * 2 * 2 * 2];
+    
+    
+    
+    
     
     int index = 0;
     for (float angle = 0.0; angle < segmentAngle * segments; angle += segmentAngle) {
@@ -1078,6 +1098,8 @@ void makeFace(simd::float4* position, simd::float3 a, simd::float3 b, simd::floa
         position[index++] = {x - static_cast<float>(cos(angle * 3.14 / 180.0) * radius), y + height, z + static_cast<float>(sin(angle * 3.14 / 180.0) * radius), 1.0};
         position[index++] = {x - static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * radius), y + height, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * radius), 1.0};
         position[index++] = {x - static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * radius), y, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * radius), 1.0};
+        
+        
         
         // bottom
         
@@ -1091,18 +1113,92 @@ void makeFace(simd::float4* position, simd::float3 a, simd::float3 b, simd::floa
         position[index++] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * radius), y + height, z + static_cast<float>(sin(angle * 3.14 / 180.0) * radius), 1.0};
         position[index++] = {x, y + height, z, 1.0};*/
     }
+    for (float angle = 0.0; angle < segmentAngle * segments; angle += segmentAngle) {
+        //simd::float4 pos = positionAt(bigRadius, angle, segmentAngle, x, y);
+        float bigRadius = 0.25f;
+        int parts = 5;
+        int partAngle = 40;
+        
+        int nonpartAngle = (360 - parts * partAngle) / parts;
+        
+        int currentAngle = nonpartAngle / 2;
+        if (angle >= currentAngle && angle <= currentAngle + partAngle) {
+            bigRadius = 0.35f;
+        }/* else {
+            bigRadius = 0.25f;
+        }*/
+        currentAngle += partAngle;
+        
+        for (int i = 0; i < parts - 1; i++) {
+            if (angle >= currentAngle + nonpartAngle && angle <= currentAngle + nonpartAngle + partAngle) {
+                bigRadius = 0.35f;
+            }/* else {
+                bigRadius = 0.25f;
+            }*/
+            currentAngle += (nonpartAngle + partAngle);
+        }
+        
+        
+        float bigRadiusB = 0.25f;
+        int currentAngleB = nonpartAngle / 2;
+        if (angle + segmentAngle >= currentAngleB && angle + segmentAngle <= currentAngleB + partAngle) {
+            bigRadiusB = 0.35f;
+        }
+        currentAngleB += partAngle;
+        
+        for (int i = 0; i < parts - 1; i++) {
+            if (angle + segmentAngle >= currentAngleB + nonpartAngle && angle + segmentAngle <= currentAngleB + nonpartAngle + partAngle) {
+                bigRadiusB = 0.35f;
+            }
+            currentAngleB += (nonpartAngle + partAngle);
+        }
+        
+        position[index++] = {x + static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * bigRadiusB), y, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * bigRadiusB), 1.0};
+        position[index++] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * bigRadius), y, z + static_cast<float>(sin(angle * 3.14 / 180.0) * bigRadius), 1.0};
+        position[index++] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * bigRadius), y + height, z + static_cast<float>(sin(angle * 3.14 / 180.0) * bigRadius), 1.0};
+        
+        position[index++] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * bigRadius), y + height, z + static_cast<float>(sin(angle * 3.14 / 180.0) * bigRadius), 1.0};
+        position[index++] = {x + static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * bigRadiusB), y + height, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * bigRadiusB), 1.0};
+        position[index++] = {x + static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * bigRadiusB), y, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * bigRadiusB), 1.0};
+    }
+    int last = segments * 3 * 2 * 2;
+    float angle = 0.0f;
+    for (int i = last; i < segments * 3 * 2 * 2 * 2; i += 6, angle += segmentAngle) {
+        position[i + 2] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * radius), y + height, z + static_cast<float>(sin(angle * 3.14 / 180.0) * radius), 1.0};
+        position[i + 1] = position[i + segments * 3 * 2 - last + 2];
+        position[i] = position[i + segments * 3 * 2 - last + 4];
+        
+        position[i + 3] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * radius), y + height, z + static_cast<float>(sin(angle * 3.14 / 180.0) * radius), 1.0};
+        position[i + 4] = {x + static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * radius), y + height, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * radius), 1.0};//position[i - last + segments * 3 * 2 + 2];
+        position[i + 5] = position[i];//position[i - last + segments * 3 * 3 + 1];
+        
+        /*position[i + 3] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * bigRadius), y + height, z + static_cast<float>(sin(angle * 3.14 / 180.0) * bigRadius), 1.0};
+        position[i + 4] = {x + static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * bigRadiusB), y + height, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * bigRadiusB), 1.0};
+        position[i + 5] = {x + static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * bigRadiusB), y, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * bigRadiusB), 1.0};*/
+    }
+    angle = 0.0f;
+    last = segments * 3 * 2 * 2 * 2;
+    for (int i = last; i < segments * 3 * 2 * 2 * 2 * 2; i += 6, angle += segmentAngle) {
+        position[i] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * radius), y, z + static_cast<float>(sin(angle * 3.14 / 180.0) * radius), 1.0};
+        position[i + 1] = position[i + segments * 3 * 2 - last + 1];
+        position[i + 2] = position[i + segments * 3 * 2 - last + 5];
+        
+        position[i + 5] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * radius), y, z + static_cast<float>(sin(angle * 3.14 / 180.0) * radius), 1.0};
+        position[i + 4] = {x + static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * radius), y, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * radius), 1.0};
+        position[i + 3] = position[i + 2];
+    }
     
-    for (int i = 0; i < segments * 3 * 2; i++) {
+    for (int i = 0; i < segments * 3 * 2 * 2 * 2 * 2; i++) {
         self.bigIndices[i + self.totalIndices] = i + self.totalIndices;
         
-        self.bigVertices[i + self.totalIndices].normal = {static_cast<float>((float) red / 255.0), static_cast<float>((float) green / 255.0), static_cast<float>((float) blue / 255.0)};
+        self.bigVertices[i + self.totalIndices].customColor = {static_cast<float>((float) red / 255.0), static_cast<float>((float) green / 255.0), static_cast<float>((float) blue / 255.0)};
         self.bigVertices[i + self.totalIndices].position = position[i];
         
-        self.bigLineVertices[i + self.totalIndices].normal = {0, 0, 0};
+        self.bigLineVertices[i + self.totalIndices].customColor = {0, 0, 0};
         self.bigLineVertices[i + self.totalIndices].position = position[i];
     }
     
-    for (int i = 0; i < segments * 2; i++) {
+    for (int i = 0; i < segments * 2 * 2 * 2 * 2; i++) {
         self.bigLineIndices[i * 6 + 0 + self.totalIndices * 2] = i * 3 + self.totalIndices;
         self.bigLineIndices[i * 6 + 1 + self.totalIndices * 2] = i * 3 + 1 + self.totalIndices;
         
@@ -1113,7 +1209,7 @@ void makeFace(simd::float4* position, simd::float3 a, simd::float3 b, simd::floa
         self.bigLineIndices[i * 6 + 5 + self.totalIndices * 2] = i * 3 + self.totalIndices;
     }
     
-    self.totalIndices += segments * 3 * 2;
+    self.totalIndices += segments * 3 * 2 * 2 * 2 * 2;
 }
 
 - (void)removeAction:(int)type {
@@ -1192,7 +1288,62 @@ void makeFace(simd::float4* position, simd::float3 a, simd::float3 b, simd::floa
     NSData *pngData = UIImagePNGRepresentation(getImage);
     UIImage *pngImage = [UIImage imageWithData:pngData];
     
-    UIImageWriteToSavedPhotosAlbum(pngImage, self, @selector(completeSavedImage:didFinishSavingWithError:contextInfo:), nil);
+    //UIImageWriteToSavedPhotosAlbum(pngImage, self, @selector(completeSavedImage:didFinishSavingWithError:contextInfo:), nil);
+    
+    //UIImage *image = [UIImage imageWithData:[chart getImage]];
+    
+    
+    
+    NSString *docPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)objectAtIndex:0];
+    NSString *filePath = [docPath stringByAppendingPathComponent:@"iphone_app_export_test.txt"];
+    
+    //NSString *contents = [NSString stringWithCapacity:9];
+    
+    NSString *contents = @"It works";
+    //fill contents with data in csv format
+    // ...
+    
+    NSError *error;
+    
+    [contents writeToFile:filePath
+               atomically:YES
+                 encoding:NSUTF8StringEncoding
+                    error:&error];
+    
+    // check for the error
+    
+    NSURL *sampleUrl =  [NSURL fileURLWithPath:filePath];
+    
+    if (sampleUrl == nil) {
+        NSLog(@"URL nul");
+    }
+    
+    char* sampleText = (char*) malloc(sizeof(char) * 8);
+    sampleText[0] = 'I';
+    sampleText[1] = 't';
+    sampleText[2] = ' ';
+    sampleText[3] = 'w';
+    sampleText[4] = 'o';
+    sampleText[5] = 'r';
+    sampleText[6] = 'k';
+    sampleText[7] = 's';
+    
+    //NSString *str = [[NSBundle mainBundle] pathForResource:@"AppDistributionGuide" ofType:@"pdf"];
+    //NSString *str
+    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[@"iphone_app_export_test.txt", sampleUrl] applicationActivities:nil];
+    //NSData *pdfData = [NSData dataWithBytes:sampleText length:sizeof(char) * 8];
+    //UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[@"iphone_app_export_test.txt", pdfData] applicationActivities:nil];
+    //NSString *str = [[NSBundle mainBundle] pathForResource:@"AppDistributionGuide" ofType:@"pdf"];
+    //UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[@"Test", [NSURL fileURLWithPath:str]] applicationActivities:nil];
+    
+    //NSArray *activityItems = @[pngImage];
+    //UIActivityViewController *activityViewControntroller = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+    activityViewController.excludedActivityTypes = @[];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+    activityViewController.popoverPresentationController.sourceView = self.mainView.view;
+    activityViewController.popoverPresentationController.sourceRect = CGRectMake(self.mainView.view.bounds.size.width/2, self.mainView.view.bounds.size.height/4, 0, 0);
+    }
+    [self.mainView presentViewController:activityViewController animated:true completion:nil];
     
     //[self.renderer.drawa]
     
@@ -1245,16 +1396,61 @@ void makeFace(simd::float4* position, simd::float3 a, simd::float3 b, simd::floa
     //[controller.view addSubview:textField];
 }
 
+- (void)setView:(UIViewController *)view {
+    [self.renderer setView:view];
+    self.mainView = view;
+}
+
+- (void)importOBJ:(int)red green:(int)green blue:(int)blue {
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"teapot" withExtension:@"obj"];
+    OBJModel *teapot = [[OBJModel alloc] initWithContentsOfURL:modelURL];
+    OBJGroup *group = [teapot groupAtIndex:1];
+    
+    for (int i = 0; i < group->vertexCount; i++) {
+        group->vertices[i].customColor = {static_cast<float>((float) red / 255.0), static_cast<float>((float) green / 255.0), static_cast<float>((float) blue / 255.0)};
+        
+        self.bigVertices[i + self.totalIndices] = group->vertices[i];
+        
+        self.bigLineVertices[i + self.totalIndices] = group->vertices[i];
+        self.bigLineVertices[i + self.totalIndices].customColor = {0, 0, 0};
+    }
+    for (int i = 0; i < group->indexCount; i++) {
+        self.bigIndices[i + self.totalIndices] = group->indices[i];
+    }
+    for (int i = 0; i < group->indexCount / 3; i++) {
+        self.bigLineIndices[i * 6 + 0 + self.totalIndices * 2] = i * 3 + self.totalIndices;
+        self.bigLineIndices[i * 6 + 1 + self.totalIndices * 2] = i * 3 + 1 + self.totalIndices;
+        
+        self.bigLineIndices[i * 6 + 2 + self.totalIndices * 2] = i * 3 + 1 + self.totalIndices;
+        self.bigLineIndices[i * 6 + 3 + self.totalIndices * 2] = i * 3 + 2 + self.totalIndices;
+        
+        self.bigLineIndices[i * 6 + 4 + self.totalIndices * 2] = i * 3 + 2 + self.totalIndices;
+        self.bigLineIndices[i * 6 + 5 + self.totalIndices * 2] = i * 3 + self.totalIndices;
+    }
+    
+    //NSLog(@"VERTICES %zu", group->vertexCount);
+    //NSLog(@"INDICES %zu", group->indexCount);
+    
+    self.totalIndices += (int) group->indexCount;
+    //self.bigIndices[i + self.totalIndices] = i + self.totalIndices;
+    
+    //self.bigVertices[i + self.totalIndices].customColor = {static_cast<float>((float) red / 255.0), static_cast<float>((float) green / 255.0), static_cast<float>((float) blue / 255.0)};
+    //self.bigVertices[i + self.totalIndices].position = position[i];
+    
+    //self.vertexBuffer = [self.renderer newBufferWithBytes:baseGroup->vertices           length:sizeof(Vertex) * baseGroup->vertexCount];
+    //self.indexBuffer = [self.renderer newBufferWithBytes:baseGroup->indices          length:sizeof(IndexType) * baseGroup->indexCount];
+}
+
 - (void)loadModel {
     
     self.totalIndices = 0;
     
     __unused int numberOfObjects = 1;
-    self.bigVertices = (Vertex*) malloc(sizeof(Vertex) * 10000);
-    self.bigIndices = (uint16_t*) malloc(sizeof(uint16_t) * 10000);
+    self.bigVertices = (Vertex*) malloc(sizeof(Vertex) * 100000);
+    self.bigIndices = (uint16_t*) malloc(sizeof(uint16_t) * 100000);
     
-    self.bigLineVertices = (Vertex*) malloc(sizeof(Vertex) * 10000);
-    self.bigLineIndices = (uint16_t*) malloc(sizeof(uint16_t) * 10000);
+    self.bigLineVertices = (Vertex*) malloc(sizeof(Vertex) * 100000);
+    self.bigLineIndices = (uint16_t*) malloc(sizeof(uint16_t) * 100000);
     
     //[self.bigVertices initWithCapacity:numberOfObjects];
     
@@ -1269,7 +1465,19 @@ void makeFace(simd::float4* position, simd::float3 a, simd::float3 b, simd::floa
     //[self appendChessboard:-0.4 y:-0.6 z:0.25 width:0.8 height:0.05 depth:0.8 red:255 green:0 blue:255 topBorder:0.1];
     //[self appendRoof:-0.4 y:-0.6 z:0.25 width:0.6 height:0.4 depth:0.5 red:255 green:0 blue:255];
     //[self appendLadder:-0.3 y:-0.8 z:0.2 width:0.6 height:1.0 depth:0.5 red:255 green:0 blue:255];
-    //[self appendGear:-0.05 y:-0.4 z:-0.15 radius:0.15 height:0.5 red:0 green:191 blue:255];
+    
+    // Gears demo
+    /*[self appendGear:0.0 y:-0.3 z:-0.15 radius:0.15 height:0.2 red:0 green:191 blue:255];
+    [self appendGear:-0.2 y:-0.6 z:-0.05 radius:0.15 height:0.2 red:0 green:0 blue:255];
+    [self appendGear:0.1 y:-0.05 z:-0.35 radius:0.15 height:0.2 red:0 green:255 blue:0];*/
+    
+    [self appendCube:-0.25 y:-0.25 z:0.25 width:0.5 height:0.5 depth:0.5 red:255 green:0 blue:255];
+    //[self.renderer handleAsset];
+    //[self importOBJ:255 green:0 blue:0];
+    
+    //NSLog(@"kfkghkgjhlglhkgljklhkjlhkjl");
+    //[self.renderer test:nil];
+    //[self.renderer setView:nil];
     
     //[self appendTorus];
     
@@ -1277,7 +1485,7 @@ void makeFace(simd::float4* position, simd::float3 a, simd::float3 b, simd::floa
     //[self appendCube:-0.25 y:-0.75 z:0.25 width:0.5 height:0.5 depth:0.5 red:255 green:0 blue:0];
     
     // light cubes demo
-    srand(time(NULL));
+    /*srand(time(NULL));
     [self appendCube:-0.4 y:-0.4 z:0.2 width:0.4 height:0.2 depth:0.2 red:rand() % 256 green:rand() % 256 blue:rand() % 256];
     [self appendCube:0.0 y:-0.4 z:0.2 width:0.4 height:0.2 depth:0.2 red:rand() % 256 green:rand() % 256 blue:rand() % 256];
     
@@ -1286,7 +1494,7 @@ void makeFace(simd::float4* position, simd::float3 a, simd::float3 b, simd::floa
     [self appendCube:0.2 y:-0.2 z:0.2 width:0.2 height:0.2 depth:0.2 red:rand() % 256 green:rand() % 256 blue:rand() % 256];
     
     [self appendCube:-0.4 y:0.0 z:0.2 width:0.4 height:0.2 depth:0.2 red:rand() % 256 green:rand() % 256 blue:rand() % 256];
-    [self appendCube:0.0 y:0.0 z:0.2 width:0.4 height:0.2 depth:0.2 red:rand() % 256 green:rand() % 256 blue:rand() % 256];
+    [self appendCube:0.0 y:0.0 z:0.2 width:0.4 height:0.2 depth:0.2 red:rand() % 256 green:rand() % 256 blue:rand() % 256];*/
     
     //[self appendPyramid];
     //[self appendCube:-0.25 width:0.2 nth:0];
@@ -1323,7 +1531,7 @@ void makeFace(simd::float4* position, simd::float3 a, simd::float3 b, simd::floa
     //modelMatrix = Rotation(Y_AXIS, -self.angle.x) * modelMatrix;
     
     //self.angle.x = 10 * 3.14 / 180;
-    self.angle = CGPointMake(-45 * 3.14 / 180, 45 * 3.14 / 180);//demo
+    self.angle = CGPointMake(-180 * 3.14 / 180, -20 * 3.14 / 180);//demo
     //self.angle = CGPointMake(-180 * 3.14 / 180, 30 * 3.14 / 180);
     //NSLog(@"ANGLE %f %f", self.angle.x, self.angle.y);
     modelMatrix = Rotation(Y_AXIS, -self.angle.x) * modelMatrix;
@@ -1331,6 +1539,8 @@ void makeFace(simd::float4* position, simd::float3 a, simd::float3 b, simd::floa
     
     simd::float4x4 viewMatrix = Identity();
     viewMatrix.columns[3].z = -1; // translate camera back along Z axis
+    
+    //viewMatrix.columns[3].z = -1.5; // translate camera back along Z axis
     
     const float near = 0.1;
     const float far = 100;

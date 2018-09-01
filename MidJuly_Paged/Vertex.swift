@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import simd
 
 struct LineVertex {
     
@@ -17,4 +18,8 @@ struct LineVertex {
         return [x,y,z,r,g,b,a]
     }
     
+}
+
+struct Vertex {
+    var position, normal, customColor: float4
 }

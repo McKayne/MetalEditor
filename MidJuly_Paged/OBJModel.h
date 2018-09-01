@@ -1,13 +1,20 @@
 
 #import <Foundation/Foundation.h>
 #import <simd/simd.h>
+#import "ViewController.h"
 
-struct Vertex
+/*struct Vertex
 {
     simd::float4 position;
     simd::float4 normal;
     simd::float4 customColor;
-};
+};*/
+
+typedef struct {
+    simd::float4 position;
+    simd::float4 normal;
+    simd::float4 customColor;
+} Vertex;
 
 typedef uint16_t IndexType;
 

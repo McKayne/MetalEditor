@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/ViewController.mm"
-            timestampString = "557087999.005855"
+            timestampString = "557524120.473132"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1204"
-            endingLineNumber = "1204"
+            startingLineNumber = "1355"
+            endingLineNumber = "1355"
             landmarkName = "-takeScreenshot"
             landmarkType = "7">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/Renderer.m"
-            timestampString = "557165157.323271"
+            timestampString = "557325990.23956"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "294"
-            endingLineNumber = "294"
+            startingLineNumber = "335"
+            endingLineNumber = "335"
             landmarkName = "-endFrame"
             landmarkType = "7">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/Renderer.m"
-            timestampString = "557165325.831852"
+            timestampString = "557325990.23956"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "304"
-            endingLineNumber = "304"
+            startingLineNumber = "345"
+            endingLineNumber = "345"
             landmarkName = "-endFrame"
             landmarkType = "7">
          </BreakpointContent>
@@ -58,12 +58,92 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/Renderer.m"
-            timestampString = "557165391.629879"
+            timestampString = "557325990.23956"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "305"
-            endingLineNumber = "305"
+            startingLineNumber = "347"
+            endingLineNumber = "347"
             landmarkName = "-endFrame"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MidJuly_Paged/Renderer.m"
+            timestampString = "557325990.23956"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "355"
+            endingLineNumber = "355"
+            landmarkName = "-endFrame"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MidJuly_Paged/Renderer.m"
+            timestampString = "557331672.7467459"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "27"
+            endingLineNumber = "27"
+            landmarkName = "vertexDescriptor"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[Renderer vertexDescriptor]"
+                  moduleName = "MidJuly_Paged"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/johndoe/Documents/dev/MidJuly_Paged/MidJuly_Paged/Renderer.m"
+                  timestampString = "557331673.092927"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "27"
+                  endingLineNumber = "27"
+                  offsetFromSymbolStart = "20">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[Renderer setVertexDescriptor:]"
+                  moduleName = "MidJuly_Paged"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/johndoe/Documents/dev/MidJuly_Paged/MidJuly_Paged/Renderer.m"
+                  timestampString = "557331673.137226"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "27"
+                  endingLineNumber = "27"
+                  offsetFromSymbolStart = "64">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MidJuly_Paged/ViewController.mm"
+            timestampString = "557524120.473132"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1320"
+            endingLineNumber = "1320"
+            landmarkName = "-takeScreenshot"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

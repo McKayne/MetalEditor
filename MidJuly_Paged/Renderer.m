@@ -1,4 +1,6 @@
 
+#import <MetalKit/MetalKit.h>
+
 #import "Renderer.h"
 
 @interface Renderer ()
@@ -22,6 +24,9 @@
 @property (nonatomic, strong) id<CAMetalDrawable> lastDrawable;
 
 @property (nonatomic, strong) id<MTLTexture> framebufferTexture;
+@property (nonatomic, strong) MTLVertexDescriptor *vertexDescriptor;
+@property (nonatomic, strong) UIViewController *mainView;
+
 @end
 
 @implementation Renderer
@@ -48,6 +53,39 @@
     }
     
     return self;
+}
+
+- (void)test:(UIViewController *)view {
+    NSLog(@"TEST");
+    self.mainView = view;
+}
+
+- (void)handleAsset {
+    NSLog(@"ASSET EXPORT TEST");
+    
+    MTKMeshBufferAllocator *bufferAllocator = [[MTKMeshBufferAllocator alloc] initWithDevice:self.device];
+    
+    NSURL *assetURL = [[NSBundle mainBundle] URLForResource:@"teapot" withExtension:@"obj"];
+    
+    MDLVertexDescriptor *mdlVertexDescriptor = MTKModelIOVertexDescriptorFromMetal(self.vertexDescriptor);
+    mdlVertexDescriptor.attributes[0].name = MDLVertexAttributePosition;
+    mdlVertexDescriptor.attributes[1].name = MDLVertexAttributeNormal;
+    mdlVertexDescriptor.attributes[2].name = MDLVertexAttributeTextureCoordinate;
+    
+    MDLAsset *asset = [[MDLAsset alloc] initWithURL:assetURL vertexDescriptor:mdlVertexDescriptor bufferAllocator:bufferAllocator];
+    
+    if (asset == nil) {
+        NSLog(@"ASSET NIL");
+    }
+    
+    NSURL *newAssetURL = [[NSBundle mainBundle] URLForResource:@"Data/Assets/realship/realship.obj" withExtension:nil];
+    
+    
+    /*BOOL res = [asset exportAssetToURL:newAssetURL];
+    if (!res) {
+        NSLog(@"NOT SAVED");
+    }*/
+    //- (BOOL)exportAssetToURL:(NSURL *)URL error:(NSError * _Nullable *)error;
 }
 
 - (void)updateDrawable:(id<CAMetalDrawable>)lastDrawable {
@@ -84,21 +122,21 @@
 
 - (void)buildPipeline
 {
-    MTLVertexDescriptor *vertexDescriptor = [MTLVertexDescriptor vertexDescriptor];
-    vertexDescriptor.attributes[0].format = MTLVertexFormatFloat4;
-    vertexDescriptor.attributes[0].bufferIndex = 0;
-    vertexDescriptor.attributes[0].offset = 0;
+    self.vertexDescriptor = [MTLVertexDescriptor vertexDescriptor];
+    self.vertexDescriptor.attributes[0].format = MTLVertexFormatFloat4;
+    self.vertexDescriptor.attributes[0].bufferIndex = 0;
+    self.vertexDescriptor.attributes[0].offset = 0;
     
-    vertexDescriptor.attributes[1].format = MTLVertexFormatFloat4;
-    vertexDescriptor.attributes[1].bufferIndex = 0;
-    vertexDescriptor.attributes[1].offset = sizeof(float) * 4;
+    self.vertexDescriptor.attributes[1].format = MTLVertexFormatFloat4;
+    self.vertexDescriptor.attributes[1].bufferIndex = 0;
+    self.vertexDescriptor.attributes[1].offset = sizeof(float) * 4;
     
-    vertexDescriptor.attributes[2].format = MTLVertexFormatFloat4;
-    vertexDescriptor.attributes[2].bufferIndex = 0;
-    vertexDescriptor.attributes[2].offset = sizeof(float) * 8;
+    self.vertexDescriptor.attributes[2].format = MTLVertexFormatFloat4;
+    self.vertexDescriptor.attributes[2].bufferIndex = 0;
+    self.vertexDescriptor.attributes[2].offset = sizeof(float) * 8;
     
-    vertexDescriptor.layouts[0].stride = sizeof(float) * 12;
-    vertexDescriptor.layouts[0].stepFunction = MTLVertexStepFunctionPerVertex;
+    self.vertexDescriptor.layouts[0].stride = sizeof(float) * 12;
+    self.vertexDescriptor.layouts[0].stepFunction = MTLVertexStepFunctionPerVertex;
     
     MTLRenderPipelineDescriptor *pipelineDescriptor = [MTLRenderPipelineDescriptor new];
     pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
@@ -110,7 +148,7 @@
     
     pipelineDescriptor.vertexFunction = [self.library newFunctionWithName:self.vertexFunctionName];
     pipelineDescriptor.fragmentFunction = [self.library newFunctionWithName:self.fragmentFunctionName];
-    pipelineDescriptor.vertexDescriptor = vertexDescriptor;
+    pipelineDescriptor.vertexDescriptor = self.vertexDescriptor;
     
     MTLDepthStencilDescriptor *depthStencilDescriptor = [MTLDepthStencilDescriptor new];
     depthStencilDescriptor.depthCompareFunction = MTLCompareFunctionLess;
@@ -227,8 +265,11 @@
     }
 }
 
-- (void)endFrame
-{
+- (void)setView:(UIViewController *)view {
+    self.mainView = view;
+}
+
+- (void)endFrame {
     NSLog(@"END FRAME");
     
     /*int width = (int)[self.framebufferTexture width];
@@ -276,9 +317,9 @@
         
         char* rgb = malloc(selfturesize);
         [self.framebufferTexture getBytes:rgb bytesPerRow:rowBytes fromRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0];
-        for (int i = 0; i < 100; i++) {
+        /*for (int i = 0; i < 100; i++) {
             NSLog(@"RGB %d %d %d %d", (int) rgb[i * 4] + 256, (int) rgb[i * 4 + 1] + 256, (int) rgb[i * 4 + 2] + 256, (int) rgb[i * 4 + 3] + 256);
-        }
+        }*/
         
         
         void *p = malloc(selfturesize);
@@ -303,7 +344,17 @@
         NSData *jpgData = UIImageJPEGRepresentation(getImage, 1.0f);
         UIImage *jpgImage = [UIImage imageWithData:jpgData];
         
-        UIImageWriteToSavedPhotosAlbum(jpgImage, self, @selector(completeSavedImage:didFinishSavingWithError:contextInfo:), nil);
+        //UIImage *image = [UIImage imageWithData:[chart getImage]];
+        NSArray *activityItems = @[jpgImage];
+        UIActivityViewController *activityViewControntroller = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+        activityViewControntroller.excludedActivityTypes = @[];
+        //if (UI\_USER\_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+            activityViewControntroller.popoverPresentationController.sourceView = self.mainView.view;
+            activityViewControntroller.popoverPresentationController.sourceRect = CGRectMake(self.mainView.view.bounds.size.width/2, self.mainView.view.bounds.size.height/4, 0, 0);
+        //}
+        [self.mainView presentViewController:activityViewControntroller animated:true completion:nil];
+        
+        //UIImageWriteToSavedPhotosAlbum(jpgImage, self, @selector(completeSavedImage:didFinishSavingWithError:contextInfo:), nil);
         
         
         

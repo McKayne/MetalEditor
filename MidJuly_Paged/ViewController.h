@@ -2,11 +2,34 @@
 #import <UIKit/UIKit.h>
 #import "Renderer.h"
 
+//#import <simd/simd.h>
+
+
+
+//typedef float4 customFloat;
+
+typedef struct {
+    float x, y, z, w;
+} customFloat4;
+
+typedef struct {
+    customFloat4 position;
+    customFloat4 normal;
+    customFloat4 customColor;
+} customVertex;
+
+/*typedef struct {
+    customFloat p;
+    float pos;
+} tVertex;*/
+
 @interface ViewController : UIViewController
 
 @property (nonatomic, strong) Renderer *renderer;
 @property (nonatomic, strong) CADisplayLink *displayLink;
 @property (nonatomic, strong) CAMetalLayer *metal;
+
+- (void)testBridge:(customVertex)v;
 
 - (void)customMetalLayer:(CALayer *)layer bounds:(CGRect)bounds;
 - (void)appendAction:(float)x y:(float)y z:(float)z;
@@ -52,6 +75,10 @@
 - (void)appendLadder:(float)x y:(float)y z:(float)z
              width:(float)width height:(float)height depth:(float)depth
                red:(int)red green:(int)green blue:(int)blue;
+
+- (void)importOBJ:(int)red green:(int)green blue:(int)blue;
+
+- (void)setView:(UIViewController *)view;
 
 @end
 

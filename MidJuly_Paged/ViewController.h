@@ -18,6 +18,13 @@ typedef struct {
     customFloat4 customColor;
 } customVertex;
 
+typedef struct {
+    customFloat4 position;
+    customFloat4 normal;
+    customFloat4 customColor;
+    customFloat4 texCoord;
+} Vertex;
+
 /*typedef struct {
     customFloat p;
     float pos;
@@ -30,6 +37,7 @@ typedef struct {
 @property (nonatomic, strong) CAMetalLayer *metal;
 
 - (void)testBridge:(customVertex)v;
+- (void)setVertexArrays:(Vertex *)bigVertices bigLineVertices:(Vertex *)bigLineVertices;
 
 - (void)customMetalLayer:(CALayer *)layer bounds:(CGRect)bounds;
 - (void)appendAction:(float)x y:(float)y z:(float)z;
@@ -40,6 +48,11 @@ typedef struct {
 - (int)appendCube:(float)x y:(float)y z:(float)z
              width:(float)width height:(float)height depth:(float)depth
                red:(int)red green:(int)green blue:(int)blue;
+- (void)rotateCube:(int) offset xAngle:(float)xAngle;
+
+- (int)appendPlate:(float)x y:(float)y z:(float)z
+            width:(float)width height:(float)height
+               red:(int)red green:(int)green blue:(int)blue alpha:(float)alpha;
 
 - (void)appendStairs:(float)x y:(float)y z:(float)z
                width:(float)width stepWidth:(float)stepWidth stepHeight:(float)stepHeight depth:(float)depth

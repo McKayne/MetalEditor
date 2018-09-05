@@ -18,7 +18,7 @@
 - (void)drawTrianglesWithInterleavedBuffer:(id<MTLBuffer>)positionBuffer lineVertexBuffer:(id<MTLBuffer>)lineVertexBuffer
                                indexBuffer:(id<MTLBuffer>)indexBuffer lineIndexBuffer:(id<MTLBuffer>)lineIndexBuffer
                              uniformBuffer:(id<MTLBuffer>)uniformBuffer
-                                indexCount:(size_t)indexCount numberOfObjects:(int)numberOfObjects;
+                                indexCount:(size_t)indexCount numberOfObjects:(int)numberOfObjects texture:(id<MTLTexture>) texture;
 
 
 - (void)updateDrawable:(id<CAMetalDrawable>)lastDrawable;

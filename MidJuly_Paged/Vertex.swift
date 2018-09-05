@@ -20,6 +20,6 @@ struct LineVertex {
     
 }
 
-struct Vertex {
+/*struct Vertex {
     var position, normal, customColor: float4
-}
+}*/

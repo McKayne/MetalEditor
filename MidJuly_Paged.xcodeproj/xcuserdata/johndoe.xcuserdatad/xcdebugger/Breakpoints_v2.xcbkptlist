@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/ViewController.mm"
-            timestampString = "557524120.473132"
+            timestampString = "557797852.991805"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1355"
-            endingLineNumber = "1355"
+            startingLineNumber = "1446"
+            endingLineNumber = "1446"
             landmarkName = "-takeScreenshot"
             landmarkType = "7">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/Renderer.m"
-            timestampString = "557325990.23956"
+            timestampString = "557847714.233091"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "335"
-            endingLineNumber = "335"
+            startingLineNumber = "384"
+            endingLineNumber = "384"
             landmarkName = "-endFrame"
             landmarkType = "7">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/Renderer.m"
-            timestampString = "557325990.23956"
+            timestampString = "557847714.233091"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "345"
-            endingLineNumber = "345"
+            startingLineNumber = "394"
+            endingLineNumber = "394"
             landmarkName = "-endFrame"
             landmarkType = "7">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/Renderer.m"
-            timestampString = "557325990.23956"
+            timestampString = "557847714.233091"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "347"
-            endingLineNumber = "347"
+            startingLineNumber = "396"
+            endingLineNumber = "396"
             landmarkName = "-endFrame"
             landmarkType = "7">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/Renderer.m"
-            timestampString = "557325990.23956"
+            timestampString = "557847714.233091"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "355"
-            endingLineNumber = "355"
+            startingLineNumber = "404"
+            endingLineNumber = "404"
             landmarkName = "-endFrame"
             landmarkType = "7">
          </BreakpointContent>
@@ -138,12 +138,76 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/ViewController.mm"
-            timestampString = "557524120.473132"
+            timestampString = "557797852.991805"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1320"
-            endingLineNumber = "1320"
+            startingLineNumber = "1411"
+            endingLineNumber = "1411"
             landmarkName = "-takeScreenshot"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MidJuly_Paged/ViewController.mm"
+            timestampString = "557797852.991805"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2112"
+            endingLineNumber = "2112"
+            landmarkName = "-redraw"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MidJuly_Paged/Renderer.m"
+            timestampString = "557847714.233091"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "280"
+            endingLineNumber = "280"
+            landmarkName = "-drawTrianglesWithInterleavedBuffer:lineVertexBuffer:indexBuffer:lineIndexBuffer:uniformBuffer:indexCount:numberOfObjects:texture:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MidJuly_Paged/Renderer.m"
+            timestampString = "557847714.233091"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "270"
+            endingLineNumber = "270"
+            landmarkName = "-drawTrianglesWithInterleavedBuffer:lineVertexBuffer:indexBuffer:lineIndexBuffer:uniformBuffer:indexCount:numberOfObjects:texture:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MidJuly_Paged/Renderer.m"
+            timestampString = "557847714.233091"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "283"
+            endingLineNumber = "283"
+            landmarkName = "-drawTrianglesWithInterleavedBuffer:lineVertexBuffer:indexBuffer:lineIndexBuffer:uniformBuffer:indexCount:numberOfObjects:texture:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

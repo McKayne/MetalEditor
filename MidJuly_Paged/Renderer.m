@@ -135,7 +135,11 @@
     self.vertexDescriptor.attributes[2].bufferIndex = 0;
     self.vertexDescriptor.attributes[2].offset = sizeof(float) * 8;
     
-    self.vertexDescriptor.layouts[0].stride = sizeof(float) * 12;
+    self.vertexDescriptor.attributes[3].format = MTLVertexFormatFloat4;
+    self.vertexDescriptor.attributes[3].bufferIndex = 0;
+    self.vertexDescriptor.attributes[3].offset = sizeof(float) * 12;
+    
+    self.vertexDescriptor.layouts[0].stride = sizeof(float) * 16;
     self.vertexDescriptor.layouts[0].stepFunction = MTLVertexStepFunctionPerVertex;
     
     MTLRenderPipelineDescriptor *pipelineDescriptor = [MTLRenderPipelineDescriptor new];
@@ -150,9 +154,23 @@
     pipelineDescriptor.fragmentFunction = [self.library newFunctionWithName:self.fragmentFunctionName];
     pipelineDescriptor.vertexDescriptor = self.vertexDescriptor;
     
+    // blending
+    MTLRenderPipelineColorAttachmentDescriptor *renderbufferAttachment = pipelineDescriptor.colorAttachments[0];
+    renderbufferAttachment.blendingEnabled = YES;
+    
+    renderbufferAttachment.rgbBlendOperation = MTLBlendOperationAdd;
+    renderbufferAttachment.alphaBlendOperation = MTLBlendOperationAdd;
+
+    renderbufferAttachment.sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+    renderbufferAttachment.sourceAlphaBlendFactor = MTLBlendFactorSourceAlpha;
+
+    renderbufferAttachment.destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+    renderbufferAttachment.destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+    
+    
     MTLDepthStencilDescriptor *depthStencilDescriptor = [MTLDepthStencilDescriptor new];
     depthStencilDescriptor.depthCompareFunction = MTLCompareFunctionLess;
-    depthStencilDescriptor.depthWriteEnabled = YES;
+    depthStencilDescriptor.depthWriteEnabled = NO;//YES;
     self.depthStencilState = [self.device newDepthStencilStateWithDescriptor:depthStencilDescriptor];
     
     NSError *error = nil;
@@ -218,13 +236,15 @@
     
     [self.commandEncoder setFrontFacingWinding:MTLWindingCounterClockwise];
     
-    [self.commandEncoder setCullMode:MTLCullModeBack];
+    //[self.commandEncoder setCullMode:MTLCullModeBack];
+    [self.commandEncoder setFrontFacingWinding:MTLWindingCounterClockwise];
+    [self.commandEncoder setCullMode:MTLCullModeNone];
 }
 
 - (void)drawTrianglesWithInterleavedBuffer:(id<MTLBuffer>)positionBuffer lineVertexBuffer:(id<MTLBuffer>)lineVertexBuffer
                                indexBuffer:(id<MTLBuffer>)indexBuffer lineIndexBuffer:(id<MTLBuffer>)lineIndexBuffer
                              uniformBuffer:(id<MTLBuffer>)uniformBuffer
-                                indexCount:(size_t)indexCount numberOfObjects:(int)numberOfObjects {
+                                indexCount:(size_t)indexCount numberOfObjects:(int)numberOfObjects texture:(id<MTLTexture>) texture {
     if (!positionBuffer || !indexBuffer || !uniformBuffer)
     {
         return;
@@ -233,6 +253,33 @@
     [self.commandEncoder setVertexBuffer:positionBuffer offset:0 atIndex:0];
     [self.commandEncoder setVertexBuffer:uniformBuffer offset:0 atIndex:1];
     [self.commandEncoder setFragmentBuffer:uniformBuffer offset:0 atIndex:0];
+    
+    MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatDepth32Float width:322 height:480 mipmapped:NO];
+    id<MTLTexture> customTexture = [self.device newTextureWithDescriptor:desc];
+    
+    MTKTextureLoader *loader = [[MTKTextureLoader alloc] initWithDevice:self.device];
+    
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"coords" ofType:@"png"];
+    customTexture = [loader newTextureWithContentsOfURL:[NSURL fileURLWithPath:path] options:nil error:nil];
+    if (customTexture == nil) {
+        NSLog(@"NIL texture");
+    }
+    
+    MTLSamplerDescriptor* descriptor = [[MTLSamplerDescriptor alloc] init];
+    descriptor.minFilter             = MTLSamplerMinMagFilterNearest;
+    descriptor.magFilter             = MTLSamplerMinMagFilterNearest;
+    descriptor.mipFilter             = MTLSamplerMipFilterNearest;
+    descriptor.maxAnisotropy         = 1;
+    descriptor.sAddressMode          = MTLSamplerAddressModeClampToEdge;
+    descriptor.tAddressMode          = MTLSamplerAddressModeClampToEdge;
+    descriptor.rAddressMode          = MTLSamplerAddressModeClampToEdge;
+    descriptor.normalizedCoordinates = true;
+    descriptor.lodMinClamp           = 0;
+    descriptor.lodMaxClamp           = FLT_MAX;
+    id<MTLSamplerState> sampler = [self.device newSamplerStateWithDescriptor:descriptor];
+    
+    [self.commandEncoder setFragmentTexture:customTexture atIndex:0];
+    [self.commandEncoder setFragmentSamplerState:sampler atIndex:0];
     
     [self.commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
                                     indexCount:numberOfObjects
@@ -248,15 +295,17 @@
      indexBuffer:indexBuffer
      indexBufferOffset:36];*/
     
-    /*[self.commandEncoder setVertexBuffer:lineVertexBuffer offset:0 atIndex:0];
-    [self.commandEncoder setVertexBuffer:uniformBuffer offset:0 atIndex:1];
-    [self.commandEncoder setFragmentBuffer:uniformBuffer offset:0 atIndex:0];
+    if (false) {
+        [self.commandEncoder setVertexBuffer:lineVertexBuffer offset:0 atIndex:0];
+        [self.commandEncoder setVertexBuffer:uniformBuffer offset:0 atIndex:1];
+        [self.commandEncoder setFragmentBuffer:uniformBuffer offset:0 atIndex:0];
     
-    [self.commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeLine
+        [self.commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeLine
                                     indexCount:(numberOfObjects * 2)
                                      indexType:MTLIndexTypeUInt16
                                    indexBuffer:lineIndexBuffer
-                             indexBufferOffset:0];*/
+                             indexBufferOffset:0];
+    }
 }
 
 - (void)completeSavedImage:(UIImage *)_image didFinishSavingWithError:(NSError *)_error contextInfo:(void *)_contextInfo {

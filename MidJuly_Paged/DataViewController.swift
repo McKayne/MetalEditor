@@ -15,7 +15,11 @@ struct Uniforms {
     var normalMatrix: float3x3
 }
 
-class DataViewController: UIViewController {
+@objc class DataViewController: UIViewController {
+    
+    //@property (nonatomic, assign) Vertex *bigVertices, *bigLineVertices;
+    var bigVertices = UnsafeMutablePointer<Vertex>.allocate(capacity: 100000)
+    var bigLineVertices = UnsafeMutablePointer<Vertex>.allocate(capacity: 100000)
     
     static var mainView: UIView!
     
@@ -342,91 +346,91 @@ class DataViewController: UIViewController {
             indices.append(__uint16_t(i))
         }
         
-        var normal: [float4] = []
-        normal.append(float4(x: 0.285806, y: 0.957545, z: 0.037708, w: 0.000000))
-        normal.append(float4(x: 0.379109, y: 0.925352, z: -0.000000, w: 0.000000))
-        normal.append(float4(x: 0.000000, y: 1.000000, z: 0.000000, w: 0.000000))
-        normal.append(float4(x: 0.194152, y: 0.980637, z: 0.025618, w: 0.000000))
-        normal.append(float4(x: 0.533366, y: 0.842427, z: 0.076408, w: 0.000000))
-        normal.append(float4(x: 0.578218, y: 0.815882, z: -0.000000, w: 0.000000))
-        normal.append(float4(x: 0.681751, y: 0.725877, z: 0.091197, w: 0.000000))
-        normal.append(float4(x: 0.706222, y: 0.707990, z: -0.000000, w: 0.000000))
-        normal.append(float4(x: 0.775360, y: 0.623030, z: 0.103201, w: 0.000000))
-        normal.append(float4(x: 0.795363, y: 0.606133, z: 0.000000, w: 0.000000))
-        normal.append(float4(x: 0.843645, y: 0.525092, z: 0.111991, w: 0.000000))
-        normal.append(float4(x: 0.860854, y: 0.508852, z: 0.000000, w: 0.000000))
-        normal.append(float4(x: 0.883783, y: 0.453058, z: 0.116900, w: 0.000000))
-        normal.append(float4(x: 0.895511, y: 0.445040, z: 0.000000, w: 0.000000))
-        normal.append(float4(x: 0.190036, y: 0.980666, z: 0.046704, w: 0.000000))
-        normal.append(float4(x: 0.323050, y: 0.942658, z: 0.083871, w: 0.000000))
-        normal.append(float4(x: 0.528220, y: 0.834889, z: 0.154737, w: 0.000000))
-        normal.append(float4(x: 0.663562, y: 0.726167, z: 0.179908, w: 0.000000))
-        normal.append(float4(x: 0.754776, y: 0.623418, z: 0.204117, w: 0.000000))
-        normal.append(float4(x: 0.821388, y: 0.525466, z: 0.221827, w: 0.000000))
-        normal.append(float4(x: 0.860580, y: 0.453416, z: 0.231983, w: 0.000000))
-        normal.append(float4(x: 0.182056, y: 0.980710, z: 0.071154, w: 0.000000))
-        normal.append(float4(x: 0.308975, y: 0.942767, z: 0.125400, w: 0.000000))
-        normal.append(float4(x: 0.503013, y: 0.835158, z: 0.222461, w: 0.000000))
-        normal.append(float4(x: 0.633884, y: 0.726537, z: 0.265209, w: 0.000000))
-        normal.append(float4(x: 0.721239, y: 0.623771, z: 0.301205, w: 0.000000))
-        normal.append(float4(x: 0.784988, y: 0.525861, z: 0.327513, w: 0.000000))
-        normal.append(float4(x: 0.822565, y: 0.453784, z: 0.342735, w: 0.000000))
-        normal.append(float4(x: 0.171057, y: 0.980744, z: 0.094243, w: 0.000000))
-        normal.append(float4(x: 0.304037, y: 0.935812, z: 0.178373, w: 0.000000))
-        normal.append(float4(x: 0.485684, y: 0.824244, z: 0.291090, w: 0.000000))
-        normal.append(float4(x: 0.593620, y: 0.726799, z: 0.345512, w: 0.000000))
-        normal.append(float4(x: 0.675513, y: 0.624142, z: 0.392592, w: 0.000000))
-        normal.append(float4(x: 0.735370, y: 0.526186, z: 0.427035, w: 0.000000))
-        normal.append(float4(x: 0.770661, y: 0.454121, z: 0.447052, w: 0.000000))
-        normal.append(float4(x: 0.157290, y: 0.980761, z: 0.115620, w: 0.000000))
+        var normal: [customFloat4] = []
+        normal.append(customFloat4(x: 0.285806, y: 0.957545, z: 0.037708, w: 0.000000))
+        normal.append(customFloat4(x: 0.379109, y: 0.925352, z: -0.000000, w: 0.000000))
+        normal.append(customFloat4(x: 0.000000, y: 1.000000, z: 0.000000, w: 0.000000))
+        normal.append(customFloat4(x: 0.194152, y: 0.980637, z: 0.025618, w: 0.000000))
+        normal.append(customFloat4(x: 0.533366, y: 0.842427, z: 0.076408, w: 0.000000))
+        normal.append(customFloat4(x: 0.578218, y: 0.815882, z: -0.000000, w: 0.000000))
+        normal.append(customFloat4(x: 0.681751, y: 0.725877, z: 0.091197, w: 0.000000))
+        normal.append(customFloat4(x: 0.706222, y: 0.707990, z: -0.000000, w: 0.000000))
+        normal.append(customFloat4(x: 0.775360, y: 0.623030, z: 0.103201, w: 0.000000))
+        normal.append(customFloat4(x: 0.795363, y: 0.606133, z: 0.000000, w: 0.000000))
+        normal.append(customFloat4(x: 0.843645, y: 0.525092, z: 0.111991, w: 0.000000))
+        normal.append(customFloat4(x: 0.860854, y: 0.508852, z: 0.000000, w: 0.000000))
+        normal.append(customFloat4(x: 0.883783, y: 0.453058, z: 0.116900, w: 0.000000))
+        normal.append(customFloat4(x: 0.895511, y: 0.445040, z: 0.000000, w: 0.000000))
+        normal.append(customFloat4(x: 0.190036, y: 0.980666, z: 0.046704, w: 0.000000))
+        normal.append(customFloat4(x: 0.323050, y: 0.942658, z: 0.083871, w: 0.000000))
+        normal.append(customFloat4(x: 0.528220, y: 0.834889, z: 0.154737, w: 0.000000))
+        normal.append(customFloat4(x: 0.663562, y: 0.726167, z: 0.179908, w: 0.000000))
+        normal.append(customFloat4(x: 0.754776, y: 0.623418, z: 0.204117, w: 0.000000))
+        normal.append(customFloat4(x: 0.821388, y: 0.525466, z: 0.221827, w: 0.000000))
+        normal.append(customFloat4(x: 0.860580, y: 0.453416, z: 0.231983, w: 0.000000))
+        normal.append(customFloat4(x: 0.182056, y: 0.980710, z: 0.071154, w: 0.000000))
+        normal.append(customFloat4(x: 0.308975, y: 0.942767, z: 0.125400, w: 0.000000))
+        normal.append(customFloat4(x: 0.503013, y: 0.835158, z: 0.222461, w: 0.000000))
+        normal.append(customFloat4(x: 0.633884, y: 0.726537, z: 0.265209, w: 0.000000))
+        normal.append(customFloat4(x: 0.721239, y: 0.623771, z: 0.301205, w: 0.000000))
+        normal.append(customFloat4(x: 0.784988, y: 0.525861, z: 0.327513, w: 0.000000))
+        normal.append(customFloat4(x: 0.822565, y: 0.453784, z: 0.342735, w: 0.000000))
+        normal.append(customFloat4(x: 0.171057, y: 0.980744, z: 0.094243, w: 0.000000))
+        normal.append(customFloat4(x: 0.304037, y: 0.935812, z: 0.178373, w: 0.000000))
+        normal.append(customFloat4(x: 0.485684, y: 0.824244, z: 0.291090, w: 0.000000))
+        normal.append(customFloat4(x: 0.593620, y: 0.726799, z: 0.345512, w: 0.000000))
+        normal.append(customFloat4(x: 0.675513, y: 0.624142, z: 0.392592, w: 0.000000))
+        normal.append(customFloat4(x: 0.735370, y: 0.526186, z: 0.427035, w: 0.000000))
+        normal.append(customFloat4(x: 0.770661, y: 0.454121, z: 0.447052, w: 0.000000))
+        normal.append(customFloat4(x: 0.157290, y: 0.980761, z: 0.115620, w: 0.000000))
         
-        var position: [float4] = []
+        var position: [customFloat4] = []
         for _ in 0..<36 {
-            position.append(float4(x: 0, y: 0, z: 0, w: 0))
+            position.append(customFloat4(x: 0, y: 0, z: 0, w: 0))
         }
         // front
         
-        position[0] = float4(x: -0.25, y: -0.25, z: 0.25, w: 1.0)
-        position[1] = float4(x: 0.25, y: -0.25, z: 0.25, w: 1.0)
-        position[2] = float4(x: 0.25, y: 0.25, z: 0.25, w: 1.0)
+        position[0] = customFloat4(x: -0.25, y: -0.25, z: 0.25, w: 1.0)
+        position[1] = customFloat4(x: 0.25, y: -0.25, z: 0.25, w: 1.0)
+        position[2] = customFloat4(x: 0.25, y: 0.25, z: 0.25, w: 1.0)
         
-        position[3] = float4(x: 0.25, y: 0.25, z: 0.25, w: 1.0)
-        position[4] = float4(x: -0.25, y: 0.25, z: 0.25, w: 1.0)
-        position[5] = float4(x: -0.25, y: -0.25, z: 0.25, w: 1.0)
+        position[3] = customFloat4(x: 0.25, y: 0.25, z: 0.25, w: 1.0)
+        position[4] = customFloat4(x: -0.25, y: 0.25, z: 0.25, w: 1.0)
+        position[5] = customFloat4(x: -0.25, y: -0.25, z: 0.25, w: 1.0)
         
         //right
         
-        position[6] = float4(x: 0.25, y: -0.25, z: 0.25, w: 1.0)
-        position[7] = float4(x: 0.25, y: -0.25, z: -0.25, w: 1.0)
-        position[8] = float4(x: 0.25, y: 0.25, z: 0.25, w: 1.0)
+        position[6] = customFloat4(x: 0.25, y: -0.25, z: 0.25, w: 1.0)
+        position[7] = customFloat4(x: 0.25, y: -0.25, z: -0.25, w: 1.0)
+        position[8] = customFloat4(x: 0.25, y: 0.25, z: 0.25, w: 1.0)
         
-        position[9] = float4(x: 0.25, y: -0.25, z: -0.25, w: 1.0)
-        position[10] = float4(x: 0.25, y: 0.25, z: -0.25, w: 1.0)
-        position[11] = float4(x: 0.25, y: 0.25, z: 0.25, w: 1.0)
+        position[9] = customFloat4(x: 0.25, y: -0.25, z: -0.25, w: 1.0)
+        position[10] = customFloat4(x: 0.25, y: 0.25, z: -0.25, w: 1.0)
+        position[11] = customFloat4(x: 0.25, y: 0.25, z: 0.25, w: 1.0)
         
         // back
         
-        position[12] = float4(x: 0.25, y: -0.25, z: -0.25, w: 1.0)
-        position[13] = float4(x: -0.25, y: -0.25, z: -0.25, w: 1.0)
-        position[14] = float4(x: 0.25, y: 0.25, z: -0.25, w: 1.0)
+        position[12] = customFloat4(x: 0.25, y: -0.25, z: -0.25, w: 1.0)
+        position[13] = customFloat4(x: -0.25, y: -0.25, z: -0.25, w: 1.0)
+        position[14] = customFloat4(x: 0.25, y: 0.25, z: -0.25, w: 1.0)
         
-        position[15] = float4(x: -0.25, y: 0.25, z: -0.25, w: 1.0)
-        position[16] = float4(x: 0.25, y: 0.25, z: -0.25, w: 1.0)
-        position[17] = float4(x: -0.25, y: -0.25, z: -0.25, w: 1.0)
+        position[15] = customFloat4(x: -0.25, y: 0.25, z: -0.25, w: 1.0)
+        position[16] = customFloat4(x: 0.25, y: 0.25, z: -0.25, w: 1.0)
+        position[17] = customFloat4(x: -0.25, y: -0.25, z: -0.25, w: 1.0)
         
         // left
         
-        position[18] = float4(x: -0.25, y: -0.25, z: -0.25, w: 1.0)
-        position[19] = float4(x: -0.25, y: -0.25, z: 0.25, w: 1.0)
-        position[20] = float4(x: -0.25, y: 0.25, z: -0.25, w: 1.0)
+        position[18] = customFloat4(x: -0.25, y: -0.25, z: -0.25, w: 1.0)
+        position[19] = customFloat4(x: -0.25, y: -0.25, z: 0.25, w: 1.0)
+        position[20] = customFloat4(x: -0.25, y: 0.25, z: -0.25, w: 1.0)
         
-        position[21] = float4(x: -0.25, y: 0.25, z: 0.25, w: 1.0)
-        position[22] = float4(x: -0.25, y: 0.25, z: -0.25, w: 1.0)
-        position[23] = float4(x: -0.25, y: -0.25, z: 0.25, w: 1.0)
+        position[21] = customFloat4(x: -0.25, y: 0.25, z: 0.25, w: 1.0)
+        position[22] = customFloat4(x: -0.25, y: 0.25, z: -0.25, w: 1.0)
+        position[23] = customFloat4(x: -0.25, y: -0.25, z: 0.25, w: 1.0)
         
         var vertices: [Vertex] = []
         for i in 0..<36 {
-            vertices.append(Vertex(position: position[i], normal: normal[i], customColor: position[i]))
+            vertices.append(Vertex(position: position[i], normal: normal[i], customColor: position[i], texCoord: position[i]))
         }
         
         
@@ -440,6 +444,7 @@ class DataViewController: UIViewController {
 
         //DataViewController.mainView = self.view
         
+        contr.setVertexArrays(bigVertices, bigLineVertices: bigLineVertices)
         contr.customMetalLayer(self.view.layer, bounds: self.view.bounds)
         contr.setView(self)
         
@@ -461,14 +466,14 @@ class DataViewController: UIViewController {
         
         //metalLayer.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
         //currentStart = toLocalCoords(x: 1488, y: 999)
-        metalLayer.frame = CGRect(x: -1400, y: -800, width: 1920, height: 1280)
+        metalLayer.frame = CGRect(x: -1920 / 2, y: -200, width: 1920, height: 1280)
         
         library = device.newDefaultLibrary()
         
         view.layer.addSublayer(metalLayer)
         
         
-        lineToDraw = Line(device: device)
+        lineToDraw = Line(device: device, bigVertices: bigLineVertices)
         
         // 1
         let defaultLibrary = device.newDefaultLibrary()!

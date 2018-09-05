@@ -27,6 +27,7 @@ class Node2D {
         let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
         renderEncoder.setRenderPipelineState(pipelineState)
         renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, at: 0)
+        
         renderEncoder.drawPrimitives(type: .line, vertexStart: 0, vertexCount: vertexCount,
                                      instanceCount: vertexCount / 2)
         renderEncoder.endEncoding()

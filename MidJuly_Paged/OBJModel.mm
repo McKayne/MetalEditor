@@ -36,8 +36,8 @@ static bool operator <(const FaceVertex &v0, const FaceVertex &v1)
 
 @interface OBJModel ()
 {
-    std::vector<simd::float4> vertices;
-    std::vector<simd::float4> normals;
+    std::vector<customFloat4> vertices;
+    std::vector<customFloat4> normals;
     std::vector<simd::float2> texCoords;
     std::vector<OBJGroup *> groups;
     std::vector<Vertex> groupVertices;
@@ -118,7 +118,7 @@ static bool operator <(const FaceVertex &v0, const FaceVertex &v1)
             [scanner scanFloat:&y];
             [scanner scanFloat:&z];
             
-            simd::float4 v = { x, y, z, 1 };
+            customFloat4 v = { x, y, z, 1 };
             vertices.push_back(v);
         }
         else if ([token isEqualToString:@"vt"])
@@ -137,7 +137,7 @@ static bool operator <(const FaceVertex &v0, const FaceVertex &v1)
             [scanner scanFloat:&ny];
             [scanner scanFloat:&nz];
             
-            simd::float4 vn = { nx, ny, nz, 0 };
+            customFloat4 vn = { nx, ny, nz, 0 };
             normals.push_back(vn);
         }
         else if ([token isEqualToString:@"f"])
@@ -245,7 +245,7 @@ static bool operator <(const FaceVertex &v0, const FaceVertex &v1)
 
 - (void)addVertexToCurrentGroup:(FaceVertex)fv
 {
-    static const simd::float4 UP = { 0, 1, 0, 0 };
+    static const customFloat4 UP = { 0, 1, 0, 0 };
     
     uint16_t groupIndex;
 

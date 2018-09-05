@@ -34,6 +34,8 @@
 		7FEBAC4820F9747200D99284 /* Shaders2D.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC4720F9747200D99284 /* Shaders2D.metal */; };
 		7FEBAC4A20F9793000D99284 /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC4920F9793000D99284 /* Triangle.swift */; };
 		7FEBAC4C20F979F300D99284 /* Node2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC4B20F979F300D99284 /* Node2D.swift */; };
+		7FED96D3213DE95D00A916AE /* IMG_0299.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7FED96D2213DE95D00A916AE /* IMG_0299.jpg */; };
+		7FED96D5213DEABC00A916AE /* coords.png in Resources */ = {isa = PBXBuildFile; fileRef = 7FED96D4213DEABC00A916AE /* coords.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +56,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7F5735C0213B306500D10D9C /* MidJuly_Paged-Swift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MidJuly_Paged-Swift.h"; sourceTree = "<group>"; };
 		7F68312121001CBC00B8FC8E /* MidJuly_Paged-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MidJuly_Paged-Bridging-Header.h"; sourceTree = "<group>"; };
 		7F68312221001CBC00B8FC8E /* Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test.m; sourceTree = "<group>"; };
 		7F68312421001D5F00B8FC8E /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -95,6 +98,8 @@
 		7FEBAC4720F9747200D99284 /* Shaders2D.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders2D.metal; sourceTree = "<group>"; };
 		7FEBAC4920F9793000D99284 /* Triangle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
 		7FEBAC4B20F979F300D99284 /* Node2D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Node2D.swift; sourceTree = "<group>"; };
+		7FED96D2213DE95D00A916AE /* IMG_0299.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = IMG_0299.jpg; path = ../../IMG_0299.jpg; sourceTree = "<group>"; };
+		7FED96D4213DEABC00A916AE /* coords.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = coords.png; path = ../../coords.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,6 +170,7 @@
 				7FEBAC1420F7C47E00D99284 /* LaunchScreen.storyboard */,
 				7FEBAC1720F7C47E00D99284 /* Info.plist */,
 				7F68312121001CBC00B8FC8E /* MidJuly_Paged-Bridging-Header.h */,
+				7F5735C0213B306500D10D9C /* MidJuly_Paged-Swift.h */,
 				7F68313121001DE400B8FC8E /* Shared.h */,
 				7F68313221001DE400B8FC8E /* teapot.obj */,
 				7F68313321001DE400B8FC8E /* Transforms.h */,
@@ -175,6 +181,8 @@
 				7F68312B21001DA700B8FC8E /* OBJModel.mm */,
 				7F68312C21001DA700B8FC8E /* Renderer.h */,
 				7F68312D21001DA700B8FC8E /* Renderer.m */,
+				7FED96D4213DEABC00A916AE /* coords.png */,
+				7FED96D2213DE95D00A916AE /* IMG_0299.jpg */,
 				7F68312721001D8A00B8FC8E /* MetalView.h */,
 				7F68312821001D8A00B8FC8E /* MetalView.m */,
 				7F68312421001D5F00B8FC8E /* AppDelegate.h */,
@@ -313,7 +321,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				7F68313821001DE400B8FC8E /* teapot.obj in Resources */,
+				7FED96D3213DE95D00A916AE /* IMG_0299.jpg in Resources */,
 				7FEBAC1620F7C47E00D99284 /* LaunchScreen.storyboard in Resources */,
+				7FED96D5213DEABC00A916AE /* coords.png in Resources */,
 				7FEBAC1320F7C47E00D99284 /* Assets.xcassets in Resources */,
 				7FEBAC1120F7C47E00D99284 /* Main.storyboard in Resources */,
 			);
@@ -513,6 +523,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 4GZ5T9GPNN;
 				INFOPLIST_FILE = MidJuly_Paged/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -529,6 +540,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 4GZ5T9GPNN;
 				INFOPLIST_FILE = MidJuly_Paged/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

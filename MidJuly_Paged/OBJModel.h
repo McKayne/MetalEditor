@@ -10,11 +10,7 @@
     simd::float4 customColor;
 };*/
 
-typedef struct {
-    simd::float4 position;
-    simd::float4 normal;
-    simd::float4 customColor;
-} Vertex;
+
 
 typedef uint16_t IndexType;
 

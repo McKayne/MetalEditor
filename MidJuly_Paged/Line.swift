@@ -613,7 +613,7 @@ class Line: Node2D {
 
     }
     
-    init(device: MTLDevice){
+    init(device: MTLDevice, bigVertices: UnsafeMutablePointer<Vertex>) {
         
         
         
@@ -648,9 +648,23 @@ class Line: Node2D {
         //currentStart = toLocalCoords(x: 1488, y: 999)
         makeArc(center: (1502, 999), radius: 12.5, angleType: 3)
         
-        print("//// \(toLocalCoords(x: 0, y: 0))")
-        print("//// \(toLocalCoords(x: 960, y: 640))")
-        print("//// \(toLocalCoords(x: 1920, y: 1280))")
+        for i in 0..<12 {
+            /*self.bigLineIndices[i * 6 + 0 + self.totalIndices * 2] = i * 3 + self.totalIndices;
+            self.bigLineIndices[i * 6 + 1 + self.totalIndices * 2] = i * 3 + 1 + self.totalIndices;
+            
+            self.bigLineIndices[i * 6 + 2 + self.totalIndices * 2] = i * 3 + 1 + self.totalIndices;
+            self.bigLineIndices[i * 6 + 3 + self.totalIndices * 2] = i * 3 + 2 + self.totalIndices;
+            
+            self.bigLineIndices[i * 6 + 4 + self.totalIndices * 2] = i * 3 + 2 + self.totalIndices;
+            self.bigLineIndices[i * 6 + 5 + self.totalIndices * 2] = i * 3 + self.totalIndices;*/
+            
+            //var current: customFloat4 = bigVertices[i * 3].position
+            appendLine(xStart: bigVertices[i * 3].position.x, yStart: bigVertices[i * 3].position.y, xEnd: bigVertices[i * 3 + 1].position.x, yEnd: bigVertices[i * 3 + 1].position.y, rgb: (255 / 255.0, 255 / 255.0, 255 / 255.0))
+            appendLine(xStart: bigVertices[i * 3 + 1].position.x, yStart: bigVertices[i * 3 + 1].position.y, xEnd: bigVertices[i * 3 + 2].position.x, yEnd: bigVertices[i * 3 + 2].position.y, rgb: (255 / 255.0, 255 / 255.0, 255 / 255.0))
+            appendLine(xStart: bigVertices[i * 3 + 2].position.x, yStart: bigVertices[i * 3 + 2].position.y, xEnd: bigVertices[i * 3].position.x, yEnd: bigVertices[i * 3].position.y, rgb: (255 / 255.0, 255 / 255.0, 255 / 255.0))
+        }
+        
+        //appendLine(xStart: currentStart.x, yStart: currentStart.y, xEnd: currentEnd.x, yEnd: currentEnd.y, rgb: (0 / 255.0, 105 / 255.0, 221 / 255.0))
         
         super.finalize(vertices: verticesArray)
     }

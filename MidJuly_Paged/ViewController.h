@@ -93,5 +93,10 @@ typedef struct {
 
 - (void)setView:(UIViewController *)view;
 
+- (void)removeFace:(int)offset nth:(int)nth;
+- (void)cloneObject:(int)offset length:(int)length xTranslate:(float)xTranslate yTranslate:(float)yTranslate zTranslate:(float)zTranslate;
+- (void)rotateObject:(int)offset length:(int)length xAngle:(float)xAngle;
+- (void)translateObject:(int)offset length:(int)length xTranslate:(float)xTranslate yTranslate:(float)yTranslate zTranslate:(float)zTranslate;
+
 @end
 

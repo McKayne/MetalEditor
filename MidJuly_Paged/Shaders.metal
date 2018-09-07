@@ -73,7 +73,7 @@ vertex ProjectedVertex vertex_main(Vertex vert [[stage_in]],
     outVert.texCoord.x = vert.texCoord.y;
     outVert.texCoord.y = vert.texCoord.z;
     
-    outVert.diffuseColor = vert.customColor;
+    //outVert.diffuseColor = vert.customColor;
     
     return outVert;
 }
@@ -112,7 +112,7 @@ float4 lightAt(ProjectedVertex vert, float3 eye) {
     return float4(ambientTerm + diffuseTerm + specularTerm, 1);
 }
 
-fragment half4 fragment_main(ProjectedVertex vert [[stage_in]], constant Uniforms &uniforms [[buffer(0)]], texture2d<float> tex2D [[texture(0)]], sampler sampler2D [[sampler(0)]]) {
+fragment float4 fragment_main(ProjectedVertex vert [[stage_in]], constant Uniforms &uniforms [[buffer(0)]], texture2d<float> tex2D [[texture(0)]], sampler sampler2D [[sampler(0)]]) {
     
     Material customMaterial = {
         .ambientColor = { 0.9, 0.1, 0 },
@@ -133,7 +133,7 @@ fragment half4 fragment_main(ProjectedVertex vert [[stage_in]], constant Uniform
     
     float kAlphaTestReferenceValue = 0.5;
     
-    vert.customColor.a = vert.customColor.w;
+    //vert.customColor.a = vert.customColor.w;
     
     float4 vertexColor = {vert.customColor.x, vert.customColor.y, vert.customColor.z, vert.customColor.w};//vert.customColor;
     float4 textureColor = {vert.customColor.x, vert.customColor.y, vert.customColor.z, vert.customColor.w};//vert.customColor;//texture.sample(texSampler, vert.texCoords);
@@ -141,7 +141,7 @@ fragment half4 fragment_main(ProjectedVertex vert [[stage_in]], constant Uniform
     float diffuseIntensity = max(kMinDiffuseIntensity, dot(normalize(vert.normal.xyz), -kLightDirection));
     float4 color = diffuseIntensity * textureColor * vertexColor;
      
-    return half4(color.r, color.g, color.b, vertexColor.a);
+    //return float4(color.r, color.g, color.b, vertexColor.a);
     
     
     //return float4(vert.customColor.x, vert.customColor.y, vert.customColor.z, vert.customColor.w);
@@ -193,6 +193,5 @@ fragment half4 fragment_main(ProjectedVertex vert [[stage_in]], constant Uniform
     
     float4 lightC = lightAt(vert, float3{-10, -10, 1});
     
-    return half4(1, 0, 0, 1);
-    //return lightA;// + lightB + lightC;
+    return lightA + lightC;// + lightC;
 }

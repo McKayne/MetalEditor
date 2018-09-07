@@ -155,6 +155,7 @@
     pipelineDescriptor.vertexDescriptor = self.vertexDescriptor;
     
     // blending
+    if (false) {
     MTLRenderPipelineColorAttachmentDescriptor *renderbufferAttachment = pipelineDescriptor.colorAttachments[0];
     renderbufferAttachment.blendingEnabled = YES;
     
@@ -166,11 +167,15 @@
 
     renderbufferAttachment.destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
     renderbufferAttachment.destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
-    
+    }
     
     MTLDepthStencilDescriptor *depthStencilDescriptor = [MTLDepthStencilDescriptor new];
     depthStencilDescriptor.depthCompareFunction = MTLCompareFunctionLess;
+    if (false) {
     depthStencilDescriptor.depthWriteEnabled = NO;//YES;
+    } else {
+        depthStencilDescriptor.depthWriteEnabled = YES;
+    }
     self.depthStencilState = [self.device newDepthStencilStateWithDescriptor:depthStencilDescriptor];
     
     NSError *error = nil;
@@ -236,9 +241,13 @@
     
     [self.commandEncoder setFrontFacingWinding:MTLWindingCounterClockwise];
     
-    //[self.commandEncoder setCullMode:MTLCullModeBack];
+    
+    if (false) {
     [self.commandEncoder setFrontFacingWinding:MTLWindingCounterClockwise];
     [self.commandEncoder setCullMode:MTLCullModeNone];
+    } else {
+        [self.commandEncoder setCullMode:MTLCullModeBack];
+    }
 }
 
 - (void)drawTrianglesWithInterleavedBuffer:(id<MTLBuffer>)positionBuffer lineVertexBuffer:(id<MTLBuffer>)lineVertexBuffer

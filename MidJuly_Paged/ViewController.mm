@@ -629,10 +629,10 @@ customFloat4 normalize(simd::float3 customVertexNormal) {
     for (int i = 0; i < 36; i++) {
         self.bigIndices[i + self.totalIndices] = i + self.totalIndices;
         
-        self.bigVertices[i + self.totalIndices].customColor = {static_cast<float>((float) red / 255.0), static_cast<float>((float) green / 255.0), static_cast<float>((float) blue / 255.0)};
+        self.bigVertices[i + self.totalIndices].customColor = {static_cast<float>((float) red / 255.0), static_cast<float>((float) green / 255.0), static_cast<float>((float) blue / 255.0), 1.0f};
         self.bigVertices[i + self.totalIndices].position = position[i];
         
-        self.bigLineVertices[i + self.totalIndices].normal = {0, 0, 0};
+        self.bigLineVertices[i + self.totalIndices].customColor = {0, 0, 0, 1.0f};
         self.bigLineVertices[i + self.totalIndices].position = position[i];
     }
     
@@ -1970,6 +1970,140 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     self.bigLineVertices[offset + 34].position.z = zStart;
 }
 
+- (void)removeFace:(int)offset nth:(int)nth {
+    int nthOffset = nth * 6;
+    for (int i = offset + nthOffset; i < self.totalIndices; i++) {
+        self.bigVertices[i] = self.bigVertices[i + 6];
+        self.bigIndices[i] = self.bigIndices[i + 6] - 6;
+        
+        self.bigLineVertices[i] = self.bigLineVertices[i + 6];
+        self.bigLineIndices[i] = self.bigLineIndices[i + 2] - 2;
+    }
+    self.totalIndices -= 6;
+    
+    for (int i = offset + nth * 2; i < self.totalIndices / 3; i++) {
+        self.bigLineIndices[i * 6 + 0 + self.totalIndices * 2] = i * 3 + self.totalIndices;
+        self.bigLineIndices[i * 6 + 1 + self.totalIndices * 2] = i * 3 + 1 + self.totalIndices;
+        
+        self.bigLineIndices[i * 6 + 2 + self.totalIndices * 2] = i * 3 + 1 + self.totalIndices;
+        self.bigLineIndices[i * 6 + 3 + self.totalIndices * 2] = i * 3 + 2 + self.totalIndices;
+        
+        self.bigLineIndices[i * 6 + 4 + self.totalIndices * 2] = i * 3 + 2 + self.totalIndices;
+        self.bigLineIndices[i * 6 + 5 + self.totalIndices * 2] = i * 3 + self.totalIndices;
+    }
+}
+
+- (void)cloneObject:(int)offset length:(int)length xTranslate:(float)xTranslate yTranslate:(float)yTranslate zTranslate:(float)zTranslate {
+    for (int i = offset; i < offset + length; i++) {
+        self.bigVertices[i] = self.bigVertices[i - length];
+        self.bigVertices[i].position.x += xTranslate;
+        self.bigVertices[i].position.y += yTranslate;
+        self.bigVertices[i].position.z += zTranslate;
+        
+        self.bigIndices[i] = i;
+        
+        self.bigLineVertices[i] = self.bigLineVertices[i - length];
+        self.bigLineVertices[i].position.x += xTranslate;
+        self.bigLineVertices[i].position.y += yTranslate;
+        self.bigLineVertices[i].position.z += zTranslate;
+    }
+    
+    self.totalIndices += length;
+}
+
+- (void)rotateObject:(int)offset length:(int)length xAngle:(float)xAngle {
+    float xMin = self.bigVertices[0].position.x, xMax = self.bigVertices[0].position.x;
+    float zMin = self.bigVertices[0].position.z, zMax = self.bigVertices[0].position.z;
+    
+    for (int i = offset; i < offset + length; i++) {
+        if (self.bigVertices[i].position.x < xMin) {
+            xMin = self.bigVertices[i].position.x;
+        }
+        if (self.bigVertices[i].position.x > xMax) {
+            xMax = self.bigVertices[i].position.x;
+        }
+        if (self.bigVertices[i].position.z < zMin) {
+            zMin = self.bigVertices[i].position.z;
+        }
+        if (self.bigVertices[i].position.z > zMax) {
+            zMax = self.bigVertices[i].position.z;
+        }
+    }
+    NSLog(@"x min = %f", xMin);
+    NSLog(@"x max = %f", xMax);
+    NSLog(@"z min = %f", zMin);
+    NSLog(@"z max = %f", zMax);
+    
+    float xCenter = (xMax + xMin) / 2.0f;
+    float zCenter = (zMax + zMin) / 2.0f;
+    
+    NSLog(@"x center = %f", xCenter);
+    NSLog(@"z center = %f", zCenter);
+    
+    
+    
+    
+    for (int i = offset; i < offset + length; i++) {
+    
+        float x = self.bigVertices[i].position.x - xCenter;
+        float z = -(self.bigVertices[i].position.z - zCenter);
+    
+        NSLog(@"X = %f", x);
+        NSLog(@"Z = %f", z);
+    
+        float radius = sqrt(x * x + z * z);
+        if (x >= 0.0f && z >= 0.0f) {
+            float tg = z / x;
+            float angle = atan(tg) / (M_PI / 180) + xAngle;
+        
+            self.bigVertices[i].position.x = cos(angle * M_PI / 180) * radius + xCenter;
+            self.bigVertices[i].position.z = -(sin(angle * M_PI / 180) * radius - zCenter);
+        
+            NSLog(@"X = %f", self.bigVertices[i].position.x);
+            NSLog(@"Z = %f", self.bigVertices[i].position.z);
+        } else if (x < 0.0f && z >= 0.0f) {
+            float tg = z / x;
+            float angle = atan(tg) / (M_PI / 180) + 180 + xAngle;
+        
+            self.bigVertices[i].position.x = cos(angle * M_PI / 180) * radius + xCenter;
+            self.bigVertices[i].position.z = -(sin(angle * M_PI / 180) * radius - zCenter);
+        
+            NSLog(@"X = %f", self.bigVertices[i].position.x);
+            NSLog(@"Z = %f", self.bigVertices[i].position.z);
+        } else if (x < 0.0f && z < 0.0f) {
+            float tg = z / x;
+            float angle = atan(tg) / (M_PI / 180) + 180 + xAngle;
+        
+            self.bigVertices[i].position.x = cos(angle * M_PI / 180) * radius + xCenter;
+            self.bigVertices[i].position.z = -(sin(angle * M_PI / 180) * radius - zCenter);
+        
+            NSLog(@"X = %f", self.bigVertices[i].position.x);
+            NSLog(@"Z = %f", self.bigVertices[i].position.z);
+        } else {
+            float tg = z / x;
+            float angle = atan(tg) / (M_PI / 180) + xAngle;
+        
+            self.bigVertices[i].position.x = cos(angle * M_PI / 180) * radius + xCenter;
+            self.bigVertices[i].position.z = -(sin(angle * M_PI / 180) * radius - zCenter);
+        
+            NSLog(@"X = %f", self.bigVertices[i].position.x);
+            NSLog(@"Z = %f", self.bigVertices[i].position.z);
+        }
+    
+        self.bigLineVertices[i].position = self.bigVertices[i].position;
+    }
+}
+
+- (void)translateObject:(int)offset length:(int)length xTranslate:(float)xTranslate yTranslate:(float)yTranslate zTranslate:(float)zTranslate {
+    for (int i = offset; i < offset + length; i++) {
+        self.bigVertices[i].position.x += xTranslate;
+        self.bigVertices[i].position.y += yTranslate;
+        self.bigVertices[i].position.z += zTranslate;
+        
+        self.bigLineVertices[i].position = self.bigVertices[i].position;
+    }
+}
+
 - (void)loadModel {
     
     self.totalIndices = 0;
@@ -2007,8 +2141,66 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
         [self rotateCube:36 * i xAngle:-10.0f * i];
     }*/
     
-    [self appendPlate:-0.25 y:-0.25 z:0.1 width:0.5 height:0.5 red:0 green:255 blue:0 alpha:1];
-    [self appendPlate:-0.25 y:-0.25 z:0.25 width:0.5 height:0.5 red:255 green:0 blue:255 alpha:0.9];
+    //[self appendPlate:-0.25 y:-0.25 z:0.1 width:0.5 height:0.5 red:0 green:255 blue:0 alpha:1];
+    //[self appendPlate:-0.25 y:-0.25 z:0.25 width:0.5 height:0.5 red:255 green:0 blue:255 alpha:0.9];
+    
+    // Compound object demo
+    
+    int a = [self appendCube:-0.25 y:-0.25 z:0.15 width:0.5 height:0.2 depth:0.5 red:255 green:255 blue:128];
+    [self removeFace:a nth:4];
+    [self removeFace:a nth:4];
+    
+    int b = [self appendCube:-0.3 y:-0.25 z:0.15 width:0.05 height:0.2 depth:0.1 red:255 green:255 blue:128];
+    [self removeFace:b nth:4];
+    [self removeFace:b nth:4];
+    
+    int c = [self appendCube:-0.1 y:-0.25 z:0.25 width:0.35 height:0.2 depth:0.1 red:255 green:255 blue:128];
+    [self removeFace:c nth:4];
+    [self removeFace:c nth:4];
+    
+    int d = [self appendCube:0.05 y:-0.25 z:0.3 width:0.1 height:0.2 depth:0.05 red:255 green:255 blue:128];
+    [self removeFace:d nth:4];
+    [self removeFace:d nth:4];
+    
+    int e = [self appendCube:0.35 y:-0.25 z:0.05 width:0.01 height:0.2 depth:0.01 red:255 green:255 blue:128];
+    [self removeFace:e nth:4];
+    [self removeFace:e nth:4];
+    
+    int f = [self appendCube:0.35 y:-0.25 z:-0.05 width:0.01 height:0.2 depth:0.01 red:255 green:255 blue:128];
+    [self removeFace:f nth:4];
+    [self removeFace:f nth:4];
+    
+    int g = [self appendCube:-0.26 y:-0.05 z:0.16 width:0.52 height:0.05 depth:0.52 red:255 green:0 blue:255];
+    int h = [self appendCube:-0.31 y:-0.05 z:0.16 width:0.05 height:0.05 depth:0.12 red:255 green:0 blue:255];
+    [self appendCube:-0.11 y:-0.05 z:0.26 width:0.37 height:0.05 depth:0.1 red:255 green:0 blue:255];
+    [self appendCube:0.04 y:-0.05 z:0.31 width:0.12 height:0.05 depth:0.05 red:255 green:0 blue:255];
+    [self appendCube:0.26 y:-0.05 z:0.06 width:0.12 height:0.05 depth:0.12 red:255 green:0 blue:255];
+    
+    int compoundSize = self.totalIndices;
+    [self translateObject:0 length:compoundSize xTranslate:0 yTranslate:0 zTranslate:-1];
+    
+    [self cloneObject:compoundSize length:compoundSize xTranslate:-0.6f yTranslate:0.0f zTranslate:0.8f];
+    [self cloneObject:compoundSize * 2 length:compoundSize xTranslate:1.2f yTranslate:0.0f zTranslate:0.0f];
+    
+    
+    [self rotateObject:compoundSize length:compoundSize xAngle:45];
+    [self rotateObject:compoundSize * 2 length:compoundSize xAngle:-45];
+    
+    [self appendCube:-1 y:-0.26 z:0.5 width:2.0 height:0.01 depth:2.0 red:200 green:200 blue:200];
+    
+    for (int i = 0; i < self.totalIndices / 3; i++) {
+        self.bigLineIndices[i * 6 + 0] = i * 3;
+        self.bigLineIndices[i * 6 + 1] = i * 3 + 1;
+        
+        self.bigLineIndices[i * 6 + 2] = i * 3 + 1;
+        self.bigLineIndices[i * 6 + 3] = i * 3 + 2;
+        
+        self.bigLineIndices[i * 6 + 4] = i * 3 + 2;
+        self.bigLineIndices[i * 6 + 5] = i * 3;
+    }
+    
+    
+    
     
     //[self rotateCube:36 * 0 xAngle:-0.0f];
     
@@ -2071,7 +2263,7 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     //modelMatrix = Rotation(Y_AXIS, -self.angle.x) * modelMatrix;
     
     //self.angle.x = 10 * 3.14 / 180;
-    self.angle = CGPointMake(0 * 3.14 / 180, -30 * 3.14 / 180);//demo
+    self.angle = CGPointMake(0 * 3.14 / 180, 30 * 3.14 / 180);//demo
     //self.angle = CGPointMake(-180 * 3.14 / 180, 30 * 3.14 / 180);
     //NSLog(@"ANGLE %f %f", self.angle.x, self.angle.y);
     modelMatrix = Rotation(Y_AXIS, -self.angle.x) * modelMatrix;
@@ -2080,7 +2272,7 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     simd::float4x4 viewMatrix = Identity();
     viewMatrix.columns[3].z = -1; // translate camera back along Z axis
     
-    //viewMatrix.columns[3].z = -1.5; // translate camera back along Z axis
+    viewMatrix.columns[3].z = -1.5; // translate camera back along Z axis
     
     const float near = 0.1;
     const float far = 100;

@@ -263,16 +263,7 @@
     [self.commandEncoder setVertexBuffer:uniformBuffer offset:0 atIndex:1];
     [self.commandEncoder setFragmentBuffer:uniformBuffer offset:0 atIndex:0];
     
-    MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatDepth32Float width:322 height:480 mipmapped:NO];
-    id<MTLTexture> customTexture = [self.device newTextureWithDescriptor:desc];
     
-    MTKTextureLoader *loader = [[MTKTextureLoader alloc] initWithDevice:self.device];
-    
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"coords" ofType:@"png"];
-    customTexture = [loader newTextureWithContentsOfURL:[NSURL fileURLWithPath:path] options:nil error:nil];
-    if (customTexture == nil) {
-        NSLog(@"NIL texture");
-    }
     
     MTLSamplerDescriptor* descriptor = [[MTLSamplerDescriptor alloc] init];
     descriptor.minFilter             = MTLSamplerMinMagFilterNearest;
@@ -286,9 +277,43 @@
     descriptor.lodMinClamp           = 0;
     descriptor.lodMaxClamp           = FLT_MAX;
     id<MTLSamplerState> sampler = [self.device newSamplerStateWithDescriptor:descriptor];
-    
-    [self.commandEncoder setFragmentTexture:customTexture atIndex:0];
     [self.commandEncoder setFragmentSamplerState:sampler atIndex:0];
+    
+    MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatDepth32Float width:322 height:480 mipmapped:NO];
+    MTKTextureLoader *loader = [[MTKTextureLoader alloc] initWithDevice:self.device];
+    
+    id<MTLTexture> customTexture = [self.device newTextureWithDescriptor:desc];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"texture1" ofType:@"jpg"];
+    customTexture = [loader newTextureWithContentsOfURL:[NSURL fileURLWithPath:path] options:nil error:nil];
+    if (customTexture == nil) {
+        NSLog(@"NIL texture");
+    }
+    [self.commandEncoder setFragmentTexture:customTexture atIndex:0];
+    
+    id<MTLTexture> textureB = [self.device newTextureWithDescriptor:desc];
+    NSString *pathB = [[NSBundle mainBundle] pathForResource:@"texture2" ofType:@"jpg"];
+    textureB = [loader newTextureWithContentsOfURL:[NSURL fileURLWithPath:pathB] options:nil error:nil];
+    if (textureB == nil) {
+        NSLog(@"NIL texture");
+    }
+    [self.commandEncoder setFragmentTexture:textureB atIndex:1];
+    
+    id<MTLTexture> textureC = [self.device newTextureWithDescriptor:desc];
+    NSString *pathC = [[NSBundle mainBundle] pathForResource:@"texture3" ofType:@"jpg"];
+    textureC = [loader newTextureWithContentsOfURL:[NSURL fileURLWithPath:pathC] options:nil error:nil];
+    if (textureC == nil) {
+        NSLog(@"NIL texture");
+    }
+    [self.commandEncoder setFragmentTexture:textureC atIndex:2];
+    
+    id<MTLTexture> textureD = [self.device newTextureWithDescriptor:desc];
+    NSString *pathD = [[NSBundle mainBundle] pathForResource:@"texture4" ofType:@"jpg"];
+    textureD = [loader newTextureWithContentsOfURL:[NSURL fileURLWithPath:pathD] options:nil error:nil];
+    if (textureC == nil) {
+        NSLog(@"NIL texture");
+    }
+    [self.commandEncoder setFragmentTexture:textureD atIndex:3];
+    
     
     [self.commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
                                     indexCount:numberOfObjects
@@ -304,7 +329,7 @@
      indexBuffer:indexBuffer
      indexBufferOffset:36];*/
     
-    if (false) {
+    if (true) {
         [self.commandEncoder setVertexBuffer:lineVertexBuffer offset:0 atIndex:0];
         [self.commandEncoder setVertexBuffer:uniformBuffer offset:0 atIndex:1];
         [self.commandEncoder setFragmentBuffer:uniformBuffer offset:0 atIndex:0];
@@ -410,7 +435,7 @@
             activityViewControntroller.popoverPresentationController.sourceView = self.mainView.view;
             activityViewControntroller.popoverPresentationController.sourceRect = CGRectMake(self.mainView.view.bounds.size.width/2, self.mainView.view.bounds.size.height/4, 0, 0);
         //}
-        [self.mainView presentViewController:activityViewControntroller animated:true completion:nil];
+        //[self.mainView presentViewController:activityViewControntroller animated:true completion:nil];
         
         //UIImageWriteToSavedPhotosAlbum(jpgImage, self, @selector(completeSavedImage:didFinishSavingWithError:contextInfo:), nil);
         

@@ -7,6 +7,46 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7F2583AE214CB71600B332AC /* Export.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F2583AD214CB71600B332AC /* Export.swift */; };
+		7F311049214D4CDB005FEA89 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F311048214D4CDB005FEA89 /* Model.swift */; };
+		7F39E8EA2148AC7200252FF6 /* SSZipArchive.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8E62148AC7200252FF6 /* SSZipArchive.h */; };
+		7F39E8EB2148AC7200252FF6 /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8E72148AC7200252FF6 /* SSZipArchive.m */; };
+		7F39E8EC2148AC7200252FF6 /* SSZipCommon.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8E82148AC7200252FF6 /* SSZipCommon.h */; };
+		7F39E8ED2148AC7200252FF6 /* ZipArchive.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8E92148AC7200252FF6 /* ZipArchive.h */; };
+		7F39E8FC2148ACC000252FF6 /* crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8EE2148ACC000252FF6 /* crypt.c */; };
+		7F39E8FD2148ACC000252FF6 /* crypt.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8EF2148ACC000252FF6 /* crypt.h */; };
+		7F39E8FE2148ACC000252FF6 /* ioapi_buf.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8F02148ACC000252FF6 /* ioapi_buf.c */; };
+		7F39E8FF2148ACC000252FF6 /* ioapi_buf.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8F12148ACC000252FF6 /* ioapi_buf.h */; };
+		7F39E9002148ACC000252FF6 /* ioapi_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8F22148ACC000252FF6 /* ioapi_mem.c */; };
+		7F39E9012148ACC000252FF6 /* ioapi_mem.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8F32148ACC000252FF6 /* ioapi_mem.h */; };
+		7F39E9022148ACC000252FF6 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8F42148ACC000252FF6 /* ioapi.c */; };
+		7F39E9032148ACC000252FF6 /* ioapi.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8F52148ACC000252FF6 /* ioapi.h */; };
+		7F39E9042148ACC000252FF6 /* minishared.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8F62148ACC000252FF6 /* minishared.c */; };
+		7F39E9052148ACC000252FF6 /* minishared.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8F72148ACC000252FF6 /* minishared.h */; };
+		7F39E9062148ACC000252FF6 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8F82148ACC000252FF6 /* unzip.c */; };
+		7F39E9072148ACC000252FF6 /* unzip.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8F92148ACC000252FF6 /* unzip.h */; };
+		7F39E9082148ACC000252FF6 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8FA2148ACC000252FF6 /* zip.c */; };
+		7F39E9092148ACC000252FF6 /* zip.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8FB2148ACC000252FF6 /* zip.h */; };
+		7F39E91E2148ACE900252FF6 /* aes_ni.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E90A2148ACE900252FF6 /* aes_ni.c */; };
+		7F39E91F2148ACE900252FF6 /* aes_ni.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E90B2148ACE900252FF6 /* aes_ni.h */; };
+		7F39E9202148ACE900252FF6 /* aes.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E90C2148ACE900252FF6 /* aes.h */; };
+		7F39E9212148ACE900252FF6 /* aescrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E90D2148ACE900252FF6 /* aescrypt.c */; };
+		7F39E9222148ACE900252FF6 /* aeskey.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E90E2148ACE900252FF6 /* aeskey.c */; };
+		7F39E9232148ACE900252FF6 /* aesopt.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E90F2148ACE900252FF6 /* aesopt.h */; };
+		7F39E9242148ACE900252FF6 /* aestab.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E9102148ACE900252FF6 /* aestab.c */; };
+		7F39E9252148ACE900252FF6 /* aestab.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E9112148ACE900252FF6 /* aestab.h */; };
+		7F39E9262148ACE900252FF6 /* brg_endian.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E9122148ACE900252FF6 /* brg_endian.h */; };
+		7F39E9272148ACE900252FF6 /* brg_types.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E9132148ACE900252FF6 /* brg_types.h */; };
+		7F39E9282148ACE900252FF6 /* fileenc.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E9142148ACE900252FF6 /* fileenc.c */; };
+		7F39E9292148ACE900252FF6 /* fileenc.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E9152148ACE900252FF6 /* fileenc.h */; };
+		7F39E92A2148ACE900252FF6 /* hmac.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E9162148ACE900252FF6 /* hmac.c */; };
+		7F39E92B2148ACE900252FF6 /* hmac.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E9172148ACE900252FF6 /* hmac.h */; };
+		7F39E92C2148ACE900252FF6 /* prng.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E9182148ACE900252FF6 /* prng.c */; };
+		7F39E92D2148ACE900252FF6 /* prng.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E9192148ACE900252FF6 /* prng.h */; };
+		7F39E92E2148ACE900252FF6 /* pwd2key.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E91A2148ACE900252FF6 /* pwd2key.c */; };
+		7F39E92F2148ACE900252FF6 /* pwd2key.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E91B2148ACE900252FF6 /* pwd2key.h */; };
+		7F39E9302148ACE900252FF6 /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E91C2148ACE900252FF6 /* sha1.c */; };
+		7F39E9312148ACE900252FF6 /* sha1.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E91D2148ACE900252FF6 /* sha1.h */; };
 		7F68312321001CBC00B8FC8E /* Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F68312221001CBC00B8FC8E /* Test.m */; };
 		7F68312621001D5F00B8FC8E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F68312521001D5F00B8FC8E /* AppDelegate.m */; };
 		7F68312921001D8A00B8FC8E /* MetalView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F68312821001D8A00B8FC8E /* MetalView.m */; };
@@ -16,6 +56,8 @@
 		7F68313921001DE400B8FC8E /* Transforms.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F68313421001DE400B8FC8E /* Transforms.mm */; };
 		7F68313A21001DE400B8FC8E /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F68313621001DE400B8FC8E /* ViewController.mm */; };
 		7F68313C2104038200B8FC8E /* Vertex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F68313B2104038200B8FC8E /* Vertex.swift */; };
+		7F8230DC214C0CD900BD262C /* ActionsTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8230DB214C0CD900BD262C /* ActionsTableViewDataSource.swift */; };
+		7F8230DE214C6FEB00BD262C /* Context.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8230DD214C6FEB00BD262C /* Context.swift */; };
 		7FEBAC0820F7C47E00D99284 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC0720F7C47E00D99284 /* AppDelegate.swift */; };
 		7FEBAC0A20F7C47E00D99284 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC0920F7C47E00D99284 /* RootViewController.swift */; };
 		7FEBAC0C20F7C47E00D99284 /* DataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC0B20F7C47E00D99284 /* DataViewController.swift */; };
@@ -36,6 +78,12 @@
 		7FEBAC4C20F979F300D99284 /* Node2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC4B20F979F300D99284 /* Node2D.swift */; };
 		7FED96D3213DE95D00A916AE /* IMG_0299.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7FED96D2213DE95D00A916AE /* IMG_0299.jpg */; };
 		7FED96D5213DEABC00A916AE /* coords.png in Resources */ = {isa = PBXBuildFile; fileRef = 7FED96D4213DEABC00A916AE /* coords.png */; };
+		7FEEBC4D2145A62800023376 /* texture1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7FEEBC4C2145A62800023376 /* texture1.jpg */; };
+		7FEEBC4F2145AF2800023376 /* texture2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7FEEBC4E2145AF2800023376 /* texture2.jpg */; };
+		7FEEBC512145DAEC00023376 /* texture3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7FEEBC502145DAEC00023376 /* texture3.jpg */; };
+		7FEEBC532145E04800023376 /* texture4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7FEEBC522145E04800023376 /* texture4.jpg */; };
+		7FEEBC6E2148A9FC00023376 /* SSZipArchive in Resources */ = {isa = PBXBuildFile; fileRef = 7FEEBC6D2148A9FC00023376 /* SSZipArchive */; };
+		7FEEBC712148AA8B00023376 /* libz.1.2.8.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FEEBC702148AA8B00023376 /* libz.1.2.8.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,7 +104,46 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		7F5735C0213B306500D10D9C /* MidJuly_Paged-Swift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MidJuly_Paged-Swift.h"; sourceTree = "<group>"; };
+		7F2583AD214CB71600B332AC /* Export.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Export.swift; sourceTree = "<group>"; };
+		7F311048214D4CDB005FEA89 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		7F39E8E62148AC7200252FF6 /* SSZipArchive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SSZipArchive.h; path = MidJuly_Paged/SSZipArchive/SSZipArchive.h; sourceTree = "<group>"; };
+		7F39E8E72148AC7200252FF6 /* SSZipArchive.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SSZipArchive.m; path = MidJuly_Paged/SSZipArchive/SSZipArchive.m; sourceTree = "<group>"; };
+		7F39E8E82148AC7200252FF6 /* SSZipCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SSZipCommon.h; path = MidJuly_Paged/SSZipArchive/SSZipCommon.h; sourceTree = "<group>"; };
+		7F39E8E92148AC7200252FF6 /* ZipArchive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ZipArchive.h; path = MidJuly_Paged/SSZipArchive/ZipArchive.h; sourceTree = "<group>"; };
+		7F39E8EE2148ACC000252FF6 /* crypt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = crypt.c; path = MidJuly_Paged/SSZipArchive/minizip/crypt.c; sourceTree = "<group>"; };
+		7F39E8EF2148ACC000252FF6 /* crypt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = crypt.h; path = MidJuly_Paged/SSZipArchive/minizip/crypt.h; sourceTree = "<group>"; };
+		7F39E8F02148ACC000252FF6 /* ioapi_buf.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ioapi_buf.c; path = MidJuly_Paged/SSZipArchive/minizip/ioapi_buf.c; sourceTree = "<group>"; };
+		7F39E8F12148ACC000252FF6 /* ioapi_buf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ioapi_buf.h; path = MidJuly_Paged/SSZipArchive/minizip/ioapi_buf.h; sourceTree = "<group>"; };
+		7F39E8F22148ACC000252FF6 /* ioapi_mem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ioapi_mem.c; path = MidJuly_Paged/SSZipArchive/minizip/ioapi_mem.c; sourceTree = "<group>"; };
+		7F39E8F32148ACC000252FF6 /* ioapi_mem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ioapi_mem.h; path = MidJuly_Paged/SSZipArchive/minizip/ioapi_mem.h; sourceTree = "<group>"; };
+		7F39E8F42148ACC000252FF6 /* ioapi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ioapi.c; path = MidJuly_Paged/SSZipArchive/minizip/ioapi.c; sourceTree = "<group>"; };
+		7F39E8F52148ACC000252FF6 /* ioapi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ioapi.h; path = MidJuly_Paged/SSZipArchive/minizip/ioapi.h; sourceTree = "<group>"; };
+		7F39E8F62148ACC000252FF6 /* minishared.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = minishared.c; path = MidJuly_Paged/SSZipArchive/minizip/minishared.c; sourceTree = "<group>"; };
+		7F39E8F72148ACC000252FF6 /* minishared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = minishared.h; path = MidJuly_Paged/SSZipArchive/minizip/minishared.h; sourceTree = "<group>"; };
+		7F39E8F82148ACC000252FF6 /* unzip.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = unzip.c; path = MidJuly_Paged/SSZipArchive/minizip/unzip.c; sourceTree = "<group>"; };
+		7F39E8F92148ACC000252FF6 /* unzip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = unzip.h; path = MidJuly_Paged/SSZipArchive/minizip/unzip.h; sourceTree = "<group>"; };
+		7F39E8FA2148ACC000252FF6 /* zip.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = zip.c; path = MidJuly_Paged/SSZipArchive/minizip/zip.c; sourceTree = "<group>"; };
+		7F39E8FB2148ACC000252FF6 /* zip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = zip.h; path = MidJuly_Paged/SSZipArchive/minizip/zip.h; sourceTree = "<group>"; };
+		7F39E90A2148ACE900252FF6 /* aes_ni.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = aes_ni.c; path = MidJuly_Paged/SSZipArchive/minizip/aes/aes_ni.c; sourceTree = "<group>"; };
+		7F39E90B2148ACE900252FF6 /* aes_ni.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = aes_ni.h; path = MidJuly_Paged/SSZipArchive/minizip/aes/aes_ni.h; sourceTree = "<group>"; };
+		7F39E90C2148ACE900252FF6 /* aes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = aes.h; path = MidJuly_Paged/SSZipArchive/minizip/aes/aes.h; sourceTree = "<group>"; };
+		7F39E90D2148ACE900252FF6 /* aescrypt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = aescrypt.c; path = MidJuly_Paged/SSZipArchive/minizip/aes/aescrypt.c; sourceTree = "<group>"; };
+		7F39E90E2148ACE900252FF6 /* aeskey.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = aeskey.c; path = MidJuly_Paged/SSZipArchive/minizip/aes/aeskey.c; sourceTree = "<group>"; };
+		7F39E90F2148ACE900252FF6 /* aesopt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = aesopt.h; path = MidJuly_Paged/SSZipArchive/minizip/aes/aesopt.h; sourceTree = "<group>"; };
+		7F39E9102148ACE900252FF6 /* aestab.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = aestab.c; path = MidJuly_Paged/SSZipArchive/minizip/aes/aestab.c; sourceTree = "<group>"; };
+		7F39E9112148ACE900252FF6 /* aestab.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = aestab.h; path = MidJuly_Paged/SSZipArchive/minizip/aes/aestab.h; sourceTree = "<group>"; };
+		7F39E9122148ACE900252FF6 /* brg_endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = brg_endian.h; path = MidJuly_Paged/SSZipArchive/minizip/aes/brg_endian.h; sourceTree = "<group>"; };
+		7F39E9132148ACE900252FF6 /* brg_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = brg_types.h; path = MidJuly_Paged/SSZipArchive/minizip/aes/brg_types.h; sourceTree = "<group>"; };
+		7F39E9142148ACE900252FF6 /* fileenc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = fileenc.c; path = MidJuly_Paged/SSZipArchive/minizip/aes/fileenc.c; sourceTree = "<group>"; };
+		7F39E9152148ACE900252FF6 /* fileenc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = fileenc.h; path = MidJuly_Paged/SSZipArchive/minizip/aes/fileenc.h; sourceTree = "<group>"; };
+		7F39E9162148ACE900252FF6 /* hmac.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = hmac.c; path = MidJuly_Paged/SSZipArchive/minizip/aes/hmac.c; sourceTree = "<group>"; };
+		7F39E9172148ACE900252FF6 /* hmac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = hmac.h; path = MidJuly_Paged/SSZipArchive/minizip/aes/hmac.h; sourceTree = "<group>"; };
+		7F39E9182148ACE900252FF6 /* prng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = prng.c; path = MidJuly_Paged/SSZipArchive/minizip/aes/prng.c; sourceTree = "<group>"; };
+		7F39E9192148ACE900252FF6 /* prng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = prng.h; path = MidJuly_Paged/SSZipArchive/minizip/aes/prng.h; sourceTree = "<group>"; };
+		7F39E91A2148ACE900252FF6 /* pwd2key.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pwd2key.c; path = MidJuly_Paged/SSZipArchive/minizip/aes/pwd2key.c; sourceTree = "<group>"; };
+		7F39E91B2148ACE900252FF6 /* pwd2key.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pwd2key.h; path = MidJuly_Paged/SSZipArchive/minizip/aes/pwd2key.h; sourceTree = "<group>"; };
+		7F39E91C2148ACE900252FF6 /* sha1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = sha1.c; path = MidJuly_Paged/SSZipArchive/minizip/aes/sha1.c; sourceTree = "<group>"; };
+		7F39E91D2148ACE900252FF6 /* sha1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sha1.h; path = MidJuly_Paged/SSZipArchive/minizip/aes/sha1.h; sourceTree = "<group>"; };
 		7F68312121001CBC00B8FC8E /* MidJuly_Paged-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MidJuly_Paged-Bridging-Header.h"; sourceTree = "<group>"; };
 		7F68312221001CBC00B8FC8E /* Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test.m; sourceTree = "<group>"; };
 		7F68312421001D5F00B8FC8E /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -74,6 +161,8 @@
 		7F68313521001DE400B8FC8E /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		7F68313621001DE400B8FC8E /* ViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
 		7F68313B2104038200B8FC8E /* Vertex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vertex.swift; sourceTree = "<group>"; };
+		7F8230DB214C0CD900BD262C /* ActionsTableViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionsTableViewDataSource.swift; sourceTree = "<group>"; };
+		7F8230DD214C6FEB00BD262C /* Context.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Context.swift; sourceTree = "<group>"; };
 		7FEBAC0420F7C47E00D99284 /* MidJuly_Paged.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MidJuly_Paged.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FEBAC0720F7C47E00D99284 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7FEBAC0920F7C47E00D99284 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
@@ -100,6 +189,12 @@
 		7FEBAC4B20F979F300D99284 /* Node2D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Node2D.swift; sourceTree = "<group>"; };
 		7FED96D2213DE95D00A916AE /* IMG_0299.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = IMG_0299.jpg; path = ../../IMG_0299.jpg; sourceTree = "<group>"; };
 		7FED96D4213DEABC00A916AE /* coords.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = coords.png; path = ../../coords.png; sourceTree = "<group>"; };
+		7FEEBC4C2145A62800023376 /* texture1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = texture1.jpg; path = ../../texture1.jpg; sourceTree = "<group>"; };
+		7FEEBC4E2145AF2800023376 /* texture2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = texture2.jpg; path = ../../texture2.jpg; sourceTree = "<group>"; };
+		7FEEBC502145DAEC00023376 /* texture3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = texture3.jpg; path = ../../texture3.jpg; sourceTree = "<group>"; };
+		7FEEBC522145E04800023376 /* texture4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = texture4.jpg; path = ../../texture4.jpg; sourceTree = "<group>"; };
+		7FEEBC6D2148A9FC00023376 /* SSZipArchive */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SSZipArchive; sourceTree = "<group>"; };
+		7FEEBC702148AA8B00023376 /* libz.1.2.8.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.2.8.tbd; path = usr/lib/libz.1.2.8.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +202,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7FEEBC712148AA8B00023376 /* libz.1.2.8.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,10 +226,49 @@
 		7FEBABFB20F7C47E00D99284 = {
 			isa = PBXGroup;
 			children = (
+				7F39E90A2148ACE900252FF6 /* aes_ni.c */,
+				7F39E90B2148ACE900252FF6 /* aes_ni.h */,
+				7F39E90C2148ACE900252FF6 /* aes.h */,
+				7F39E90D2148ACE900252FF6 /* aescrypt.c */,
+				7F39E90E2148ACE900252FF6 /* aeskey.c */,
+				7F39E90F2148ACE900252FF6 /* aesopt.h */,
+				7F39E9102148ACE900252FF6 /* aestab.c */,
+				7F39E9112148ACE900252FF6 /* aestab.h */,
+				7F39E9122148ACE900252FF6 /* brg_endian.h */,
+				7F39E9132148ACE900252FF6 /* brg_types.h */,
+				7F39E9142148ACE900252FF6 /* fileenc.c */,
+				7F39E9152148ACE900252FF6 /* fileenc.h */,
+				7F39E9162148ACE900252FF6 /* hmac.c */,
+				7F39E9172148ACE900252FF6 /* hmac.h */,
+				7F39E9182148ACE900252FF6 /* prng.c */,
+				7F39E9192148ACE900252FF6 /* prng.h */,
+				7F39E91A2148ACE900252FF6 /* pwd2key.c */,
+				7F39E91B2148ACE900252FF6 /* pwd2key.h */,
+				7F39E91C2148ACE900252FF6 /* sha1.c */,
+				7F39E91D2148ACE900252FF6 /* sha1.h */,
+				7F39E8EE2148ACC000252FF6 /* crypt.c */,
+				7F39E8EF2148ACC000252FF6 /* crypt.h */,
+				7F39E8F02148ACC000252FF6 /* ioapi_buf.c */,
+				7F39E8F12148ACC000252FF6 /* ioapi_buf.h */,
+				7F39E8F22148ACC000252FF6 /* ioapi_mem.c */,
+				7F39E8F32148ACC000252FF6 /* ioapi_mem.h */,
+				7F39E8F42148ACC000252FF6 /* ioapi.c */,
+				7F39E8F52148ACC000252FF6 /* ioapi.h */,
+				7F39E8F62148ACC000252FF6 /* minishared.c */,
+				7F39E8F72148ACC000252FF6 /* minishared.h */,
+				7F39E8F82148ACC000252FF6 /* unzip.c */,
+				7F39E8F92148ACC000252FF6 /* unzip.h */,
+				7F39E8FA2148ACC000252FF6 /* zip.c */,
+				7F39E8FB2148ACC000252FF6 /* zip.h */,
+				7F39E8E62148AC7200252FF6 /* SSZipArchive.h */,
+				7F39E8E72148AC7200252FF6 /* SSZipArchive.m */,
+				7F39E8E82148AC7200252FF6 /* SSZipCommon.h */,
+				7F39E8E92148AC7200252FF6 /* ZipArchive.h */,
 				7FEBAC0620F7C47E00D99284 /* MidJuly_Paged */,
 				7FEBAC1F20F7C47F00D99284 /* MidJuly_PagedTests */,
 				7FEBAC2A20F7C47F00D99284 /* MidJuly_PagedUITests */,
 				7FEBAC0520F7C47E00D99284 /* Products */,
+				7FEEBC6F2148AA8A00023376 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -150,9 +285,12 @@
 		7FEBAC0620F7C47E00D99284 /* MidJuly_Paged */ = {
 			isa = PBXGroup;
 			children = (
+				7FEEBC6D2148A9FC00023376 /* SSZipArchive */,
 				7FEBAC0720F7C47E00D99284 /* AppDelegate.swift */,
 				7FEBAC0920F7C47E00D99284 /* RootViewController.swift */,
 				7FEBAC0B20F7C47E00D99284 /* DataViewController.swift */,
+				7F8230DD214C6FEB00BD262C /* Context.swift */,
+				7F8230DB214C0CD900BD262C /* ActionsTableViewDataSource.swift */,
 				7F68313B2104038200B8FC8E /* Vertex.swift */,
 				7F68312221001CBC00B8FC8E /* Test.m */,
 				7FEBAC4920F9793000D99284 /* Triangle.swift */,
@@ -170,17 +308,22 @@
 				7FEBAC1420F7C47E00D99284 /* LaunchScreen.storyboard */,
 				7FEBAC1720F7C47E00D99284 /* Info.plist */,
 				7F68312121001CBC00B8FC8E /* MidJuly_Paged-Bridging-Header.h */,
-				7F5735C0213B306500D10D9C /* MidJuly_Paged-Swift.h */,
 				7F68313121001DE400B8FC8E /* Shared.h */,
 				7F68313221001DE400B8FC8E /* teapot.obj */,
 				7F68313321001DE400B8FC8E /* Transforms.h */,
 				7F68313421001DE400B8FC8E /* Transforms.mm */,
 				7F68313521001DE400B8FC8E /* ViewController.h */,
 				7F68313621001DE400B8FC8E /* ViewController.mm */,
+				7F311048214D4CDB005FEA89 /* Model.swift */,
+				7F2583AD214CB71600B332AC /* Export.swift */,
+				7FEEBC502145DAEC00023376 /* texture3.jpg */,
 				7F68312A21001DA700B8FC8E /* OBJModel.h */,
 				7F68312B21001DA700B8FC8E /* OBJModel.mm */,
 				7F68312C21001DA700B8FC8E /* Renderer.h */,
 				7F68312D21001DA700B8FC8E /* Renderer.m */,
+				7FEEBC522145E04800023376 /* texture4.jpg */,
+				7FEEBC4E2145AF2800023376 /* texture2.jpg */,
+				7FEEBC4C2145A62800023376 /* texture1.jpg */,
 				7FED96D4213DEABC00A916AE /* coords.png */,
 				7FED96D2213DE95D00A916AE /* IMG_0299.jpg */,
 				7F68312721001D8A00B8FC8E /* MetalView.h */,
@@ -207,6 +350,14 @@
 				7FEBAC2D20F7C47F00D99284 /* Info.plist */,
 			);
 			path = MidJuly_PagedUITests;
+			sourceTree = "<group>";
+		};
+		7FEEBC6F2148AA8A00023376 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7FEEBC702148AA8B00023376 /* libz.1.2.8.tbd */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -320,11 +471,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7FEEBC4D2145A62800023376 /* texture1.jpg in Resources */,
+				7FEEBC512145DAEC00023376 /* texture3.jpg in Resources */,
 				7F68313821001DE400B8FC8E /* teapot.obj in Resources */,
 				7FED96D3213DE95D00A916AE /* IMG_0299.jpg in Resources */,
 				7FEBAC1620F7C47E00D99284 /* LaunchScreen.storyboard in Resources */,
 				7FED96D5213DEABC00A916AE /* coords.png in Resources */,
+				7FEEBC6E2148A9FC00023376 /* SSZipArchive in Resources */,
+				7FEEBC532145E04800023376 /* texture4.jpg in Resources */,
 				7FEBAC1320F7C47E00D99284 /* Assets.xcassets in Resources */,
+				7FEEBC4F2145AF2800023376 /* texture2.jpg in Resources */,
 				7FEBAC1120F7C47E00D99284 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -350,6 +506,47 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F311049214D4CDB005FEA89 /* Model.swift in Sources */,
+				7F39E91E2148ACE900252FF6 /* aes_ni.c in Sources */,
+				7F39E91F2148ACE900252FF6 /* aes_ni.h in Sources */,
+				7F39E9202148ACE900252FF6 /* aes.h in Sources */,
+				7F39E9212148ACE900252FF6 /* aescrypt.c in Sources */,
+				7F39E9222148ACE900252FF6 /* aeskey.c in Sources */,
+				7F39E9232148ACE900252FF6 /* aesopt.h in Sources */,
+				7F39E9242148ACE900252FF6 /* aestab.c in Sources */,
+				7F39E9252148ACE900252FF6 /* aestab.h in Sources */,
+				7F39E9262148ACE900252FF6 /* brg_endian.h in Sources */,
+				7F39E9272148ACE900252FF6 /* brg_types.h in Sources */,
+				7F39E9282148ACE900252FF6 /* fileenc.c in Sources */,
+				7F39E9292148ACE900252FF6 /* fileenc.h in Sources */,
+				7F39E92A2148ACE900252FF6 /* hmac.c in Sources */,
+				7F39E92B2148ACE900252FF6 /* hmac.h in Sources */,
+				7F39E92C2148ACE900252FF6 /* prng.c in Sources */,
+				7F2583AE214CB71600B332AC /* Export.swift in Sources */,
+				7F39E92D2148ACE900252FF6 /* prng.h in Sources */,
+				7F39E92E2148ACE900252FF6 /* pwd2key.c in Sources */,
+				7F39E92F2148ACE900252FF6 /* pwd2key.h in Sources */,
+				7F39E9302148ACE900252FF6 /* sha1.c in Sources */,
+				7F39E9312148ACE900252FF6 /* sha1.h in Sources */,
+				7F39E8FC2148ACC000252FF6 /* crypt.c in Sources */,
+				7F39E8FD2148ACC000252FF6 /* crypt.h in Sources */,
+				7F39E8FE2148ACC000252FF6 /* ioapi_buf.c in Sources */,
+				7F39E8FF2148ACC000252FF6 /* ioapi_buf.h in Sources */,
+				7F39E9002148ACC000252FF6 /* ioapi_mem.c in Sources */,
+				7F39E9012148ACC000252FF6 /* ioapi_mem.h in Sources */,
+				7F39E9022148ACC000252FF6 /* ioapi.c in Sources */,
+				7F39E9032148ACC000252FF6 /* ioapi.h in Sources */,
+				7F39E9042148ACC000252FF6 /* minishared.c in Sources */,
+				7F39E9052148ACC000252FF6 /* minishared.h in Sources */,
+				7F39E9062148ACC000252FF6 /* unzip.c in Sources */,
+				7F39E9072148ACC000252FF6 /* unzip.h in Sources */,
+				7F8230DC214C0CD900BD262C /* ActionsTableViewDataSource.swift in Sources */,
+				7F39E9082148ACC000252FF6 /* zip.c in Sources */,
+				7F39E9092148ACC000252FF6 /* zip.h in Sources */,
+				7F39E8EA2148AC7200252FF6 /* SSZipArchive.h in Sources */,
+				7F39E8EB2148AC7200252FF6 /* SSZipArchive.m in Sources */,
+				7F39E8EC2148AC7200252FF6 /* SSZipCommon.h in Sources */,
+				7F39E8ED2148AC7200252FF6 /* ZipArchive.h in Sources */,
 				7FEBAC0A20F7C47E00D99284 /* RootViewController.swift in Sources */,
 				7FEBAC4A20F9793000D99284 /* Triangle.swift in Sources */,
 				7F68312F21001DA700B8FC8E /* Renderer.m in Sources */,
@@ -371,6 +568,7 @@
 				7FEBAC4620F7FE9300D99284 /* Line.swift in Sources */,
 				7FEBAC4220F7F4B700D99284 /* Matrix4.swift in Sources */,
 				7F68312621001D5F00B8FC8E /* AppDelegate.m in Sources */,
+				7F8230DE214C6FEB00BD262C /* Context.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -525,8 +723,10 @@
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 4GZ5T9GPNN;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				INFOPLIST_FILE = MidJuly_Paged/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "testorg.MidJuly-Paged";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "MidJuly_Paged/MidJuly_Paged-Bridging-Header.h";
@@ -542,8 +742,10 @@
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 4GZ5T9GPNN;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				INFOPLIST_FILE = MidJuly_Paged/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "testorg.MidJuly-Paged";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "MidJuly_Paged/MidJuly_Paged-Bridging-Header.h";

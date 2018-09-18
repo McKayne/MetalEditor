@@ -51,6 +51,7 @@ struct ProjectedVertex
     float4 diffuseColor;
     float4 customColor;
     float2 texCoord;
+    int texNth;
 };
 
 vertex ProjectedVertex vertex_main(Vertex vert [[stage_in]],
@@ -70,9 +71,22 @@ vertex ProjectedVertex vertex_main(Vertex vert [[stage_in]],
     outVert.customColor.z = vert.customColor.z;
     outVert.customColor.w = vert.customColor.w;
     
-    outVert.texCoord.x = vert.texCoord.y;
-    outVert.texCoord.y = vert.texCoord.z;
+    if (vert.texCoord.w > 0.0) {
+        outVert.texCoord.x = vert.texCoord.y;
+        outVert.texCoord.y = vert.texCoord.z;
+    } else {
+        outVert.texCoord.x = -1.0;
+    }
     
+    if (vert.texCoord.x < 1.0) {
+        outVert.texNth = 0;
+    } else if (vert.texCoord.x < 2.0) {
+        outVert.texNth = 1;
+    } else if (vert.texCoord.x < 3.0) {
+        outVert.texNth = 2;
+    } else {
+        outVert.texNth = 3;
+    }
     //outVert.diffuseColor = vert.customColor;
     
     return outVert;
@@ -112,7 +126,7 @@ float4 lightAt(ProjectedVertex vert, float3 eye) {
     return float4(ambientTerm + diffuseTerm + specularTerm, 1);
 }
 
-fragment float4 fragment_main(ProjectedVertex vert [[stage_in]], constant Uniforms &uniforms [[buffer(0)]], texture2d<float> tex2D [[texture(0)]], sampler sampler2D [[sampler(0)]]) {
+fragment float4 fragment_main(ProjectedVertex vert [[stage_in]], constant Uniforms &uniforms [[buffer(0)]], texture2d<float> tex2D [[texture(0)]], sampler sampler2D [[sampler(0)]], texture2d<float> texB [[texture(1)]], texture2d<float> texC [[texture(2)]], texture2d<float> texD [[texture(3)]]) {
     
     Material customMaterial = {
         .ambientColor = { 0.9, 0.1, 0 },
@@ -124,8 +138,33 @@ fragment float4 fragment_main(ProjectedVertex vert [[stage_in]], constant Unifor
     //if (vert.customColor.w < 0.5)
         //discard_fragment();
     
-    //return tex2D.sample(sampler2D, vert.texCoord);
-    
+    /*if (vert.texCoord.x >= 0.0) {
+        switch (vert.texNth) {
+            case 0:
+                return tex2D.sample(sampler2D, vert.texCoord);
+            case 1:
+                return texB.sample(sampler2D, vert.texCoord);
+            case 2:
+                return texC.sample(sampler2D, vert.texCoord);
+            default:
+                return texD.sample(sampler2D, vert.texCoord);
+        }
+    }*/
+    if (vert.texCoord.x >= 0.0) {
+        switch (vert.texNth) {
+            case 0:
+                vert.customColor = tex2D.sample(sampler2D, vert.texCoord);
+                break;
+            case 1:
+                vert.customColor = texB.sample(sampler2D, vert.texCoord);
+                break;
+            case 2:
+                vert.customColor = texC.sample(sampler2D, vert.texCoord);
+                break;
+            default:
+                vert.customColor = texD.sample(sampler2D, vert.texCoord);
+        }
+    }
     
     float3 kLightDirection( 0.13, 0.72, 0.68 );//(0.2, -0.96, 0.2);
     
@@ -144,7 +183,7 @@ fragment float4 fragment_main(ProjectedVertex vert [[stage_in]], constant Unifor
     //return float4(color.r, color.g, color.b, vertexColor.a);
     
     
-    //return float4(vert.customColor.x, vert.customColor.y, vert.customColor.z, vert.customColor.w);
+    return float4(vert.customColor.x, vert.customColor.y, vert.customColor.z, vert.customColor.w);
     
     float3 customColor;
     customColor.x = vert.customColor.x;

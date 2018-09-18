@@ -15,9 +15,10 @@ struct Uniforms {
     var normalMatrix: float3x3
 }
 
-@objc class DataViewController: UIViewController {
+@objc class DataViewController: UIViewController, UITableViewDelegate {
     
-    //@property (nonatomic, assign) Vertex *bigVertices, *bigLineVertices;
+    var model = Model()
+    
     var bigVertices = UnsafeMutablePointer<Vertex>.allocate(capacity: 100000)
     var bigLineVertices = UnsafeMutablePointer<Vertex>.allocate(capacity: 100000)
     
@@ -47,6 +48,20 @@ struct Uniforms {
     let createButton = UIButton(frame: CGRect(x: 150, y: 50, width: 200, height: 50))
     let cancelButton = UIButton(frame: CGRect(x: 30, y: 50, width: 200, height: 50))
     let exportButton = UIButton(frame: CGRect(x: 150, y: 50, width: 200, height: 50))
+    
+    
+    
+    
+    var context: Context = .initial
+    
+    let actionsTableView = UITableView(frame: CGRect(x: 0, y: 100, width: 320, height: 300))
+    var actionsDataSource: ActionsTableViewDataSource?
+    
+    let item = UINavigationItem(title: "Perspective")
+    let actionsButton = UIBarButtonItem(title: "Actions", style: .done, target: self, action: #selector(showActionsList(sender:)))
+    
+    let button = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(takeScreenshot(sender:)))
+    let applyButton = UIBarButtonItem(title: "Apply", style: .done, target: self, action: #selector(applyAction(sender:)))
     
     var nthPage: Int = 0
     
@@ -275,6 +290,61 @@ struct Uniforms {
         contr.takeScreenshot()
     }
     
+    func showActionsList(sender: UIButton!) {
+        print("List of actions")
+        
+        if actionsTableView.isHidden {
+            actionsTableView.isHidden = false
+            actionsButton.title = "Cancel"
+        } else{
+            context = .initial
+            actionsTableView.reloadData()
+            
+            actionsTableView.isHidden = true
+            actionsButton.title = "Actions"
+        }
+        
+        
+        //contr.takeScreenshot()
+    }
+    
+    func applyAction(sender: UIButton!) {
+        print("Applying")
+        
+        let xScale = Float((actionsDataSource?.xText.text!)!)!
+        let yScale = Float((actionsDataSource?.yText.text!)!)!
+        let zScale = Float((actionsDataSource?.zText.text!)!)!
+        
+        contr.scaleObject(0, length: contr.getTotalIndices(), xScale: xScale, yScale: yScale, zScale: zScale)
+        contr.redraw()
+        
+        item.rightBarButtonItem = button
+        
+        context = .initial
+        actionsTableView.reloadData()
+        
+        actionsTableView.isHidden = true
+        actionsButton.title = "Actions"
+    }
+    
+    /*func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 30.0
+    }*/
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print(indexPath.row)
+        
+        if context == .initial {
+            context = .scaling
+            
+            item.rightBarButtonItem = applyButton
+        } else {
+            context = .initial
+        }
+        
+        tableView.reloadData()
+    }
+    
     func appendUI(nth: Int) {
         textFieldX.borderStyle = .roundedRect
         textFieldY.borderStyle = .roundedRect
@@ -306,15 +376,50 @@ struct Uniforms {
         exportButton.setTitle("Export", for: .normal)
         exportButton.addTarget(self, action: #selector(takeScreenshot(sender:)), for: .touchUpInside)
         
+        //UINavigationBar
+        
+        let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action:nil)
+        shareButton.tintColor = .red
+        
+        self.navigationItem.rightBarButtonItem = shareButton
+        
+        //    initWithBarButtonSystemItem:UIBarButtonSystemItemAction
+        //    target:self
+        //    action:@selector(shareAction:)];
+        
         if nth != 0 {
             timer = CADisplayLink(target: self, selector: #selector(self.gameloop))
             timer.add(to: RunLoop.main, forMode: RunLoopMode.defaultRunLoopMode)
         }
         if nth == 0 {
+            
+            actionsTableView.tableFooterView = UIView(frame: .zero)
+            actionsTableView.isHidden = true
+            
+            actionsDataSource = ActionsTableViewDataSource(controller: self)
+            
+            actionsTableView.delegate = self
+            actionsTableView.dataSource = actionsDataSource
+            self.view.addSubview(actionsTableView)
+            
+            let bar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: 320, height: 65))
+            bar.isTranslucent = true
+            
+            
+            
+            item.rightBarButtonItem = button
+            item.hidesBackButton = true
+            bar.pushItem(item, animated: false)
+            
+            
+            item.leftBarButtonItem = actionsButton
+            
+            self.view.addSubview(bar)
+            
             self.view.addSubview(addButton)
             self.view.addSubview(createButton)
-            self.view.addSubview(cancelButton)
-            self.view.addSubview(exportButton)
+            //self.view.addSubview(cancelButton)
+            //self.view.addSubview(exportButton)
             
             self.view.addSubview(textFieldX)
             self.view.addSubview(textFieldY)

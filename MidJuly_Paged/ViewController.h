@@ -3,7 +3,7 @@
 #import "Renderer.h"
 
 //#import <simd/simd.h>
-
+//#import "MidJuly_Paged-Swift.h"
 
 
 //typedef float4 customFloat;
@@ -30,11 +30,15 @@ typedef struct {
     float pos;
 } tVertex;*/
 
+@class Export;
+
 @interface ViewController : UIViewController
 
 @property (nonatomic, strong) Renderer *renderer;
 @property (nonatomic, strong) CADisplayLink *displayLink;
 @property (nonatomic, strong) CAMetalLayer *metal;
+
+- (void)demo1;
 
 - (void)testBridge:(customVertex)v;
 - (void)setVertexArrays:(Vertex *)bigVertices bigLineVertices:(Vertex *)bigLineVertices;
@@ -45,10 +49,13 @@ typedef struct {
 - (void)takeScreenshot;
 - (void)completeSavedImage:(UIImage *)_image didFinishSavingWithError:(NSError *)_error contextInfo:(void *)_contextInfo;
 
+- (NSString *)exportOBJ:(NSString *)filename;
+- (NSString *)exportMTL:(NSString *)filename;
+- (NSString *)exportZIP:(NSString *)filename items:(NSArray *)items;
+
 - (int)appendCube:(float)x y:(float)y z:(float)z
              width:(float)width height:(float)height depth:(float)depth
                red:(int)red green:(int)green blue:(int)blue;
-- (void)rotateCube:(int) offset xAngle:(float)xAngle;
 
 - (int)appendPlate:(float)x y:(float)y z:(float)z
             width:(float)width height:(float)height
@@ -89,14 +96,31 @@ typedef struct {
              width:(float)width height:(float)height depth:(float)depth
                red:(int)red green:(int)green blue:(int)blue;
 
+- (int)appendPolygon:(float)x y:(float)y z:(float)z
+             width:(float)width height:(float)height
+               red:(int)red green:(int)green blue:(int)blue alpha:(float)alpha;
+
+- (int)appendCompoundRoof:(float)x y:(float)y z:(float)z width:(float)width lowerSegments:(int)lowerSegments;
+
 - (void)importOBJ:(int)red green:(int)green blue:(int)blue;
 
 - (void)setView:(UIViewController *)view;
 
+- (void)rotateObjectX:(int)offset length:(int)length xAngle:(float)xAngle;
+- (void)rotateObjectZ:(int)offset length:(int)length zAngle:(float)zAngle;
+
 - (void)removeFace:(int)offset nth:(int)nth;
 - (void)cloneObject:(int)offset length:(int)length xTranslate:(float)xTranslate yTranslate:(float)yTranslate zTranslate:(float)zTranslate;
-- (void)rotateObject:(int)offset length:(int)length xAngle:(float)xAngle;
 - (void)translateObject:(int)offset length:(int)length xTranslate:(float)xTranslate yTranslate:(float)yTranslate zTranslate:(float)zTranslate;
+
+- (void)translateVertex:(int)offset length:(int)length x:(float)x y:(float)y z:(float)z xTranslate:(float)xTranslate yTranslate:(float)yTranslate zTranslate:(float)zTranslate debug:(BOOL)debug;
+- (void)scaleObject:(int)offset length:(int)length xScale:(float)xScale yScale:(float)yScale zScale:(float)zScale;
+
+- (void)setFaceTexture:(int)offset nth:(int)nth texNth:(int)texNth;
+
+- (int)getTotalIndices;
+
+- (void)redraw;
 
 @end
 

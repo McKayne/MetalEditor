@@ -1,4 +1,4 @@
-
+#import "SSZipArchive/ZipArchive.h"
 #import "ViewController.h"
 #import "OBJModel.h"
 #import "Shared.h"
@@ -9,6 +9,8 @@
 #import <Metal/Metal.h>
 
 #import <time.h>
+
+#import "MidJuly_Paged-Swift.h"
 
 int lastObject;
 
@@ -424,6 +426,67 @@ customFloat4 normalize(simd::float3 customVertexNormal) {
     return customFloat4{customVertexNormal.x / getLength(customVertexNormal), customVertexNormal.y / getLength(customVertexNormal), customVertexNormal.z / getLength(customVertexNormal), 0};
 }
 
+- (int)appendPolygon:(float)x y:(float)y z:(float)z width:(float)width height:(float)height red:(int)red green:(int)green blue:(int)blue alpha:(float)alpha {
+    customFloat4 position[3];
+    
+    // front
+    // 0
+    
+    position[0] = {x, y, z, 1.0};
+    position[1] = {x + width, y, z, 1.0};
+    position[2] = {x + width / 2, y + height, z, 1.0};
+    
+    simd::float3 customNormal[1];
+    for (int i = 0, nth = 0; nth < 1; i += 3, nth++) {
+        simd::float3 edge1 = {position[i + 1].x - position[i].x, position[i + 1].y - position[i].y, position[i + 1].z - position[i].z};
+        simd::float3 edge2 = {position[i + 2].x - position[i].x, position[i + 2].y - position[i].y, position[i + 2].z - position[i].z};
+        
+        simd::float3 cross = {edge1.y * edge2.z - edge1.z * edge2.y, edge1.z * edge2.x - edge1.x * edge2.z, edge1.x * edge2.y - edge1.y * edge2.x};
+        
+        float len = sqrt(cross.x * cross.x + cross.y * cross.y + cross.z * cross.z);
+        
+        customNormal[nth] = {cross.x / len, cross.y / len, cross.z / len};
+    }
+    
+    for (int i = 0; i < 3; i++) {
+        self.bigIndices[i + self.totalIndices] = i + self.totalIndices;
+        
+        self.bigVertices[i + self.totalIndices].customColor = {static_cast<float>((float) red / 255.0), static_cast<float>((float) green / 255.0), static_cast<float>((float) blue / 255.0), alpha};
+        self.bigVertices[i + self.totalIndices].position = position[i];
+        
+        self.bigLineVertices[i + self.totalIndices].normal = {0, 0, 0};
+        self.bigLineVertices[i + self.totalIndices].position = position[i];
+        self.bigLineVertices[i + self.totalIndices].customColor = {0, 0, 0, 1};
+        self.bigLineVertices[i + self.totalIndices].texCoord = {0, 0, 0, 0};
+    }
+    // front
+    
+    simd::float3 customVertexNormal = {customNormal[0].x, customNormal[0].y, customNormal[0].z};
+    self.bigVertices[0 + self.totalIndices].normal = normalize(customVertexNormal);
+    self.bigVertices[1 + self.totalIndices].normal = normalize(customVertexNormal);
+    self.bigVertices[2 + self.totalIndices].normal = normalize(customVertexNormal);
+    
+    self.bigVertices[self.totalIndices].texCoord = {1, 0.25, 0.5, 0};
+    self.bigVertices[self.totalIndices + 1].texCoord = {1, 0.5, 0.5, 0};
+    self.bigVertices[self.totalIndices + 2].texCoord = {1, 0.5, 0.25, 0};
+    
+    for (int i = 0; i < 1; i++) {
+        self.bigLineIndices[i * 6 + 0 + self.totalIndices * 2] = i * 3 + self.totalIndices;
+        self.bigLineIndices[i * 6 + 1 + self.totalIndices * 2] = i * 3 + 1 + self.totalIndices;
+        
+        self.bigLineIndices[i * 6 + 2 + self.totalIndices * 2] = i * 3 + 1 + self.totalIndices;
+        self.bigLineIndices[i * 6 + 3 + self.totalIndices * 2] = i * 3 + 2 + self.totalIndices;
+        
+        self.bigLineIndices[i * 6 + 4 + self.totalIndices * 2] = i * 3 + 2 + self.totalIndices;
+        self.bigLineIndices[i * 6 + 5 + self.totalIndices * 2] = i * 3 + self.totalIndices;
+    }
+    
+    int lastIndices = self.totalIndices;
+    self.totalIndices += 3;
+    
+    return lastIndices;
+}
+
 - (int)appendPlate:(float)x y:(float)y z:(float)z width:(float)width height:(float)height red:(int)red green:(int)green blue:(int)blue alpha:(float)alpha {
     customFloat4 position[6];
     
@@ -460,6 +523,8 @@ customFloat4 normalize(simd::float3 customVertexNormal) {
         
         self.bigLineVertices[i + self.totalIndices].normal = {0, 0, 0};
         self.bigLineVertices[i + self.totalIndices].position = position[i];
+        self.bigLineVertices[i + self.totalIndices].customColor = {0, 0, 0, 1};
+        self.bigLineVertices[i + self.totalIndices].texCoord = {0, 0, 0, 0};
     }
     // front
     
@@ -1344,6 +1409,125 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     }
 }
 
+- (NSString *)exportOBJ:(NSString *)filename {
+    NSString *docPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)objectAtIndex:0];
+    NSString *filePath = [docPath stringByAppendingPathComponent:[filename stringByAppendingString:@".obj"]];
+    
+    NSMutableString *contents = [NSMutableString string];
+    [contents appendString:@"# Modeled on iPhone\n\n# List of geometric vertices\n"];
+    
+    //NSMutableString *contents = @"# Modeled on iPhone\n\n# List of geometric vertices\n";
+    NSError *error;
+    
+    //contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\nmtllib ./%@\n", [filename stringByAppendingString:@".mtl"]]];
+    [contents appendString:[NSString stringWithFormat:@"\nmtllib ./%@\n", [filename stringByAppendingString:@".mtl"]]];
+    
+    // vertices
+    
+    BOOL includeColor = true;
+    if (includeColor) {
+        for (int i = 0; i < self.totalIndices; i++) {
+            //contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\nv %f %f %f %f %f %f", self.bigVertices[i].position.x, self.bigVertices[i].position.y, self.bigVertices[i].position.z, self.bigVertices[i].customColor.x, self.bigVertices[i].customColor.y, self.bigVertices[i].customColor.z]];
+            [contents appendString:[NSString stringWithFormat:@"\nv %f %f %f %f %f %f", self.bigVertices[i].position.x, self.bigVertices[i].position.y, self.bigVertices[i].position.z, self.bigVertices[i].customColor.x, self.bigVertices[i].customColor.y, self.bigVertices[i].customColor.z]];
+        }
+    } else {
+        for (int i = 0; i < self.totalIndices; i++) {
+            contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\nv %f %f %f", self.bigVertices[i].position.x, self.bigVertices[i].position.y, self.bigVertices[i].position.z]];
+        }
+    }
+    NSLog(@"LEN = %lu", [contents length]);
+    
+    // texture coords
+    
+    //contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\n\n# List of texture coordinates\n"]];
+    [contents appendString:[NSString stringWithFormat:@"\n\n# List of texture coordinates\n"]];
+    
+    for (int i = 0; i < self.totalIndices; i++) {
+        //contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\nvt %f %f", self.bigVertices[i].texCoord.y, self.bigVertices[i].texCoord.z]];
+        [contents appendString:[NSString stringWithFormat:@"\nvt %f %f", self.bigVertices[i].texCoord.y, self.bigVertices[i].texCoord.z]];
+    }
+    
+    // normals
+    
+    //contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\n\n# List of lighting normals\n"]];
+    [contents appendString:[NSString stringWithFormat:@"\n\n# List of lighting normals\n"]];
+    
+    for (int i = 0; i < self.totalIndices; i++) {
+        //contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\nvn %f %f %f", self.bigVertices[i].normal.x, self.bigVertices[i].normal.y, self.bigVertices[i].normal.z]];
+        [contents appendString:[NSString stringWithFormat:@"\nvn %f %f %f", self.bigVertices[i].normal.x, self.bigVertices[i].normal.y, self.bigVertices[i].normal.z]];
+    }
+    
+    // faces
+    
+    //contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\n\n# List of face indices\n"]];
+    [contents appendString:[NSString stringWithFormat:@"\n\n# List of face indices\n"]];
+    
+    int nth = 1;
+    int lastMaterial = -1;
+    for (int i = 0; i < self.totalIndices / 3; i++) {
+        if (self.bigVertices[nth].texCoord.w == 1) {
+            if (self.bigVertices[nth].texCoord.x != lastMaterial) {
+                lastMaterial = self.bigVertices[nth].texCoord.x;
+                //NSLog(@"MATERIAL %d %d %f", lastMaterial, nth, self.bigVertices[nth].texCoord.x);
+                //contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\n\nusemtl material%d", lastMaterial]];
+                [contents appendString:[NSString stringWithFormat:@"\n\nusemtl material%d", lastMaterial]];
+            }
+        }
+        //contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\nf %d %d %d", nth++, nth++, nth++]];
+        [contents appendString:[NSString stringWithFormat:@"\nf %d %d %d", nth++, nth++, nth++]];
+    }
+    
+    NSLog(contents);
+    
+    [contents writeToFile:filePath
+               atomically:YES
+                 encoding:NSUTF8StringEncoding
+                    error:&error];
+    
+    return filePath;
+}
+
+- (NSString *)exportMTL:(NSString *)filename {
+    NSString *docPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)objectAtIndex:0];
+    NSString *filePath = [docPath stringByAppendingPathComponent:[filename stringByAppendingString:@".mtl"]];
+    
+    NSString *contents = @"# Modeled on iPhone\n\n# List of materials\n";
+    NSError *error;
+    
+    for (int i = 0; i < 4; i++) {
+        contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\nnewmtl material%d", i]];
+        contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\n\tNs %d", 0]];
+        contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\n\td %d", 1]];
+        contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\n\tillum %d", 2]];
+        contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\n\tKd %f %f %f", 0.8, 0.8, 0.8]];
+        contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\n\tKs %f %f %f", 0.0, 0.0, 0.0]];
+        contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\n\tKa %f %f %f", 0.2, 0.2, 0.2]];
+        contents = [contents stringByAppendingString:[NSString stringWithFormat:@"\n\tmap_Kd texture%d.jpg\n", i + 1]];
+    }
+    
+    NSLog(contents);
+    
+    [contents writeToFile:filePath
+               atomically:YES
+                 encoding:NSUTF8StringEncoding
+                    error:&error];
+    
+    return filePath;
+}
+
+- (NSString *)exportZIP:(NSString *)filename items:(NSArray *)items {
+    NSString *docPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)objectAtIndex:0];
+    NSString *filePath = [docPath stringByAppendingPathComponent:[filename stringByAppendingString:@".zip"]];
+    
+    [SSZipArchive createZipFileAtPath:filePath withFilesAtPaths:items];
+    
+    return filePath;
+}
+
+- (int)getTotalIndices {
+    return self.totalIndices;
+}
+
 - (void)takeScreenshot {
     NSLog(@"Now switching to another controller");
     
@@ -1354,7 +1538,7 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
         NSLog(@"Last drawable Nil");
     }*/
     
-    id<MTLTexture> metalTexture = [self.renderer getDrawable];//[lastDrawable texture];
+    /*id<MTLTexture> metalTexture = [self.renderer getDrawable];//[lastDrawable texture];
     
     int width = (int)[metalTexture width];
     int height = (int)[metalTexture height];
@@ -1377,64 +1561,43 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     free(p);
     
     NSData *pngData = UIImagePNGRepresentation(getImage);
-    UIImage *pngImage = [UIImage imageWithData:pngData];
+    UIImage *pngImage = [UIImage imageWithData:pngData];*/
     
     //UIImageWriteToSavedPhotosAlbum(pngImage, self, @selector(completeSavedImage:didFinishSavingWithError:contextInfo:), nil);
     
     //UIImage *image = [UIImage imageWithData:[chart getImage]];
     
-    
-    
-    NSString *docPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)objectAtIndex:0];
-    NSString *filePath = [docPath stringByAppendingPathComponent:@"iphone_app_export_test.txt"];
-    
-    //NSString *contents = [NSString stringWithCapacity:9];
-    
-    NSString *contents = @"It works";
-    //fill contents with data in csv format
-    // ...
-    
-    NSError *error;
-    
-    [contents writeToFile:filePath
-               atomically:YES
-                 encoding:NSUTF8StringEncoding
-                    error:&error];
+    [Export exportOBJWithModelName:@"iphone_app_export_obj_3"];
+    //[Export exportOBJ:modelName @"fgfg"];
+    //[Export exportOBJ:@"hfhf"];
+    //Export.exportOBJ:@"iphone_app_export_obj_3";
+    NSString *filename = @"iphone_app_export_obj_3";
+    NSString *objFilename = [self exportOBJ:filename];
+    NSString *mtlFilename = [self exportMTL:filename];
+    NSString *zipFilename = [self exportZIP:filename items:@[objFilename, mtlFilename]];
     
     // check for the error
     
-    NSURL *sampleUrl =  [NSURL fileURLWithPath:filePath];
+    NSURL *zipUrl =  [NSURL fileURLWithPath:zipFilename];
     
-    if (sampleUrl == nil) {
-        NSLog(@"URL nul");
+    if (zipUrl == nil) {
+        NSLog(@"URL nil");
     }
     
-    char* sampleText = (char*) malloc(sizeof(char) * 8);
-    sampleText[0] = 'I';
-    sampleText[1] = 't';
-    sampleText[2] = ' ';
-    sampleText[3] = 'w';
-    sampleText[4] = 'o';
-    sampleText[5] = 'r';
-    sampleText[6] = 'k';
-    sampleText[7] = 's';
+    //dispatch_async(dispatch_get_main_queue(), ^{
+    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[zipUrl] applicationActivities:nil];
     
-    //NSString *str = [[NSBundle mainBundle] pathForResource:@"AppDistributionGuide" ofType:@"pdf"];
-    //NSString *str
-    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[@"iphone_app_export_test.txt", sampleUrl] applicationActivities:nil];
-    //NSData *pdfData = [NSData dataWithBytes:sampleText length:sizeof(char) * 8];
-    //UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[@"iphone_app_export_test.txt", pdfData] applicationActivities:nil];
-    //NSString *str = [[NSBundle mainBundle] pathForResource:@"AppDistributionGuide" ofType:@"pdf"];
-    //UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[@"Test", [NSURL fileURLWithPath:str]] applicationActivities:nil];
-    
-    //NSArray *activityItems = @[pngImage];
-    //UIActivityViewController *activityViewControntroller = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
     activityViewController.excludedActivityTypes = @[];
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-    activityViewController.popoverPresentationController.sourceView = self.mainView.view;
-    activityViewController.popoverPresentationController.sourceRect = CGRectMake(self.mainView.view.bounds.size.width/2, self.mainView.view.bounds.size.height/4, 0, 0);
+        activityViewController.popoverPresentationController.sourceView = self.mainView.view;
+        activityViewController.popoverPresentationController.sourceRect = CGRectMake(self.mainView.view.bounds.size.width/2, self.mainView.view.bounds.size.height/4, 0, 0);
     }
-    [self.mainView presentViewController:activityViewController animated:true completion:nil];
+    
+    //dispatch_async(dispatch_get_main_queue(), ^{
+        [self.mainView presentViewController:activityViewController animated:true completion:nil];
+    //});
+    //});
+    //[self.mainView presentViewController:activityViewController animated:true completion:nil];
     
     //[self.renderer.drawa]
     
@@ -1532,444 +1695,6 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     //self.indexBuffer = [self.renderer newBufferWithBytes:baseGroup->indices          length:sizeof(IndexType) * baseGroup->indexCount];
 }
 
-- (void)rotateCube:(int) offset xAngle:(float)xAngle {
-    
-    float xAngleA = xAngle + 135.0f;
-    
-    float x = self.bigVertices[offset].position.x;
-    float z = self.bigVertices[offset + 7].position.z;
-    
-    float xCenter = (x + self.bigVertices[offset + 1].position.x) / 2.0f;
-    float zCenter = (z + self.bigVertices[offset].position.z) / 2.0f;
-    
-    float radius = sqrt(pow(xCenter - x, 2) + pow(zCenter - z, 2));
-    
-    float xStart = cos(xAngleA * M_PI / 180.0) * radius;
-    float zStart = sin(xAngleA * M_PI / 180.0) * radius;
-    
-    NSLog(@"xCenter = %f, zCenter = %f", xCenter, zCenter);
-    NSLog(@"radius = %f", radius);
-    
-    NSLog(@"xStart = %f, zStart = %f", xStart, zStart);
-    
-    // front
-    // 0
-    
-    //position[0] = {x, y, z, 1.0};
-    self.bigVertices[offset].position.x = xStart;
-    self.bigVertices[offset].position.z = zStart;
-    
-    // 1
-    
-    //position[4] = {x, y + height, z, 1.0};
-    self.bigVertices[offset + 4].position.x = xStart;
-    self.bigVertices[offset + 4].position.z = zStart;
-    //position[5] = {x, y, z, 1.0};
-    self.bigVertices[offset + 5].position.x = xStart;
-    self.bigVertices[offset + 5].position.z = zStart;
-    
-    // left
-    
-    //position[19] = {x, y, z, 1.0};
-    self.bigVertices[offset + 19].position.x = xStart;
-    self.bigVertices[offset + 19].position.z = zStart;
-    
-    //position[21] = {x, y + height, z, 1.0};
-    //position[23] = {x, y, z, 1.0};
-    self.bigVertices[offset + 21].position.x = xStart;
-    self.bigVertices[offset + 21].position.z = zStart;
-    self.bigVertices[offset + 23].position.x = xStart;
-    self.bigVertices[offset + 23].position.z = zStart;
-    
-    // top
-    // 9
-    
-    //position[27] = {x, y + height, z, 1.0};
-    self.bigVertices[offset + 27].position.x = xStart;
-    self.bigVertices[offset + 27].position.z = zStart;
-    
-    // bottom
-    // 11
-    
-    //position[35] = {x, y, z, 1.0};
-    self.bigVertices[offset + 35].position.x = xStart;
-    self.bigVertices[offset + 35].position.z = zStart;
-    
-    
-    
-    
-    
-    
-    
-    // front
-    // 0
-    
-    //position[0] = {x, y, z, 1.0};
-    self.bigLineVertices[offset].position.x = xStart;
-    self.bigLineVertices[offset].position.z = zStart;
-    
-    // 1
-    
-    //position[4] = {x, y + height, z, 1.0};
-    self.bigLineVertices[offset + 4].position.x = xStart;
-    self.bigLineVertices[offset + 4].position.z = zStart;
-    //position[5] = {x, y, z, 1.0};
-    self.bigLineVertices[offset + 5].position.x = xStart;
-    self.bigLineVertices[offset + 5].position.z = zStart;
-    
-    // left
-    
-    //position[19] = {x, y, z, 1.0};
-    self.bigLineVertices[offset + 19].position.x = xStart;
-    self.bigLineVertices[offset + 19].position.z = zStart;
-    
-    //position[21] = {x, y + height, z, 1.0};
-    //position[23] = {x, y, z, 1.0};
-    self.bigLineVertices[offset + 21].position.x = xStart;
-    self.bigLineVertices[offset + 21].position.z = zStart;
-    self.bigLineVertices[offset + 23].position.x = xStart;
-    self.bigLineVertices[offset + 23].position.z = zStart;
-    
-    // top
-    // 9
-    
-    //position[27] = {x, y + height, z, 1.0};
-    self.bigLineVertices[offset + 27].position.x = xStart;
-    self.bigLineVertices[offset + 27].position.z = zStart;
-    
-    // bottom
-    // 11
-    
-    //position[35] = {x, y, z, 1.0};
-    self.bigLineVertices[offset + 35].position.x = xStart;
-    self.bigLineVertices[offset + 35].position.z = zStart;
-    
-    
-    float xAngleB = xAngle + 225.0f;
-    
-    xStart = cos(xAngleB * M_PI / 180.0) * radius;
-    zStart = sin(xAngleB * M_PI / 180.0) * radius;
-    
-    NSLog(@"xStart = %f, zStart = %f", xStart, zStart);
-    
-    // back
-    
-    //position[13] = {x, y, z - depth, 1.0};
-    self.bigVertices[offset + 13].position.x = xStart;
-    self.bigVertices[offset + 13].position.z = zStart;
-    
-    //position[15] = {x, y + height, z - depth, 1.0};
-    self.bigVertices[offset + 15].position.x = xStart;
-    self.bigVertices[offset + 15].position.z = zStart;
-    //position[17] = {x, y, z - depth, 1.0};
-    self.bigVertices[offset + 17].position.x = xStart;
-    self.bigVertices[offset + 17].position.z = zStart;
-    
-    // left
-    
-    //position[18] = {x, y, z - depth, 1.0};
-    self.bigVertices[offset + 18].position.x = xStart;
-    self.bigVertices[offset + 18].position.z = zStart;
-    //position[20] = {x, y + height, z - depth, 1.0};
-    self.bigVertices[offset + 20].position.x = xStart;
-    self.bigVertices[offset + 20].position.z = zStart;
-    
-    //position[22] = {x, y + height, z - depth, 1.0};
-    self.bigVertices[offset + 22].position.x = xStart;
-    self.bigVertices[offset + 22].position.z = zStart;
-    
-    // top
-    // 8
-    
-    //position[26] = {x, y + height, z - depth, 1.0};
-    self.bigVertices[offset + 26].position.x = xStart;
-    self.bigVertices[offset + 26].position.z = zStart;
-    
-    // 9
-    
-    //position[29] = {x, y + height, z - depth, 1.0};
-    self.bigVertices[offset + 29].position.x = xStart;
-    self.bigVertices[offset + 29].position.z = zStart;
-    
-    // bottom
-    // 10
-    
-    //position[31] = {x, y, z - depth, 1.0};
-    self.bigVertices[offset + 31].position.x = xStart;
-    self.bigVertices[offset + 31].position.z = zStart;
-    
-    // 11
-    
-    //position[33] = {x, y, z - depth, 1.0};
-    self.bigVertices[offset + 33].position.x = xStart;
-    self.bigVertices[offset + 33].position.z = zStart;
-    
-    
-    
-    // back
-    
-    //position[13] = {x, y, z - depth, 1.0};
-    self.bigLineVertices[offset + 13].position.x = xStart;
-    self.bigLineVertices[offset + 13].position.z = zStart;
-    
-    //position[15] = {x, y + height, z - depth, 1.0};
-    self.bigLineVertices[offset + 15].position.x = xStart;
-    self.bigLineVertices[offset + 15].position.z = zStart;
-    //position[17] = {x, y, z - depth, 1.0};
-    self.bigLineVertices[offset + 17].position.x = xStart;
-    self.bigLineVertices[offset + 17].position.z = zStart;
-    
-    // left
-    
-    //position[18] = {x, y, z - depth, 1.0};
-    self.bigLineVertices[offset + 18].position.x = xStart;
-    self.bigLineVertices[offset + 18].position.z = zStart;
-    //position[20] = {x, y + height, z - depth, 1.0};
-    self.bigLineVertices[offset + 20].position.x = xStart;
-    self.bigLineVertices[offset + 20].position.z = zStart;
-    
-    //position[22] = {x, y + height, z - depth, 1.0};
-    self.bigLineVertices[offset + 22].position.x = xStart;
-    self.bigLineVertices[offset + 22].position.z = zStart;
-    
-    // top
-    // 8
-    
-    //position[26] = {x, y + height, z - depth, 1.0};
-    self.bigLineVertices[offset + 26].position.x = xStart;
-    self.bigLineVertices[offset + 26].position.z = zStart;
-    
-    // 9
-    
-    //position[29] = {x, y + height, z - depth, 1.0};
-    self.bigLineVertices[offset + 29].position.x = xStart;
-    self.bigLineVertices[offset + 29].position.z = zStart;
-    
-    // bottom
-    // 10
-    
-    //position[31] = {x, y, z - depth, 1.0};
-    self.bigLineVertices[offset + 31].position.x = xStart;
-    self.bigLineVertices[offset + 31].position.z = zStart;
-    
-    // 11
-    
-    //position[33] = {x, y, z - depth, 1.0};
-    self.bigLineVertices[offset + 33].position.x = xStart;
-    self.bigLineVertices[offset + 33].position.z = zStart;
-    
-    
-    
-    float xAngleC = xAngle + 315.0f;
-    
-    xStart = cos(xAngleC * M_PI / 180.0) * radius;
-    zStart = sin(xAngleC * M_PI / 180.0) * radius;
-    
-    NSLog(@"xStart = %f, zStart = %f", xStart, zStart);
-    
-    // back
-    
-    //position[12] = {x + width, y, z - depth, 1.0};
-    self.bigVertices[offset + 12].position.x = xStart;
-    self.bigVertices[offset + 12].position.z = zStart;
-    //position[14] = {x + width, y + height, z - depth, 1.0};
-    self.bigVertices[offset + 14].position.x = xStart;
-    self.bigVertices[offset + 14].position.z = zStart;
-    
-    //position[16] = {x + width, y + height, z - depth, 1.0};
-    self.bigVertices[offset + 16].position.x = xStart;
-    self.bigVertices[offset + 16].position.z = zStart;
-    
-    //right
-    
-    //position[7] = {x + width, y, z - depth, 1.0};
-    self.bigVertices[offset + 7].position.x = xStart;
-    self.bigVertices[offset + 7].position.z = zStart;
-    
-    //position[9] = {x + width, y, z - depth, 1.0};
-    self.bigVertices[offset + 9].position.x = xStart;
-    self.bigVertices[offset + 9].position.z = zStart;
-    //position[10] = {x + width, y + height, z - depth, 1.0};
-    self.bigVertices[offset + 10].position.x = xStart;
-    self.bigVertices[offset + 10].position.z = zStart;
-    
-    // top
-    // 8
-    
-    //position[25] = {x + width, y + height, z - depth, 1.0};
-    self.bigVertices[offset + 25].position.x = xStart;
-    self.bigVertices[offset + 25].position.z = zStart;
-    
-    // bottom
-    // 10
-    
-    //position[32] = {x + width, y, z - depth, 1.0};
-    self.bigVertices[offset + 32].position.x = xStart;
-    self.bigVertices[offset + 32].position.z = zStart;
-    
-    
-    
-    // back
-    
-    //position[12] = {x + width, y, z - depth, 1.0};
-    self.bigLineVertices[offset + 12].position.x = xStart;
-    self.bigLineVertices[offset + 12].position.z = zStart;
-    //position[14] = {x + width, y + height, z - depth, 1.0};
-    self.bigLineVertices[offset + 14].position.x = xStart;
-    self.bigLineVertices[offset + 14].position.z = zStart;
-    
-    //position[16] = {x + width, y + height, z - depth, 1.0};
-    self.bigLineVertices[offset + 16].position.x = xStart;
-    self.bigLineVertices[offset + 16].position.z = zStart;
-    
-    //right
-    
-    //position[7] = {x + width, y, z - depth, 1.0};
-    self.bigLineVertices[offset + 7].position.x = xStart;
-    self.bigLineVertices[offset + 7].position.z = zStart;
-    
-    //position[9] = {x + width, y, z - depth, 1.0};
-    self.bigLineVertices[offset + 9].position.x = xStart;
-    self.bigLineVertices[offset + 9].position.z = zStart;
-    //position[10] = {x + width, y + height, z - depth, 1.0};
-    self.bigLineVertices[offset + 10].position.x = xStart;
-    self.bigLineVertices[offset + 10].position.z = zStart;
-    
-    // top
-    // 8
-    
-    //position[25] = {x + width, y + height, z - depth, 1.0};
-    self.bigLineVertices[offset + 25].position.x = xStart;
-    self.bigLineVertices[offset + 25].position.z = zStart;
-    
-    // bottom
-    // 10
-    
-    //position[32] = {x + width, y, z - depth, 1.0};
-    self.bigLineVertices[offset + 32].position.x = xStart;
-    self.bigLineVertices[offset + 32].position.z = zStart;
-    
-    
-    float xAngleD = xAngle + 405.0f;
-    
-    xStart = cos(xAngleD * M_PI / 180.0) * radius;
-    zStart = sin(xAngleD * M_PI / 180.0) * radius;
-    
-    NSLog(@"xStart = %f, zStart = %f", xStart, zStart);
-    
-    // front
-    // 0
-    
-    //position[1] = {x + width, y, z, 1.0};
-    self.bigVertices[offset + 1].position.x = xStart;
-    self.bigVertices[offset + 1].position.z = zStart;
-    //position[2] = {x + width, y + height, z, 1.0};
-    self.bigVertices[offset + 2].position.x = xStart;
-    self.bigVertices[offset + 2].position.z = zStart;
-    
-    // 1
-    
-    //position[3] = {x + width, y + height, z, 1.0};
-    self.bigVertices[offset + 3].position.x = xStart;
-    self.bigVertices[offset + 3].position.z = zStart;
-    
-    //right
-    
-    //position[6] = {x + width, y, z, 1.0};
-    self.bigVertices[offset + 6].position.x = xStart;
-    self.bigVertices[offset + 6].position.z = zStart;
-    //position[8] = {x + width, y + height, z, 1.0};
-    self.bigVertices[offset + 8].position.x = xStart;
-    self.bigVertices[offset + 8].position.z = zStart;
-    
-    //position[11] = {x + width, y + height, z, 1.0};
-    self.bigVertices[offset + 11].position.x = xStart;
-    self.bigVertices[offset + 11].position.z = zStart;
-    
-    // top
-    // 8
-    
-    //position[24] = {x + width, y + height, z, 1.0};
-    self.bigVertices[offset + 24].position.x = xStart;
-    self.bigVertices[offset + 24].position.z = zStart;
-    
-    // 9
-    
-    //position[28] = {x + width, y + height, z, 1.0};
-    self.bigVertices[offset + 28].position.x = xStart;
-    self.bigVertices[offset + 28].position.z = zStart;
-    
-    // bottom
-    // 10
-    
-    //position[30] = {x + width, y, z, 1.0};
-    self.bigVertices[offset + 30].position.x = xStart;
-    self.bigVertices[offset + 30].position.z = zStart;
-    
-    // 11
-    
-    //position[34] = {x + width, y, z, 1.0};
-    self.bigVertices[offset + 34].position.x = xStart;
-    self.bigVertices[offset + 34].position.z = zStart;
-    
-    
-    
-    // front
-    // 0
-    
-    //position[1] = {x + width, y, z, 1.0};
-    self.bigLineVertices[offset + 1].position.x = xStart;
-    self.bigLineVertices[offset + 1].position.z = zStart;
-    //position[2] = {x + width, y + height, z, 1.0};
-    self.bigLineVertices[offset + 2].position.x = xStart;
-    self.bigLineVertices[offset + 2].position.z = zStart;
-    
-    // 1
-    
-    //position[3] = {x + width, y + height, z, 1.0};
-    self.bigLineVertices[offset + 3].position.x = xStart;
-    self.bigLineVertices[offset + 3].position.z = zStart;
-    
-    //right
-    
-    //position[6] = {x + width, y, z, 1.0};
-    self.bigLineVertices[offset + 6].position.x = xStart;
-    self.bigLineVertices[offset + 6].position.z = zStart;
-    //position[8] = {x + width, y + height, z, 1.0};
-    self.bigLineVertices[offset + 8].position.x = xStart;
-    self.bigLineVertices[offset + 8].position.z = zStart;
-    
-    //position[11] = {x + width, y + height, z, 1.0};
-    self.bigLineVertices[offset + 11].position.x = xStart;
-    self.bigLineVertices[offset + 11].position.z = zStart;
-    
-    // top
-    // 8
-    
-    //position[24] = {x + width, y + height, z, 1.0};
-    self.bigLineVertices[offset + 24].position.x = xStart;
-    self.bigLineVertices[offset + 24].position.z = zStart;
-    
-    // 9
-    
-    //position[28] = {x + width, y + height, z, 1.0};
-    self.bigLineVertices[offset + 28].position.x = xStart;
-    self.bigLineVertices[offset + 28].position.z = zStart;
-    
-    // bottom
-    // 10
-    
-    //position[30] = {x + width, y, z, 1.0};
-    self.bigLineVertices[offset + 30].position.x = xStart;
-    self.bigLineVertices[offset + 30].position.z = zStart;
-    
-    // 11
-    
-    //position[34] = {x + width, y, z, 1.0};
-    self.bigLineVertices[offset + 34].position.x = xStart;
-    self.bigLineVertices[offset + 34].position.z = zStart;
-}
-
 - (void)removeFace:(int)offset nth:(int)nth {
     int nthOffset = nth * 6;
     for (int i = offset + nthOffset; i < self.totalIndices; i++) {
@@ -2011,9 +1736,9 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     self.totalIndices += length;
 }
 
-- (void)rotateObject:(int)offset length:(int)length xAngle:(float)xAngle {
-    float xMin = self.bigVertices[0].position.x, xMax = self.bigVertices[0].position.x;
-    float zMin = self.bigVertices[0].position.z, zMax = self.bigVertices[0].position.z;
+- (void)rotateObjectX:(int)offset length:(int)length xAngle:(float)xAngle {
+    float xMin = self.bigVertices[offset].position.x, xMax = self.bigVertices[offset].position.x;
+    float zMin = self.bigVertices[offset].position.z, zMax = self.bigVertices[offset].position.z;
     
     for (int i = offset; i < offset + length; i++) {
         if (self.bigVertices[i].position.x < xMin) {
@@ -2048,10 +1773,14 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
         float x = self.bigVertices[i].position.x - xCenter;
         float z = -(self.bigVertices[i].position.z - zCenter);
     
-        NSLog(@"X = %f", x);
-        NSLog(@"Z = %f", z);
+        //NSLog(@"X = %f", x);
+        //NSLog(@"Z = %f", z);
     
         float radius = sqrt(x * x + z * z);
+        if (radius == 0.0f) {
+            continue;
+        }
+        
         if (x >= 0.0f && z >= 0.0f) {
             float tg = z / x;
             float angle = atan(tg) / (M_PI / 180) + xAngle;
@@ -2059,8 +1788,8 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
             self.bigVertices[i].position.x = cos(angle * M_PI / 180) * radius + xCenter;
             self.bigVertices[i].position.z = -(sin(angle * M_PI / 180) * radius - zCenter);
         
-            NSLog(@"X = %f", self.bigVertices[i].position.x);
-            NSLog(@"Z = %f", self.bigVertices[i].position.z);
+            //NSLog(@"X = %f", self.bigVertices[i].position.x);
+            //NSLog(@"Z = %f", self.bigVertices[i].position.z);
         } else if (x < 0.0f && z >= 0.0f) {
             float tg = z / x;
             float angle = atan(tg) / (M_PI / 180) + 180 + xAngle;
@@ -2068,8 +1797,8 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
             self.bigVertices[i].position.x = cos(angle * M_PI / 180) * radius + xCenter;
             self.bigVertices[i].position.z = -(sin(angle * M_PI / 180) * radius - zCenter);
         
-            NSLog(@"X = %f", self.bigVertices[i].position.x);
-            NSLog(@"Z = %f", self.bigVertices[i].position.z);
+            //NSLog(@"X = %f", self.bigVertices[i].position.x);
+            //NSLog(@"Z = %f", self.bigVertices[i].position.z);
         } else if (x < 0.0f && z < 0.0f) {
             float tg = z / x;
             float angle = atan(tg) / (M_PI / 180) + 180 + xAngle;
@@ -2077,8 +1806,8 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
             self.bigVertices[i].position.x = cos(angle * M_PI / 180) * radius + xCenter;
             self.bigVertices[i].position.z = -(sin(angle * M_PI / 180) * radius - zCenter);
         
-            NSLog(@"X = %f", self.bigVertices[i].position.x);
-            NSLog(@"Z = %f", self.bigVertices[i].position.z);
+            //NSLog(@"X = %f", self.bigVertices[i].position.x);
+            //NSLog(@"Z = %f", self.bigVertices[i].position.z);
         } else {
             float tg = z / x;
             float angle = atan(tg) / (M_PI / 180) + xAngle;
@@ -2086,10 +1815,97 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
             self.bigVertices[i].position.x = cos(angle * M_PI / 180) * radius + xCenter;
             self.bigVertices[i].position.z = -(sin(angle * M_PI / 180) * radius - zCenter);
         
-            NSLog(@"X = %f", self.bigVertices[i].position.x);
-            NSLog(@"Z = %f", self.bigVertices[i].position.z);
+            //NSLog(@"X = %f", self.bigVertices[i].position.x);
+            //NSLog(@"Z = %f", self.bigVertices[i].position.z);
         }
     
+        self.bigLineVertices[i].position = self.bigVertices[i].position;
+    }
+}
+
+- (void)rotateObjectZ:(int)offset length:(int)length zAngle:(float)zAngle {
+    float yMin = self.bigVertices[offset].position.y, yMax = self.bigVertices[offset].position.y;
+    float zMin = self.bigVertices[offset].position.z, zMax = self.bigVertices[offset].position.z;
+    
+    for (int i = offset; i < offset + length; i++) {
+        if (self.bigVertices[i].position.y < yMin) {
+            yMin = self.bigVertices[i].position.y;
+        }
+        if (self.bigVertices[i].position.y > yMax) {
+            yMax = self.bigVertices[i].position.y;
+        }
+        if (self.bigVertices[i].position.z < zMin) {
+            zMin = self.bigVertices[i].position.z;
+        }
+        if (self.bigVertices[i].position.z > zMax) {
+            zMax = self.bigVertices[i].position.z;
+        }
+    }
+    NSLog(@"y min = %f", yMin);
+    NSLog(@"y max = %f", yMax);
+    NSLog(@"z min = %f", zMin);
+    NSLog(@"z max = %f", zMax);
+    
+    float yCenter = (yMax + yMin) / 2.0f;
+    float zCenter = (zMax + zMin) / 2.0f;
+    
+    NSLog(@"y center = %f", yCenter);
+    NSLog(@"z center = %f", zCenter);
+    
+    
+    
+    
+    for (int i = offset; i < offset + length; i++) {
+        
+        float y = self.bigVertices[i].position.y - yCenter;
+        float z = -(self.bigVertices[i].position.z - zCenter);
+        
+        //NSLog(@"Y = %f", y);
+        //NSLog(@"Z = %f", z);
+        
+        float radius = sqrt(y * y + z * z);
+        if (radius == 0.0f) {
+            continue;
+        }
+        
+        if (y >= 0.0f && z >= 0.0f) {
+            float tg = z / y;
+            float angle = atan(tg) / (M_PI / 180) + zAngle;
+            
+            self.bigVertices[i].position.y = cos(angle * M_PI / 180) * radius + yCenter;
+            self.bigVertices[i].position.z = -(sin(angle * M_PI / 180) * radius - zCenter);
+            
+            //NSLog(@"Y = %f", self.bigVertices[i].position.y);
+            //NSLog(@"Z = %f", self.bigVertices[i].position.z);
+        } else if (y < 0.0f && z >= 0.0f) {
+            float tg = z / y;
+            float angle = atan(tg) / (M_PI / 180) + 180 + zAngle;
+            
+            self.bigVertices[i].position.y = cos(angle * M_PI / 180) * radius + yCenter;
+            self.bigVertices[i].position.z = -(sin(angle * M_PI / 180) * radius - zCenter);
+            
+            //NSLog(@"Y = %f", self.bigVertices[i].position.y);
+            //NSLog(@"Z = %f", self.bigVertices[i].position.z);
+        } else if (y < 0.0f && z < 0.0f) {
+            float tg = z / y;
+            float angle = atan(tg) / (M_PI / 180) + 180 + zAngle;
+            
+            self.bigVertices[i].position.y = cos(angle * M_PI / 180) * radius + yCenter;
+            self.bigVertices[i].position.z = -(sin(angle * M_PI / 180) * radius - zCenter);
+            
+            //NSLog(@"Y = %f", self.bigVertices[i].position.y);
+            //NSLog(@"Z = %f", self.bigVertices[i].position.z);
+        } else {
+            float tg = z / y;
+            float angle = atan(tg) / (M_PI / 180) + zAngle;
+            
+            self.bigVertices[i].position.y = cos(angle * M_PI / 180) * radius + yCenter;
+            self.bigVertices[i].position.z = -(sin(angle * M_PI / 180) * radius - zCenter);
+            
+            //NSLog(@"Y = %f", self.bigVertices[i].position.y);
+            //NSLog(@"Z = %f", self.bigVertices[i].position.z);
+        }
+        
         self.bigLineVertices[i].position = self.bigVertices[i].position;
     }
 }
@@ -2104,77 +1920,188 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     }
 }
 
-- (void)loadModel {
+- (void)translateVertex:(int)offset length:(int)length x:(float)x y:(float)y z:(float)z xTranslate:(float)xTranslate yTranslate:(float)yTranslate zTranslate:(float)zTranslate debug:(BOOL)debug {
+    for (int i = offset; i < offset + length; i++) {
+        float diff = sqrt(pow(self.bigVertices[i].position.x - x, 2) + pow(self.bigVertices[i].position.y - y, 2) + pow(self.bigVertices[i].position.z - z, 2));
+        
+        if (debug) {
+            NSLog(@"DIFF %d %e", i, diff);
+            NSLog(@"%d %f %f %f ", i, self.bigVertices[i].position.x, self.bigVertices[i].position.y, self.bigVertices[i].position.z);
+            NSLog(@"diff %d %e %e %e ", i, self.bigVertices[i].position.x - x, self.bigVertices[i].position.y - y, self.bigVertices[i].position.z - z);
+        }
+        //if (self.bigVertices[i].position.x == x && self.bigVertices[i].position.y == y && self.bigVertices[i].position.z == z) {
+        if (diff <= pow(10, -6)) {
+            NSLog(@"jhbjnnlknlknklnlknknknknknknknknknknknknkn");
+            self.bigVertices[i].position.x += xTranslate;
+            self.bigVertices[i].position.y += yTranslate;
+            self.bigVertices[i].position.z += zTranslate;
+            
+            self.bigLineVertices[i].position = self.bigVertices[i].position;
+        }
+    }
+}
+
+- (void)scaleObject:(int)offset length:(int)length xScale:(float)xScale yScale:(float)yScale zScale:(float)zScale {
+    for (int i = offset; i < offset + length; i++) {
+        self.bigVertices[i].position.x *= xScale;
+        self.bigVertices[i].position.y *= yScale;
+        self.bigVertices[i].position.z *= zScale;
+        
+        self.bigLineVertices[i].position = self.bigVertices[i].position;
+    }
+}
+
+- (void)setFaceTexture:(int)offset nth:(int)nth texNth:(int)texNth {
+    int nthOffset = nth * 6;
+    int i = offset + nthOffset;
+        /*// top
+         // 8
+         
+         position[24] = {x + width, y + height, z, 1.0};
+         position[26] = {x, y + height, z - depth, 1.0};
+         position[25] = {x + width, y + height, z - depth, 1.0};
+         
+         // 9
+         
+         position[27] = {x, y + height, z, 1.0};
+         position[28] = {x + width, y + height, z, 1.0};
+         position[29] = {x, y + height, z - depth, 1.0};*/
     
-    self.totalIndices = 0;
+    switch (nth) {
+        case 4:
+            self.bigVertices[i].texCoord = {static_cast<float>(texNth), 1.0, 1.0, 1};//
+            self.bigVertices[i + 1].texCoord = {static_cast<float>(texNth), 1.0, 0.0, 1};
+            self.bigVertices[i + 2].texCoord = {static_cast<float>(texNth), 0.0, 0.0, 1};
+            
+            self.bigVertices[i + 3].texCoord = {static_cast<float>(texNth), 0.0, 1.0, 1};
+            self.bigVertices[i + 4].texCoord = {static_cast<float>(texNth), 1.0, 1.0, 1};
+            self.bigVertices[i + 5].texCoord = {static_cast<float>(texNth), 0.0, 0.0, 1};
+            break;
+        default:
+            self.bigVertices[i].texCoord = {static_cast<float>(texNth), 0.0, 1.0, 1};
+            self.bigVertices[i + 1].texCoord = {static_cast<float>(texNth), 1.0, 1.0, 1};
+            self.bigVertices[i + 2].texCoord = {static_cast<float>(texNth), 1.0, 0.0, 1};
+            
+            self.bigVertices[i + 3].texCoord = {static_cast<float>(texNth), 1.0, 0.0, 1};
+            self.bigVertices[i + 4].texCoord = {static_cast<float>(texNth), 0.0, 0.0, 1};
+            self.bigVertices[i + 5].texCoord = {static_cast<float>(texNth), 0.0, 1.0, 1};
+    }
+        
     
-    __unused int numberOfObjects = 1;
-    //self.bigVertices = (Vertex*) malloc(sizeof(Vertex) * 100000);
-    self.bigIndices = (uint16_t*) malloc(sizeof(uint16_t) * 100000);
+        
     
-    //self.bigLineVertices = (Vertex*) malloc(sizeof(Vertex) * 100000);
-    self.bigLineIndices = (uint16_t*) malloc(sizeof(uint16_t) * 100000);
     
-    //[self.bigVertices initWithCapacity:numberOfObjects];
-    
-    // Early august demo
-    /*[self appendCube:-0.4 y:-0.6 z:0.25 width:0.7 height:0.05 depth:0.8 red:255 green:0 blue:255];
-    [self appendCube:-0.25 y:-0.55 z:0.05 width:0.4 height:0.15 depth:0.4 red:255 green:255 blue:0];
-    [self appendCylinder:-0.05 y:-0.4 z:-0.15 radius:0.15 height:0.5 red:0 green:191 blue:255];
-    [self appendCone:-0.05 y:0.1 z:-0.15 radius:0.15 height:0.3 red:90 green:0 blue:157];
-    [self appendSphere:-0.05 y:0.5 z:-0.15 radius:0.1 red:255 green:0 blue:0];
-    [self appendStairs:-0.25 y:-0.55 z:0.25 width:0.4 stepWidth:0.05 stepHeight:0.05 depth:0.2 red:0 green:255 blue:0];*/
-    
-    //[self appendChessboard:-0.4 y:-0.6 z:0.25 width:0.8 height:0.05 depth:0.8 red:255 green:0 blue:255 topBorder:0.1];
-    //[self appendRoof:-0.4 y:-0.6 z:0.25 width:0.6 height:0.4 depth:0.5 red:255 green:0 blue:255];
-    //[self appendLadder:-0.3 y:-0.8 z:0.2 width:0.6 height:1.0 depth:0.5 red:255 green:0 blue:255];
-    
-    // Gears demo
-    /*[self appendGear:0.0 y:-0.3 z:-0.15 radius:0.15 height:0.2 red:0 green:191 blue:255];
-    [self appendGear:-0.2 y:-0.6 z:-0.05 radius:0.15 height:0.2 red:0 green:0 blue:255];
-    [self appendGear:0.1 y:-0.05 z:-0.35 radius:0.15 height:0.2 red:0 green:255 blue:0];*/
-    
-    // Rotation demo
-    /*srand(time(NULL));
-    for (int i = 0; i < 10; i++) {
-        [self appendCube:-0.25 y:-0.7 + i * 0.1 z:0.25 width:0.5 height:0.1 depth:0.5 red:rand() % 256 green:rand() % 256 blue:rand() % 256];
-        [self rotateCube:36 * i xAngle:-10.0f * i];
-    }*/
-    
-    //[self appendPlate:-0.25 y:-0.25 z:0.1 width:0.5 height:0.5 red:0 green:255 blue:0 alpha:1];
-    //[self appendPlate:-0.25 y:-0.25 z:0.25 width:0.5 height:0.5 red:255 green:0 blue:255 alpha:0.9];
-    
+}
+
+- (void)demo1 {
     // Compound object demo
     
     int a = [self appendCube:-0.25 y:-0.25 z:0.15 width:0.5 height:0.2 depth:0.5 red:255 green:255 blue:128];
+    [self setFaceTexture:a nth:0 texNth:3];
+    [self setFaceTexture:a nth:1 texNth:3];
+    [self setFaceTexture:a nth:2 texNth:3];
+    [self setFaceTexture:a nth:3 texNth:3];
     [self removeFace:a nth:4];
     [self removeFace:a nth:4];
     
     int b = [self appendCube:-0.3 y:-0.25 z:0.15 width:0.05 height:0.2 depth:0.1 red:255 green:255 blue:128];
+    [self setFaceTexture:b nth:0 texNth:3];
+    [self setFaceTexture:b nth:1 texNth:3];
+    [self setFaceTexture:b nth:2 texNth:3];
+    [self setFaceTexture:b nth:3 texNth:3];
     [self removeFace:b nth:4];
     [self removeFace:b nth:4];
     
     int c = [self appendCube:-0.1 y:-0.25 z:0.25 width:0.35 height:0.2 depth:0.1 red:255 green:255 blue:128];
+    [self setFaceTexture:c nth:0 texNth:3];
+    [self setFaceTexture:c nth:1 texNth:3];
+    [self setFaceTexture:c nth:2 texNth:3];
+    [self setFaceTexture:c nth:3 texNth:3];
     [self removeFace:c nth:4];
     [self removeFace:c nth:4];
     
     int d = [self appendCube:0.05 y:-0.25 z:0.3 width:0.1 height:0.2 depth:0.05 red:255 green:255 blue:128];
+    [self setFaceTexture:d nth:0 texNth:3];
+    [self setFaceTexture:d nth:1 texNth:3];
+    [self setFaceTexture:d nth:2 texNth:3];
+    [self setFaceTexture:d nth:3 texNth:3];
     [self removeFace:d nth:4];
     [self removeFace:d nth:4];
     
     int e = [self appendCube:0.35 y:-0.25 z:0.05 width:0.01 height:0.2 depth:0.01 red:255 green:255 blue:128];
+    [self setFaceTexture:e nth:0 texNth:3];
+    [self setFaceTexture:e nth:1 texNth:3];
+    [self setFaceTexture:e nth:2 texNth:3];
+    [self setFaceTexture:e nth:3 texNth:3];
     [self removeFace:e nth:4];
     [self removeFace:e nth:4];
     
     int f = [self appendCube:0.35 y:-0.25 z:-0.05 width:0.01 height:0.2 depth:0.01 red:255 green:255 blue:128];
+    [self setFaceTexture:f nth:0 texNth:3];
+    [self setFaceTexture:f nth:1 texNth:3];
+    [self setFaceTexture:f nth:2 texNth:3];
+    [self setFaceTexture:f nth:3 texNth:3];
     [self removeFace:f nth:4];
     [self removeFace:f nth:4];
     
     int g = [self appendCube:-0.26 y:-0.05 z:0.16 width:0.52 height:0.05 depth:0.52 red:255 green:0 blue:255];
+    [self translateVertex:g length:36 x:-0.26 y:-0.05 + 0.05 z:0.16 xTranslate:0.02 yTranslate:0.0 zTranslate:-0.02 debug:false];
+    [self translateVertex:g length:36 x:-0.26 + 0.52 y:-0.05 + 0.05 z:0.16 xTranslate:-0.02 yTranslate:0.0 zTranslate:-0.02 debug:false];
+    [self translateVertex:g length:36 x:-0.26 + 0.52 y:0.0 z:-0.36 xTranslate:-0.02 yTranslate:0.0 zTranslate:0.02 debug:false];
+    [self translateVertex:g length:36 x:-0.26 y:0.0 z:-0.36 xTranslate:0.02 yTranslate:0.0 zTranslate:0.02 debug:false];
+    [self setFaceTexture:g nth:4 texNth:1];
+    [self setFaceTexture:g nth:0 texNth:2];
+    [self setFaceTexture:g nth:1 texNth:2];
+    [self setFaceTexture:g nth:2 texNth:2];
+    [self setFaceTexture:g nth:3 texNth:2];
+    [self setFaceTexture:g nth:5 texNth:1];
+    
     int h = [self appendCube:-0.31 y:-0.05 z:0.16 width:0.05 height:0.05 depth:0.12 red:255 green:0 blue:255];
-    [self appendCube:-0.11 y:-0.05 z:0.26 width:0.37 height:0.05 depth:0.1 red:255 green:0 blue:255];
-    [self appendCube:0.04 y:-0.05 z:0.31 width:0.12 height:0.05 depth:0.05 red:255 green:0 blue:255];
-    [self appendCube:0.26 y:-0.05 z:0.06 width:0.12 height:0.05 depth:0.12 red:255 green:0 blue:255];
+    [self translateVertex:h length:36 x:-0.31 y:-0.05 + 0.05 z:0.16 xTranslate:0.02 yTranslate:0.0 zTranslate:-0.02 debug:false];
+    [self translateVertex:h length:36 x:-0.31 y:-0.05 + 0.05 z:0.16 - 0.12 xTranslate:0.02 yTranslate:0.0 zTranslate:0.02 debug:false];
+    [self translateVertex:h length:36 x:-0.31 + 0.05 y:-0.05 + 0.05 z:0.16 xTranslate:0.02 yTranslate:0.0 zTranslate:-0.02 debug:false];
+    [self translateVertex:h length:36 x:-0.31 + 0.05 y:-0.05 + 0.05 z:0.16 - 0.12 xTranslate:0.02 yTranslate:0.0 zTranslate:0.02 debug:false];
+    [self setFaceTexture:h nth:4 texNth:1];
+    [self setFaceTexture:h nth:0 texNth:2];
+    [self setFaceTexture:h nth:1 texNth:2];
+    [self setFaceTexture:h nth:2 texNth:2];
+    [self setFaceTexture:h nth:3 texNth:2];
+    [self setFaceTexture:h nth:5 texNth:1];
+    
+    int k = [self appendCube:-0.11 y:-0.05 z:0.26 width:0.37 height:0.05 depth:0.1 red:255 green:0 blue:255];
+    [self translateVertex:k length:36 x:-0.11 y:-0.05 + 0.05 z:0.26 xTranslate:0.02 yTranslate:0.0 zTranslate:-0.02 debug:false];
+    [self translateVertex:k length:36 x:-0.11 y:-0.05 + 0.05 z:0.26 - 0.1 xTranslate:0.02 yTranslate:0.0 zTranslate:-0.02 debug:false];
+    [self translateVertex:k length:36 x:-0.11 + 0.37 y:-0.05 + 0.05 z:0.26 xTranslate:-0.02 yTranslate:0.0 zTranslate:-0.02 debug:false];
+    [self translateVertex:k length:36 x:-0.11 + 0.37 y:-0.05 + 0.05 z:0.26 - 0.1 xTranslate:-0.02 yTranslate:0.0 zTranslate:-0.02 debug:false];
+    [self setFaceTexture:k nth:4 texNth:1];
+    [self setFaceTexture:k nth:0 texNth:2];
+    [self setFaceTexture:k nth:1 texNth:2];
+    [self setFaceTexture:k nth:2 texNth:2];
+    [self setFaceTexture:k nth:3 texNth:2];
+    [self setFaceTexture:k nth:5 texNth:1];
+    
+    int l = [self appendCube:0.04 y:-0.05 z:0.31 width:0.12 height:0.05 depth:0.05 red:255 green:0 blue:255];
+    [self translateVertex:l length:36 x:0.04 y:-0.05 + 0.05 z:0.31 xTranslate:0.02 yTranslate:0.0 zTranslate:-0.02 debug:false];
+    [self translateVertex:l length:36 x:0.04 y:-0.05 + 0.05 z:0.31 - 0.05 xTranslate:0.02 yTranslate:0.0 zTranslate:-0.02 debug:false];
+    [self translateVertex:l length:36 x:0.04 + 0.12 y:-0.05 + 0.05 z:0.31 xTranslate:-0.02 yTranslate:0.0 zTranslate:-0.02 debug:false];
+    [self translateVertex:l length:36 x:0.04 + 0.12 y:-0.05 + 0.05 z:0.31 - 0.05 xTranslate:-0.02 yTranslate:0.0 zTranslate:-0.02 debug:false];
+    [self setFaceTexture:l nth:4 texNth:1];
+    [self setFaceTexture:l nth:0 texNth:2];
+    [self setFaceTexture:l nth:1 texNth:2];
+    [self setFaceTexture:l nth:3 texNth:2];
+    [self setFaceTexture:l nth:5 texNth:1];
+    
+    int m = [self appendCube:0.26 y:-0.05 z:0.06 width:0.12 height:0.05 depth:0.12 red:255 green:0 blue:255];
+    [self translateVertex:m length:36 x:0.26 y:-0.05 + 0.05 z:0.06 xTranslate:-0.02 yTranslate:0.0 zTranslate:-0.02 debug:false];
+    [self translateVertex:m length:36 x:0.26 y:-0.05 + 0.05 z:0.06 - 0.12 xTranslate:-0.02 yTranslate:0.0 zTranslate:0.02 debug:false];
+    [self translateVertex:m length:36 x:0.26 + 0.12 y:-0.05 + 0.05 z:0.06 xTranslate:-0.02 yTranslate:0.0 zTranslate:-0.02 debug:false];
+    [self translateVertex:m length:36 x:0.26 + 0.12 y:-0.05 + 0.05 z:0.06 - 0.12 xTranslate:-0.02 yTranslate:0.0 zTranslate:0.02 debug:false];
+    [self setFaceTexture:m nth:4 texNth:1];
+    [self setFaceTexture:m nth:0 texNth:2];
+    [self setFaceTexture:m nth:1 texNth:2];
+    [self setFaceTexture:m nth:2 texNth:2];
+    [self setFaceTexture:m nth:3 texNth:2];
+    [self setFaceTexture:m nth:5 texNth:1];
     
     int compoundSize = self.totalIndices;
     [self translateObject:0 length:compoundSize xTranslate:0 yTranslate:0 zTranslate:-1];
@@ -2183,10 +2110,18 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     [self cloneObject:compoundSize * 2 length:compoundSize xTranslate:1.2f yTranslate:0.0f zTranslate:0.0f];
     
     
-    [self rotateObject:compoundSize length:compoundSize xAngle:45];
-    [self rotateObject:compoundSize * 2 length:compoundSize xAngle:-45];
+    [self rotateObjectX:compoundSize length:compoundSize xAngle:45];
+    [self rotateObjectX:compoundSize * 2 length:compoundSize xAngle:-45];
     
-    [self appendCube:-1 y:-0.26 z:0.5 width:2.0 height:0.01 depth:2.0 red:200 green:200 blue:200];
+    int n = [self appendCube:-1 y:-0.26 z:0.5 width:2.0 height:0.01 depth:2.0 red:200 green:200 blue:200];
+    NSLog(@">>>>>>>>>>>>> %d", n);
+    [self setFaceTexture:n nth:4 texNth:0];
+    
+    for (int i = n; i < self.totalIndices; i++) {
+        NSLog(@"%d: %f %f %f %f", i, self.bigVertices[i].texCoord.x, self.bigVertices[i].texCoord.y, self.bigVertices[i].texCoord.z, self.bigVertices[i].texCoord.w);
+    }
+    
+    [self scaleObject:0 length:self.totalIndices xScale:2 yScale:2 zScale:2];
     
     for (int i = 0; i < self.totalIndices / 3; i++) {
         self.bigLineIndices[i * 6 + 0] = i * 3;
@@ -2198,39 +2133,624 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
         self.bigLineIndices[i * 6 + 4] = i * 3 + 2;
         self.bigLineIndices[i * 6 + 5] = i * 3;
     }
+}
+
+- (int)appendCompoundRoof:(float)x y:(float)y z:(float)z width:(float)width lowerSegments:(int)lowerSegments {
+    
+    int lastIndices = self.totalIndices;
+    
+    float lowerHeight = 0.3, depth = 0.05, roofDepth = 0.6;
+    
+    float segmentWidth = width / lowerSegments;
+    
+    // front lower
+    float centerY = lowerHeight / 2, centerZ = depth / 2;
+    float radius = sqrt(pow(lowerHeight / 2, 2) + pow(depth / 2, 2));
+    
+    float tg = (lowerHeight / 2) / (-depth / 2);
+    float angle = atan(tg) / (M_PI / 180) + 180;
+    
+    float lowerY = sin((angle + 30) * M_PI / 180.0) * radius;
+    
+    int frontLowerStart = self.totalIndices;
+    for (int i = 0; i < lowerSegments; i++) {
+        int start = [self appendCube:x + segmentWidth * i y:y z:z width:segmentWidth height:lowerHeight depth:depth red:0 green:128 blue:255];
+        [self rotateObjectZ:start length:self.totalIndices - start zAngle:30];
+    }
+    
+    [self translateObject:frontLowerStart length:self.totalIndices - frontLowerStart xTranslate:0 yTranslate:lowerY - lowerHeight / 2 zTranslate:0];//1.342404
+    
+    for (int i = frontLowerStart; i < self.totalIndices; i++) {
+        NSLog(@"VERTEX %f %f %f", self.bigVertices[i].position.x, self.bigVertices[i].position.y, self.bigVertices[i].position.z);
+    }//y max = 1.309808
+    
+    // back lower
+    int backLowerStart = self.totalIndices;
+    for (int i = 0; i < lowerSegments; i++) {
+        int start = [self appendCube:x + segmentWidth * i y:y z:z - roofDepth + depth width:segmentWidth height:lowerHeight depth:depth red:0 green:128 blue:255];
+        [self rotateObjectZ:start length:self.totalIndices - start zAngle:-30];
+    }
+    
+    [self translateObject:backLowerStart length:self.totalIndices - backLowerStart xTranslate:0 yTranslate:lowerY - lowerHeight / 2 zTranslate:0];
+    
+    // upper
+    float upperHeight = 0.255993843;
+    
+    tg = (lowerHeight / 2) / (depth / 2);
+    angle = atan(tg) / (M_PI / 180);
+    float upperY = sin((angle + 30) * M_PI / 180.0) * radius;
+    float upperZ = cos((angle + 30) * M_PI / 180.0) * radius;//0.025 if no angle
+    
+    // upper front
+    
+    
+    radius = sqrt(pow(upperHeight / 2, 2) + pow(depth / 2, 2));
+    tg = (upperHeight / 2) / (-depth / 2);
+    angle = atan(tg) / (M_PI / 180) + 180;
+    
+    float upperYlower = sin((angle + 60) * M_PI / 180.0) * radius;
+    float upperZlower = cos((angle + 60) * M_PI / 180.0) * radius;
+    
+    tg = (upperHeight / 2) / (depth / 2);
+    angle = atan(tg) / (M_PI / 180);
+    
+    upperHeight = sqrt(pow((depth / 2 - roofDepth / 2 - (upperZ + upperZlower)) / cos((angle + 60) * M_PI / 180.0), 2) - pow(depth / 2, 2)) * 2;
+    
+    int upperFront = [self appendCube:x y:y + lowerHeight - (lowerHeight / 2 - upperY) + lowerY - lowerHeight / 2 z:z width:width height:upperHeight depth:depth red:0 green:128 blue:255];
+    for (int i = upperFront; i < self.totalIndices; i++) {
+        NSLog(@"VERTEX %f %f %f", self.bigVertices[i].position.x, self.bigVertices[i].position.y, self.bigVertices[i].position.z);
+    }
+    [self rotateObjectZ:upperFront length:self.totalIndices - upperFront zAngle:60];
     
     
     
     
-    //[self rotateCube:36 * 0 xAngle:-0.0f];
     
-    //[self.renderer handleAsset];
-    //[self importOBJ:255 green:0 blue:0];
     
-    //NSLog(@"kfkghkgjhlglhkgljklhkjlhkjl");
-    //[self.renderer test:nil];
-    //[self.renderer setView:nil];
     
-    //[self appendTorus];
+    float topZ = cos((angle + 60) * M_PI / 180.0) * radius + (upperZ + upperZlower);
+    float topDiff = topZ - depth / 2;
+    float centerDiff = roofDepth / 2 + topDiff;
     
-    //[self appendCube:-0.25 y:-0.25 z:0.25 width:0.5 height:0.5 depth:0.5 red:255 green:0 blue:255];
-    //[self appendCube:-0.25 y:-0.75 z:0.25 width:0.5 height:0.5 depth:0.5 red:255 green:0 blue:0];
     
-    // light cubes demo
-    /*srand(time(NULL));
-    [self appendCube:-0.4 y:-0.4 z:0.2 width:0.4 height:0.2 depth:0.2 red:rand() % 256 green:rand() % 256 blue:rand() % 256];
-    [self appendCube:0.0 y:-0.4 z:0.2 width:0.4 height:0.2 depth:0.2 red:rand() % 256 green:rand() % 256 blue:rand() % 256];
     
-    [self appendCube:-0.4 y:-0.2 z:0.2 width:0.2 height:0.2 depth:0.2 red:rand() % 256 green:rand() % 256 blue:rand() % 256];
-    [self appendCube:-0.2 y:-0.2 z:0.2 width:0.4 height:0.2 depth:0.2 red:rand() % 256 green:rand() % 256 blue:rand() % 256];
-    [self appendCube:0.2 y:-0.2 z:0.2 width:0.2 height:0.2 depth:0.2 red:rand() % 256 green:rand() % 256 blue:rand() % 256];
     
-    [self appendCube:-0.4 y:0.0 z:0.2 width:0.4 height:0.2 depth:0.2 red:rand() % 256 green:rand() % 256 blue:rand() % 256];
-    [self appendCube:0.0 y:0.0 z:0.2 width:0.4 height:0.2 depth:0.2 red:rand() % 256 green:rand() % 256 blue:rand() % 256];*/
+    [self translateObject:upperFront length:self.totalIndices - upperFront xTranslate:0 yTranslate:upperYlower - upperHeight / 2 zTranslate:upperZ - depth / 2 + upperZlower + depth / 2];
     
-    //[self appendPyramid];
-    //[self appendCube:-0.25 width:0.2 nth:0];
-    //[self appendCube:0.05 width:0.2 nth:1];
+    // upper back
+    int upperBack = [self appendCube:x y:y + lowerHeight - (lowerHeight / 2 - upperY) + lowerY - lowerHeight / 2 z:z - roofDepth + depth width:width height:upperHeight depth:depth red:0 green:128 blue:255];
+    [self rotateObjectZ:upperBack length:self.totalIndices - upperBack zAngle:-60];
+    [self translateObject:upperBack length:self.totalIndices - upperBack xTranslate:0 yTranslate:upperYlower - upperHeight / 2 zTranslate:-(upperZ - depth / 2 + upperZlower + depth / 2)];
+    
+    
+    //topDiff = -roofDepth / 2;
+    //topZ - depth / 2 = -roofDepth / 2;
+    //topZ = depth / 2 - roofDepth / 2;
+    //cos((angle + 60) * M_PI / 180.0) * radius + (upperZ + upperZlower) = depth / 2 - roofDepth / 2;
+    //cos((angle + 60) * M_PI / 180.0) * radius = depth / 2 - roofDepth / 2 - (upperZ + upperZlower);
+    //radius = (depth / 2 - roofDepth / 2 - (upperZ + upperZlower)) / cos((angle + 60) * M_PI / 180.0);
+    //sqrt(pow(upperHeight / 2, 2) + pow(depth / 2, 2)) = (depth / 2 - roofDepth / 2 - (upperZ + upperZlower)) / cos((angle + 60) * M_PI / 180.0);
+    //pow(upperHeight / 2, 2) + pow(depth / 2, 2) = pow((depth / 2 - roofDepth / 2 - (upperZ + upperZlower)) / cos((angle + 60) * M_PI / 180.0), 2);
+    //pow(upperHeight / 2, 2) = pow((depth / 2 - roofDepth / 2 - (upperZ + upperZlower)) / cos((angle + 60) * M_PI / 180.0), 2) - pow(depth / 2, 2);
+    //upperHeight / 2 = sqrt(pow((depth / 2 - roofDepth / 2 - (upperZ + upperZlower)) / cos((angle + 60) * M_PI / 180.0), 2) - pow(depth / 2, 2));
+    upperHeight = sqrt(pow((depth / 2 - roofDepth / 2 - (upperZ + upperZlower)) / cos((angle + 60) * M_PI / 180.0), 2) - pow(depth / 2, 2)) * 2;
+    
+    return lastIndices;
+}
+
+- (void)loadModel {
+    
+    self.totalIndices = 0;
+    
+    __unused int numberOfObjects = 1;
+    self.bigIndices = (uint16_t*) malloc(sizeof(uint16_t) * 100000);
+    
+    self.bigLineIndices = (uint16_t*) malloc(sizeof(uint16_t) * 100000);
+    
+    //[self demo1];
+    
+    float widthA = 0.2, widthB = 0.1, currentY = -0.45;
+    
+    for (int i = 0; i < 5; i++) {
+        float current = -1 - 0.6;
+        for (int j = 0; j < 2; j++) {
+            [self appendPlate:current y:currentY z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.1 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.1 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            current += 0.3;
+        }
+        NSLog(@"CURRENT = %f", current);
+        currentY += 0.3;
+    }
+    int temp = self.totalIndices;
+    float currentQ = -1 - 0.6;
+    for (int j = 0; j < 2; j++) {
+        [self appendPlate:currentQ y:-0.45 + 1.5 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentQ + 0.1 y:-0.45 + 1.5 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentQ + 0.2 y:-0.45 + 1.5 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        [self appendPlate:currentQ y:-0.45 + 1.5 + 0.1 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentQ + 0.1 y:-0.45 + 1.5 + 0.1 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentQ + 0.2 y:-0.45 + 1.5 + 0.1 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        [self appendPlate:currentQ y:-0.45 + 1.5 + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentQ + 0.1 y:-0.45 + 1.5 + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentQ + 0.2 y:-0.45 + 1.5 + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        currentQ += 0.3;
+    }
+    int temp2 = self.totalIndices - temp;
+    [self translateVertex:temp length:temp2 x:-1 - 0.6 y:-0.45 + 1.5 + 0.2 + 0.1 z:0.25 xTranslate:0.1 yTranslate:0 zTranslate:0 debug:true];
+    [self translateVertex:temp length:temp2 x:-1 y:-0.45 + 1.5 + 0.2 + 0.1 z:0.25 xTranslate:-0.1 yTranslate:0 zTranslate:0 debug:true];
+    [self translateVertex:temp length:temp2 x:-1 y:-0.45 + 1.5 + 0.2 z:0.25 xTranslate:-0.05 yTranslate:0 zTranslate:0 debug:true];
+    
+    int objectZ = self.totalIndices;
+    [self rotateObjectX:0 length:objectZ xAngle:-90];
+    [self translateObject:0 length:objectZ xTranslate:0.3 yTranslate:0 zTranslate:-0.3];
+    
+    currentY = -0.45;
+    for (int i = 0; i < 5; i++) {
+        float current = -1;
+        for (int j = 0; j < 4; j++) {
+            [self appendPlate:current y:currentY z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.1 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.1 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            current += 0.3;
+        }
+        
+        
+        
+        NSLog(@"CURRENT = %f", current);
+        currentY += 0.3;
+    }
+    currentY = -0.45 + 1.5;
+    float currentF = -1 + 0.3;
+    for (int j = 0; j < 2; j++) {
+        [self appendPlate:currentF y:currentY z:0.25 - 0.05 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.1 y:currentY z:0.25 - 0.05 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.2 y:currentY z:0.25 - 0.05 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        [self appendPlate:currentF y:currentY + 0.1 z:0.25 - 0.05 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.2 y:currentY + 0.1 z:0.25 - 0.05 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        [self appendPlate:currentF y:currentY + 0.2 z:0.25 - 0.05 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.1 y:currentY + 0.2 z:0.25 - 0.05 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.2 y:currentY + 0.2 z:0.25 - 0.05 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        currentF += 0.3;
+    }
+    
+    currentY = -0.45;
+    for (int i = 0; i < 6; i++) {
+        float current = 0.2;
+        for (int j = 0; j < 4; j++) {
+            [self appendPlate:current y:currentY z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.1 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.1 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            current += 0.3;
+        }
+        NSLog(@"CURRENT = %f", current);
+        currentY += 0.3;
+    }
+    
+    int objectH = self.totalIndices;
+    currentF = 0.2 - 0.3 + 0.15;
+    currentY = -0.45 + 1.5;
+    for (int j = 0; j < 1; j++) {
+        [self appendPlate:currentF y:currentY z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.1 y:currentY z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.2 y:currentY z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        [self appendPlate:currentF y:currentY + 0.1 z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.1 y:currentY + 0.1 z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.2 y:currentY + 0.1 z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        [self appendPlate:currentF y:currentY + 0.2 z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.1 y:currentY + 0.2 z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.2 y:currentY + 0.2 z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        
+    }
+    [self rotateObjectX:objectH length:self.totalIndices - objectH xAngle:-90];
+    
+    objectH = self.totalIndices;
+    currentF = 0.2 - 0.3 + 0.15;
+    currentY = -0.45 + 1.8;
+    for (int j = 0; j < 1; j++) {
+        [self appendPlate:currentF y:currentY z:0.25 - 0.45 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.1 y:currentY z:0.25 - 0.45 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.2 y:currentY z:0.25 - 0.45 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        [self appendPlate:currentF y:currentY + 0.1 z:0.25 - 0.45 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.1 y:currentY + 0.1 z:0.25 - 0.45 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.2 y:currentY + 0.1 z:0.25 - 0.45 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        [self appendPlate:currentF y:currentY + 0.2 z:0.25 - 0.45 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.1 y:currentY + 0.2 z:0.25 - 0.45 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.2 y:currentY + 0.2 z:0.25 - 0.45 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        
+    }
+    [self rotateObjectX:objectH length:self.totalIndices - objectH xAngle:-90];
+    
+    currentF = 0.2;
+    currentY = -0.45 + 1.8;
+    for (int j = 0; j < 4; j++) {
+        [self appendPlate:currentF y:currentY z:0.25 - 0.3 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.1 y:currentY z:0.25 - 0.3 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.2 y:currentY z:0.25 - 0.3 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        [self appendPlate:currentF y:currentY + 0.1 z:0.25 - 0.3 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.1 y:currentY + 0.1 z:0.25 - 0.3 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.2 y:currentY + 0.1 z:0.25 - 0.3 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        [self appendPlate:currentF y:currentY + 0.2 z:0.25 - 0.3 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.1 y:currentY + 0.2 z:0.25 - 0.3 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.2 y:currentY + 0.2 z:0.25 - 0.3 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        currentF += 0.3;
+    }
+    
+    objectH = self.totalIndices;
+    currentF = 0.2;
+    currentY = -0.45 + 1.8 - 0.15;
+    for (int j = 0; j < 4; j++) {
+        [self appendPlate:currentF y:currentY z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.1 y:currentY z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.2 y:currentY z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        [self appendPlate:currentF y:currentY + 0.1 z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.1 y:currentY + 0.1 z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.2 y:currentY + 0.1 z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        [self appendPlate:currentF y:currentY + 0.2 z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.1 y:currentY + 0.2 z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        [self appendPlate:currentF + 0.2 y:currentY + 0.2 z:0.25 - 0.15 width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+        
+        currentF += 0.3;
+    }
+    [self rotateObjectZ:objectH length:self.totalIndices - objectH zAngle:90];
+    
+    int objectB = self.totalIndices;
+    
+    currentY = -0.45;
+    for (int i = 0; i < 9; i++) {
+        float current = 1.4;
+        for (int j = 0; j < 2; j++) {
+            [self appendPlate:current y:currentY z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.1 z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY + 0.1 z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.1 z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            
+            current += 0.3;
+        }
+        NSLog(@"CURRENT = %f", current);
+        currentY += 0.3;
+    }
+    int objectC = self.totalIndices;
+    [self rotateObjectX:objectB length:objectC - objectB xAngle:-90];
+    [self translateObject:objectB length:objectC - objectB xTranslate:-0.3 yTranslate:0 zTranslate:-0.3];
+    
+    currentY = -0.45;
+    for (int i = 0; i < 9; i++) {
+        float current = 1.4;
+        for (int j = 0; j < 1; j++) {
+            [self appendPlate:current y:currentY z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.1 z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            if (i == 0 || i == 8) {
+                [self appendPlate:current + 0.1 y:currentY + 0.1 z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            }
+            [self appendPlate:current + 0.2 y:currentY + 0.1 z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.2 z:0.25 width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            
+            current += 0.3;
+        }
+        NSLog(@"CURRENT = %f", current);
+        currentY += 0.3;
+    }
+    
+    int roofStart = self.totalIndices;
+    [self appendCompoundRoof:-1.05 y:-0.45 + 1.5 z:0.25 width:0.05 lowerSegments:1];
+    int roofa = [self appendCompoundRoof:-1 y:-0.45 + 1.5 z:0.25 width:1.2 lowerSegments:4];
+    for (int i = 0; i < 12; i++) {
+        [self removeFace:roofa nth:6];
+    }
+    
+    
+    int roofb = [self appendCompoundRoof:0.2 y:-0.45 + 1.8 z:0.25 width:1.2 lowerSegments:4];
+    for (int i = 0; i < 24; i++) {
+        [self removeFace:roofb nth:0];
+    }
+    for (int i = 0; i < 6; i++) {
+        [self removeFace:roofb nth:24];
+    }
+    
+    int roofEnd = self.totalIndices;
+    //[self cloneObject:roofEnd length:roofEnd - roofStart xTranslate:5.15 yTranslate:0 zTranslate:-0.675];
+    //[self rotateObjectX:roofEnd length:roofEnd - roofStart xAngle:180];
+    
+    
+    
+    int objectA = self.totalIndices;
+    [self rotateObjectX:0 length:roofEnd xAngle:30];
+    
+    for (int i = objectA - 1; i >= objectA - 200; i--) {
+        NSLog(@"%f %f", self.bigVertices[i].position.x, self.bigVertices[i].position.z);
+    }
+    //[self translateObject:0 length:objectA xTranslate:0.22 yTranslate:0 zTranslate:0.825];
+    
+    int objectRight = self.totalIndices;
+    
+    float z = -0.465192;//5192f;
+    
+    currentY = -0.45;
+    for (int i = 0; i < 9; i++) {
+        float current = 1.669134f;
+        for (int j = 0; j < 3; j++) {
+            [self appendPlate:current y:currentY z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.1 z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.1 z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.2 z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY + 0.2 z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.2 z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            
+            current += 0.3;
+        }
+        NSLog(@"CURRENT = %f", current);
+        currentY += 0.3;
+    }
+    
+    int objectD = self.totalIndices;
+    
+    currentY = -0.45;
+    for (int i = 0; i < 9; i++) {
+        float current = 2.569134f;
+        for (int j = 0; j < 1; j++) {
+            [self appendPlate:current y:currentY z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.1 z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            if (i < 1 || i > 5) {
+                [self appendPlate:current + 0.1 y:currentY + 0.1 z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            }
+            [self appendPlate:current + 0.2 y:currentY + 0.1 z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.2 z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY + 0.2 z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.2 z:z width:0.1 height:0.1 red:255 green:255 blue:0 alpha:1];
+            
+            current += 0.3;
+        }
+        NSLog(@"CURRENT = %f", current);
+        currentY += 0.3;
+    }
+    
+    int objectE = self.totalIndices;
+    [self rotateObjectX:objectD length:objectE - objectD xAngle:90];
+    [self translateObject:objectD length:objectE - objectD xTranslate:-0.15 yTranslate:0 zTranslate:-0.15];
+    
+    currentY = -0.45 + 0.3;
+    for (int i = 0; i < 5; i++) {
+        float current = 2.569134f;
+        for (int j = 0; j < 1; j++) {
+            [self appendPlate:current y:currentY z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.1 z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.1 z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.2 z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY + 0.2 z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.2 z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            
+            current += 0.3;
+        }
+        NSLog(@"CURRENT = %f", current);
+        currentY += 0.3;
+    }
+    
+    int objectF = self.totalIndices;
+    
+    currentY = -0.45 + 0.3 + 1.5;
+    for (int i = 0; i < 1; i++) {
+        float current = 2.569134f;
+        for (int j = 0; j < 1; j++) {
+            [self appendPlate:current y:currentY z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.1 z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY + 0.1 z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.1 z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.2 z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY + 0.2 z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.2 z:z width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            
+            current += 0.3;
+        }
+        NSLog(@"CURRENT = %f", current);
+        currentY += 0.3;
+    }
+    
+    int objectG = self.totalIndices;
+    [self rotateObjectZ:objectF length:objectG - objectF zAngle:90];
+    [self translateObject:objectF length:objectG - objectF xTranslate:0 yTranslate:-0.15 zTranslate:-0.15];
+    
+    [self cloneObject:self.totalIndices length:objectG - objectF xTranslate:0 yTranslate:-0.3 zTranslate:0];
+    [self cloneObject:self.totalIndices length:objectG - objectF xTranslate:0 yTranslate:-0.3 zTranslate:0];
+    [self cloneObject:self.totalIndices length:objectG - objectF xTranslate:0 yTranslate:-0.3 zTranslate:0];
+    [self cloneObject:self.totalIndices length:objectG - objectF xTranslate:0 yTranslate:-0.3 zTranslate:0];
+    [self cloneObject:self.totalIndices length:objectG - objectF xTranslate:0 yTranslate:-0.3 zTranslate:0];
+    
+    currentY = -0.45 + 0.3;
+    for (int i = 0; i < 5; i++) {
+        float current = 2.569134f;
+        for (int j = 0; j < 1; j++) {
+            [self appendPlate:current y:currentY z:z - 0.3 width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY z:z - 0.3 width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY z:z - 0.3 width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.1 z:z - 0.3 width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.1 z:z - 0.3 width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.2 z:z - 0.3 width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY + 0.2 z:z - 0.3 width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.2 z:z - 0.3 width:0.1 height:0.1 red:0 green:191 blue:255 alpha:1];
+            
+            current += 0.3;
+        }
+        NSLog(@"CURRENT = %f", current);
+        currentY += 0.3;
+    }
+    
+    currentY = -0.45;
+    for (int i = 0; i < 6; i++) {
+        float current = 2.869134f;
+        for (int j = 0; j < 4; j++) {
+            [self appendPlate:current y:currentY z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.1 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.1 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.2 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY + 0.2 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.2 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            current += 0.3;
+        }
+        NSLog(@"CURRENT = %f", current);
+        currentY += 0.3;
+    }
+    
+    int roofc = [self appendCompoundRoof:2.869134f y:-0.45 + 1.8 z:z width:1.2 lowerSegments:4];
+    for (int i = 0; i < 6; i++) {
+        [self removeFace:roofc nth:6];
+    }
+    for (int i = 0; i < 6; i++) {
+        [self removeFace:roofc nth:12];
+    }
+    
+    currentY = -0.45;
+    for (int i = 0; i < 5; i++) {
+        float current = 4.069134f;
+        for (int j = 0; j < 4; j++) {
+            [self appendPlate:current y:currentY z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.1 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.1 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.2 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY + 0.2 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.2 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            current += 0.3;
+        }
+        NSLog(@"CURRENT = %f", current);
+        currentY += 0.3;
+    }
+    
+    int roofd = [self appendCompoundRoof:4.069134f y:-0.45 + 1.5 z:z width:1.2 lowerSegments:4];
+    for (int i = 0; i < 6; i++) {
+        [self removeFace:roofd nth:6];
+    }
+    for (int i = 0; i < 6; i++) {
+        [self removeFace:roofd nth:12];
+    }
+    
+    [self appendCompoundRoof:4.069134f + 1.2 y:-0.45 + 1.5 z:z width:0.05 lowerSegments:4];
+    
+    int objectY = self.totalIndices;
+    
+    currentY = -0.45;
+    for (int i = 0; i < 5; i++) {
+        float current = 5.269135f;
+        for (int j = 0; j < 2; j++) {
+            [self appendPlate:current y:currentY z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.1 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            if (i == 0 && j == 0) {
+                [self appendPlate:current + 0.1 y:currentY + 0.1 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            }
+            [self appendPlate:current + 0.2 y:currentY + 0.1 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            [self appendPlate:current y:currentY + 0.2 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.1 y:currentY + 0.2 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            [self appendPlate:current + 0.2 y:currentY + 0.2 z:z width:0.1 height:0.1 red:255 green:0 blue:255 alpha:1];
+            
+            current += 0.3;
+        }
+        NSLog(@"CURRENT = %f", current);
+        currentY += 0.3;
+    }
+    
+    int objectX = self.totalIndices;
+    [self rotateObjectX:objectY length:objectX - objectY xAngle:90];
+    [self translateObject:objectY length:objectX - objectY xTranslate:-0.3 yTranslate:0 zTranslate:-0.3];
+    
+    [self rotateObjectX:objectRight length:self.totalIndices - objectRight xAngle:-30];
+    
+    [self appendCube:-2 y:-0.46 z:2 width:10 height:0.01 depth:10 red:200 green:200 blue:200];
+    
+    for (int i = 0; i < self.totalIndices / 3; i++) {
+        self.bigLineIndices[i * 6 + 0] = i * 3;
+        self.bigLineIndices[i * 6 + 1] = i * 3 + 1;
+        
+        self.bigLineIndices[i * 6 + 2] = i * 3 + 1;
+        self.bigLineIndices[i * 6 + 3] = i * 3 + 2;
+        
+        self.bigLineIndices[i * 6 + 4] = i * 3 + 2;
+        self.bigLineIndices[i * 6 + 5] = i * 3;
+    }
     
     self.vertexBuffer = [self.renderer newBufferWithBytes:self.bigVertices length:sizeof(Vertex) * self.totalIndices];
     self.indexBuffer = [self.renderer newBufferWithBytes:self.bigIndices length:sizeof(IndexType) * self.totalIndices];
@@ -2263,7 +2783,7 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     //modelMatrix = Rotation(Y_AXIS, -self.angle.x) * modelMatrix;
     
     //self.angle.x = 10 * 3.14 / 180;
-    self.angle = CGPointMake(0 * 3.14 / 180, 30 * 3.14 / 180);//demo
+    self.angle = CGPointMake(40 * 3.14 / 180, 10 * 3.14 / 180);//demo
     //self.angle = CGPointMake(-180 * 3.14 / 180, 30 * 3.14 / 180);
     //NSLog(@"ANGLE %f %f", self.angle.x, self.angle.y);
     modelMatrix = Rotation(Y_AXIS, -self.angle.x) * modelMatrix;
@@ -2272,7 +2792,10 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     simd::float4x4 viewMatrix = Identity();
     viewMatrix.columns[3].z = -1; // translate camera back along Z axis
     
-    viewMatrix.columns[3].z = -1.5; // translate camera back along Z axis
+    viewMatrix.columns[3].x = -0; // translate camera back along Z axis
+    viewMatrix.columns[3].y = -1.5; // translate camera back along Z axis
+    viewMatrix.columns[3].z = -3; // translate camera back along Z axis
+    //viewMatrix.columns[3].z = -0.5;
     
     const float near = 0.1;
     const float far = 100;

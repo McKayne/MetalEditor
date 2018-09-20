@@ -38,10 +38,6 @@ typedef struct {
 @property (nonatomic, strong) CADisplayLink *displayLink;
 @property (nonatomic, strong) CAMetalLayer *metal;
 
-- (void)demo1;
-- (void)demo2;
-
-//- (void)testBridge:(customVertex)v;
 - (void)setVertexArrays:(Vertex *)bigVertices bigLineVertices:(Vertex *)bigLineVertices bigIndices:(uint16_t *)bigIndices bigLineIndices:(uint16_t *)bigLineIndices;
 
 - (void)customMetalLayer:(CALayer *)layer bounds:(CGRect)bounds indicesCount:(int)indicesCount;
@@ -55,14 +51,6 @@ typedef struct {
 - (NSString *)exportZIP:(NSString *)filename items:(NSArray *)items;
 
 - (void)showExportDialog;
-
-- (int)appendCube:(float)x y:(float)y z:(float)z
-             width:(float)width height:(float)height depth:(float)depth
-               red:(int)red green:(int)green blue:(int)blue;
-
-- (int)appendPlate:(float)x y:(float)y z:(float)z
-            width:(float)width height:(float)height
-               red:(int)red green:(int)green blue:(int)blue alpha:(float)alpha;
 
 - (void)appendStairs:(float)x y:(float)y z:(float)z
                width:(float)width stepWidth:(float)stepWidth stepHeight:(float)stepHeight depth:(float)depth
@@ -92,8 +80,6 @@ typedef struct {
 - (int)appendPolygon:(float)x y:(float)y z:(float)z
              width:(float)width height:(float)height
                red:(int)red green:(int)green blue:(int)blue alpha:(float)alpha;
-
-- (int)appendCompoundRoof:(float)x y:(float)y z:(float)z width:(float)width lowerSegments:(int)lowerSegments;
 
 - (void)importOBJ:(int)red green:(int)green blue:(int)blue;
 

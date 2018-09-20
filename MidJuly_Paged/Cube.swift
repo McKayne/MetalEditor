@@ -9,149 +9,269 @@
 import Foundation
 import Metal
 
-class Cube: Node {
+class Cube: SceneObject {
     
-    var verticesArray: [Vertex] = []
+    private var x: Float, y: Float, z: Float
+    private var width: Float, height: Float, depth: Float
+    private var rgb: (r: Int, g: Int, b: Int)
     
-    func appendBorderCube(xStart: Float, yStart: Float, zStart: Float, width: Float, height: Float, depth: Float) {
-        /*let A = Vertex(x: xStart, y: yStart + height, z: zStart + depth, r:  0.0, g:  0.0, b:  0.0, a:  1.0)
-        let B = Vertex(x: xStart, y: yStart, z: zStart + depth, r:  0.0, g:  0.0, b:  0.0, a:  1.0)
-        let C = Vertex(x: xStart + width, y: yStart, z: zStart + depth, r:  0.0, g:  0.0, b:  0.0, a:  1.0)
-        let D = Vertex(x: xStart + width, y: yStart + height, z: zStart + depth, r:  0.0, g:  0.0, b:  0.0, a:  1.0)
+    private func appendCube() {
         
-        let Q = Vertex(x: xStart, y: yStart + height, z: zStart, r:  0.0, g:  0.0, b:  0.0, a:  1.0)
-        let R = Vertex(x: xStart + width, y: yStart + height, z: zStart, r:  0.0, g:  0.0, b:  0.0, a:  1.0)
-        let S = Vertex(x: xStart, y: yStart, z: zStart, r:  0.0, g:  0.0, b:  0.0, a:  1.0)
-        let T = Vertex(x: xStart + width, y: yStart, z: zStart, r:  0.0, g:  0.0, b:  0.0, a:  1.0)
+        var position: [customFloat4] = []
         
-        verticesArray.append(A)
-        verticesArray.append(B)
-        verticesArray.append(C)
+        // front face
         
-        verticesArray.append(A)
-        verticesArray.append(C)
-        verticesArray.append(D)   //Front
+        position.append(customFloat4(x: x, y: y, z: z, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y, z: z, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y + height, z: z, w: 1.0))
         
+        position.append(customFloat4(x: x + width, y: y + height, z: z, w: 1.0))
+        position.append(customFloat4(x: x, y: y + height, z: z, w: 1.0))
+        position.append(customFloat4(x: x, y: y, z: z, w: 1.0))
         
-        verticesArray.append(R)
-        verticesArray.append(T)
-        verticesArray.append(S)
+        // right face
         
-        verticesArray.append(Q)
-        verticesArray.append(R)
-        verticesArray.append(S)   //Back
+        position.append(customFloat4(x: x + width, y: y, z: z, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y + height, z: z, w: 1.0))
         
-        verticesArray.append(Q)
-        verticesArray.append(S)
-        verticesArray.append(B)
+        position.append(customFloat4(x: x + width, y: y, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y + height, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y + height, z: z, w: 1.0))
         
-        verticesArray.append(Q)
-        verticesArray.append(B)
-        verticesArray.append(A)   //Left
+        // back face
         
-        verticesArray.append(D)
-        verticesArray.append(C)
-        verticesArray.append(T)
+        position.append(customFloat4(x: x + width, y: y, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x, y: y, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y + height, z: z - depth, w: 1.0))
         
-        verticesArray.append(D)
-        verticesArray.append(T)
-        verticesArray.append(R)   //Right
+        position.append(customFloat4(x: x, y: y + height, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y + height, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x, y: y, z: z - depth, w: 1.0))
         
-        verticesArray.append(Q)
-        verticesArray.append(A)
-        verticesArray.append(D)
+        // left face
         
-        verticesArray.append(Q)
-        verticesArray.append(D)
-        verticesArray.append(R)   //Top
+        position.append(customFloat4(x: x, y: y, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x, y: y, z: z, w: 1.0))
+        position.append(customFloat4(x: x, y: y + height, z: z - depth, w: 1.0))
         
-        verticesArray.append(B)
-        verticesArray.append(S)
-        verticesArray.append(T)
+        position.append(customFloat4(x: x, y: y + height, z: z, w: 1.0))
+        position.append(customFloat4(x: x, y: y + height, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x, y: y, z: z, w: 1.0))
         
-        verticesArray.append(B)
-        verticesArray.append(T)
-        verticesArray.append(C)    //Bot
-        */
+        // top face
+        
+        position.append(customFloat4(x: x + width, y: y + height, z: z, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y + height, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x, y: y + height, z: z - depth, w: 1.0))
+        
+        position.append(customFloat4(x: x, y: y + height, z: z, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y + height, z: z, w: 1.0))
+        position.append(customFloat4(x: x, y: y + height, z: z - depth, w: 1.0))
+        
+        // bottom face
+        
+        position.append(customFloat4(x: x + width, y: y, z: z, w: 1.0))
+        position.append(customFloat4(x: x, y: y, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y, z: z - depth, w: 1.0))
+        
+        position.append(customFloat4(x: x, y: y, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y, z: z, w: 1.0))
+        position.append(customFloat4(x: x, y: y, z: z, w: 1.0))
+
+        for i in 0..<36 {
+            indices.append(i)
+            
+            var vertex: Vertex = Vertex()
+            vertex.position = position[i]
+            vertex.customColor = customFloat4(x: Float(rgb.r) / 255.0, y: Float(rgb.g) / 255.0, z: Float(rgb.b) / 255.0, w: 1.0)
+            
+            var lineVertex: Vertex = Vertex()
+            lineVertex.position = position[i]
+            lineVertex.customColor = customFloat4(x: 0.0, y: 0.0, z: 0.0, w: 1.0)
+            
+            vertices.append(vertex)
+            lineVertices.append(lineVertex)
+        }
     }
     
-    func appendCube(xStart: Float, yStart: Float, zStart: Float, width: Float, height: Float, depth: Float) {
-        /*let A = Vertex(x: xStart, y: yStart + height, z: zStart + depth, r:  1.0, g:  1.0, b:  0.0, a:  1.0)
-        let B = Vertex(x: xStart, y: yStart, z: zStart + depth, r:  0.0, g:  1.0, b:  1.0, a:  1.0)
-        let C = Vertex(x: xStart + width, y: yStart, z: zStart + depth, r:  1.0, g:  1.0, b:  0.0, a:  1.0)
-        let D = Vertex(x: xStart + width, y: yStart + height, z: zStart + depth, r:  0.1, g:  0.6, b:  0.4, a:  1.0)
-        
-        let Q = Vertex(x: xStart, y: yStart + height, z: zStart, r:  1.0, g:  0.0, b:  0.0, a:  1.0)
-        let R = Vertex(x: xStart + width, y: yStart + height, z: zStart, r:  0.0, g:  1.0, b:  0.0, a:  1.0)
-        let S = Vertex(x: xStart, y: yStart, z: zStart, r:  0.0, g:  0.0, b:  1.0, a:  1.0)
-        let T = Vertex(x: xStart + width, y: yStart, z: zStart, r:  0.1, g:  0.6, b:  0.4, a:  1.0)
-        
-        verticesArray.append(A)
-        verticesArray.append(B)
-        verticesArray.append(C)
-        
-        verticesArray.append(A)
-        verticesArray.append(C)
-        verticesArray.append(D)   //Front
-        
-        
-        verticesArray.append(R)
-        verticesArray.append(T)
-        verticesArray.append(S)
-        
-        verticesArray.append(Q)
-        verticesArray.append(R)
-        verticesArray.append(S)   //Back
-            
-        verticesArray.append(Q)
-        verticesArray.append(S)
-        verticesArray.append(B)
-        
-        verticesArray.append(Q)
-        verticesArray.append(B)
-        verticesArray.append(A)   //Left
-        
-        verticesArray.append(D)
-        verticesArray.append(C)
-        verticesArray.append(T)
-        
-        verticesArray.append(D)
-        verticesArray.append(T)
-        verticesArray.append(R)   //Right
-            
-        verticesArray.append(Q)
-        verticesArray.append(A)
-        verticesArray.append(D)
-        
-        verticesArray.append(Q)
-        verticesArray.append(D)
-        verticesArray.append(R)   //Top
-        
-        verticesArray.append(B)
-        verticesArray.append(S)
-        verticesArray.append(T)
-        
-        verticesArray.append(B)
-        verticesArray.append(T)
-        verticesArray.append(C)    //Bot
-        */
+    private func appendNormals() {
+        /*
+         simd::float3 customNormal[12];
+         
+         simd::float3 edge1, edge2, cross;
+         float len;
+         
+         
+         for (int i = 0, nth = 0; nth < 12; i += 3, nth++) {
+         edge1 = {position[i + 1].x - position[i].x, position[i + 1].y - position[i].y, position[i + 1].z - position[i].z};
+         edge2 = {position[i + 2].x - position[i].x, position[i + 2].y - position[i].y, position[i + 2].z - position[i].z};
+         
+         cross = {edge1.y * edge2.z - edge1.z * edge2.y, edge1.z * edge2.x - edge1.x * edge2.z, edge1.x * edge2.y - edge1.y * edge2.x};
+         
+         len = sqrt(cross.x * cross.x + cross.y * cross.y + cross.z * cross.z);
+         
+         customNormal[nth] = {cross.x / len, cross.y / len, cross.z / len};
+         }
+         
+         
+         
+         simd::float3 customVertexNormal;
+         
+         // front
+         
+         customVertexNormal = {customNormal[0].x + customNormal[1].x + customNormal[2].x + customNormal[3].x + customNormal[8].x + customNormal[9].x,
+         customNormal[0].y + customNormal[1].y + customNormal[2].y + customNormal[3].y + customNormal[8].y + customNormal[9].y,
+         customNormal[0].z + customNormal[1].z + customNormal[2].z + customNormal[3].z + customNormal[8].z + customNormal[9].z};
+         self.bigVertices[2 + self.totalIndices].normal = normalize(customVertexNormal);
+         self.bigVertices[3 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[0].x + customNormal[1].x + customNormal[6].x + customNormal[7].x + customNormal[11].x,
+         customNormal[0].y + customNormal[1].y + customNormal[6].y + customNormal[7].y + customNormal[11].y,
+         customNormal[0].z + customNormal[1].z + customNormal[6].z + customNormal[7].z + customNormal[11].z};
+         self.bigVertices[0 + self.totalIndices].normal = normalize(customVertexNormal);
+         self.bigVertices[5 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[0].x + customNormal[2].x + customNormal[10].x + customNormal[11].x,
+         customNormal[0].y + customNormal[2].y + customNormal[10].y + customNormal[11].y,
+         customNormal[0].z + customNormal[2].z + customNormal[10].z + customNormal[11].z};
+         self.bigVertices[1 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[1].x + customNormal[7].x + customNormal[9].x,
+         customNormal[1].y + customNormal[7].y + customNormal[9].y,
+         customNormal[1].z + customNormal[7].z + customNormal[9].z};
+         self.bigVertices[4 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         // right
+         
+         customVertexNormal = {customNormal[2].x + customNormal[3].x + customNormal[4].x + customNormal[10].x,
+         customNormal[2].y + customNormal[3].y + customNormal[4].y + customNormal[10].y,
+         customNormal[2].z + customNormal[3].z + customNormal[4].z + customNormal[10].z};
+         self.bigVertices[7 + self.totalIndices].normal = normalize(customVertexNormal);
+         self.bigVertices[9 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[0].x + customNormal[1].x + customNormal[2].x + customNormal[3].x + customNormal[8].x + customNormal[9].x,
+         customNormal[0].y + customNormal[1].y + customNormal[2].y + customNormal[3].y + customNormal[8].y + customNormal[9].y,
+         customNormal[0].z + customNormal[1].z + customNormal[2].z + customNormal[3].z + customNormal[8].z + customNormal[9].z};
+         self.bigVertices[8 + self.totalIndices].normal = normalize(customVertexNormal);
+         self.bigVertices[11 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[0].x + customNormal[2].x + customNormal[10].x + customNormal[11].x,
+         customNormal[0].y + customNormal[2].y + customNormal[10].y + customNormal[11].y,
+         customNormal[0].z + customNormal[2].z + customNormal[10].z + customNormal[11].z};
+         self.bigVertices[6 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[3].x + customNormal[4].x + customNormal[5].x + customNormal[8].x,
+         customNormal[3].y + customNormal[4].y + customNormal[5].y + customNormal[8].y,
+         customNormal[3].z + customNormal[4].z + customNormal[5].z + customNormal[8].z};
+         self.bigVertices[10 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         // back
+         
+         customVertexNormal = {customNormal[4].x + customNormal[5].x + customNormal[6].x + customNormal[10].x + customNormal[11].x,
+         customNormal[4].y + customNormal[5].y + customNormal[6].y + customNormal[10].y + customNormal[11].y,
+         customNormal[4].z + customNormal[5].z + customNormal[6].z + customNormal[10].z + customNormal[11].z};
+         self.bigVertices[13 + self.totalIndices].normal = normalize(customVertexNormal);
+         self.bigVertices[17 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[3].x + customNormal[4].x + customNormal[5].x + customNormal[8].x,
+         customNormal[3].y + customNormal[4].y + customNormal[5].y + customNormal[8].y,
+         customNormal[3].z + customNormal[4].z + customNormal[5].z + customNormal[8].z};
+         self.bigVertices[14 + self.totalIndices].normal = normalize(customVertexNormal);
+         self.bigVertices[16 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[2].x + customNormal[3].x + customNormal[4].x + customNormal[10].x,
+         customNormal[2].y + customNormal[3].y + customNormal[4].y + customNormal[10].y,
+         customNormal[2].z + customNormal[3].z + customNormal[4].z + customNormal[10].z};
+         self.bigVertices[12 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[5].x + customNormal[6].x + customNormal[7].x + customNormal[8].x + customNormal[9].x,
+         customNormal[5].y + customNormal[6].y + customNormal[7].y + customNormal[8].y + customNormal[9].y,
+         customNormal[5].z + customNormal[6].z + customNormal[7].z + customNormal[8].z + customNormal[9].z};
+         self.bigVertices[15 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         // left
+         
+         customVertexNormal = {customNormal[0].x + customNormal[1].x + customNormal[6].x + customNormal[7].x + customNormal[11].x,
+         customNormal[0].y + customNormal[1].y + customNormal[6].y + customNormal[7].y + customNormal[11].y,
+         customNormal[0].z + customNormal[1].z + customNormal[6].z + customNormal[7].z + customNormal[11].z};
+         self.bigVertices[19 + self.totalIndices].normal = normalize(customVertexNormal);
+         self.bigVertices[23 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[5].x + customNormal[6].x + customNormal[7].x + customNormal[8].x + customNormal[9].x,
+         customNormal[5].y + customNormal[6].y + customNormal[7].y + customNormal[8].y + customNormal[9].y,
+         customNormal[5].z + customNormal[6].z + customNormal[7].z + customNormal[8].z + customNormal[9].z};
+         self.bigVertices[20 + self.totalIndices].normal = normalize(customVertexNormal);
+         self.bigVertices[22 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         
+         customVertexNormal = {customNormal[4].x + customNormal[5].x + customNormal[6].x + customNormal[10].x + customNormal[11].x,
+         customNormal[4].y + customNormal[5].y + customNormal[6].y + customNormal[10].y + customNormal[11].y,
+         customNormal[4].z + customNormal[5].z + customNormal[6].z + customNormal[10].z + customNormal[11].z};
+         self.bigVertices[18 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[1].x + customNormal[7].x + customNormal[9].x,
+         customNormal[1].y + customNormal[7].y + customNormal[9].y,
+         customNormal[1].z + customNormal[7].z + customNormal[9].z};
+         self.bigVertices[21 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         // top
+         
+         customVertexNormal = {customNormal[5].x + customNormal[6].x + customNormal[7].x + customNormal[8].x + customNormal[9].x,
+         customNormal[5].y + customNormal[6].y + customNormal[7].y + customNormal[8].y + customNormal[9].y,
+         customNormal[5].z + customNormal[6].z + customNormal[7].z + customNormal[8].z + customNormal[9].z};
+         self.bigVertices[26 + self.totalIndices].normal = normalize(customVertexNormal);
+         self.bigVertices[29 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[0].x + customNormal[1].x + customNormal[2].x + customNormal[3].x + customNormal[8].x + customNormal[9].x,
+         customNormal[0].y + customNormal[1].y + customNormal[2].y + customNormal[3].y + customNormal[8].y + customNormal[9].y,
+         customNormal[0].z + customNormal[1].z + customNormal[2].z + customNormal[3].z + customNormal[8].z + customNormal[9].z};
+         self.bigVertices[24 + self.totalIndices].normal = normalize(customVertexNormal);
+         self.bigVertices[28 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[3].x + customNormal[4].x + customNormal[5].x + customNormal[8].x,
+         customNormal[3].y + customNormal[4].y + customNormal[5].y + customNormal[8].y,
+         customNormal[3].z + customNormal[4].z + customNormal[5].z + customNormal[8].z};
+         self.bigVertices[25 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[1].x + customNormal[7].x + customNormal[9].x,
+         customNormal[1].y + customNormal[7].y + customNormal[9].y,
+         customNormal[1].z + customNormal[7].z + customNormal[9].z};
+         self.bigVertices[27 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         // bottom
+         
+         customVertexNormal = {customNormal[0].x + customNormal[2].x + customNormal[10].x + customNormal[11].x,
+         customNormal[0].y + customNormal[2].y + customNormal[10].y + customNormal[11].y,
+         customNormal[0].z + customNormal[2].z + customNormal[10].z + customNormal[11].z};
+         self.bigVertices[30 + self.totalIndices].normal = normalize(customVertexNormal);
+         self.bigVertices[34 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[4].x + customNormal[5].x + customNormal[6].x + customNormal[10].x + customNormal[11].x,
+         customNormal[4].y + customNormal[5].y + customNormal[6].y + customNormal[10].y + customNormal[11].y,
+         customNormal[4].z + customNormal[5].z + customNormal[6].z + customNormal[10].z + customNormal[11].z};
+         self.bigVertices[31 + self.totalIndices].normal = normalize(customVertexNormal);
+         self.bigVertices[33 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[2].x + customNormal[3].x + customNormal[4].x + customNormal[10].x,
+         customNormal[2].y + customNormal[3].y + customNormal[4].y + customNormal[10].y,
+         customNormal[2].z + customNormal[3].z + customNormal[4].z + customNormal[10].z};
+         self.bigVertices[32 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         customVertexNormal = {customNormal[0].x + customNormal[1].x + customNormal[6].x + customNormal[7].x + customNormal[11].x,
+         customNormal[0].y + customNormal[1].y + customNormal[6].y + customNormal[7].y + customNormal[11].y,
+         customNormal[0].z + customNormal[1].z + customNormal[6].z + customNormal[7].z + customNormal[11].z};
+         self.bigVertices[35 + self.totalIndices].normal = normalize(customVertexNormal);
+         
+         */
     }
     
-    init(device: MTLDevice){
+    init(x: Float, y: Float, z: Float, width: Float, height: Float, depth: Float, rgb: (r: Int, g: Int, b: Int)) {
+        self.x = x; self.y = y; self.z = z
+        self.width = width; self.height = height; self.depth = depth
+        self.rgb = rgb
         
-        
-        
-        super.init(name: "Cube", device: device)
-        
-        //appendBorderCube(xStart: -3.0, yStart: -1.2, zStart: 2.5, width: 6.0, height: 0.2, depth: 0.5)
-        
-        appendCube(xStart: -1.0, yStart: 0.5, zStart: -1.0, width: 2.0, height: 1.0, depth: 2.0)
-        appendCube(xStart: -3.0, yStart: -1.0, zStart: -3.0, width: 6.0, height: 0.5, depth: 6.0)//base
-        
-        
-        //appendBorderCube(xStart: -3.0, yStart: -0.5, zStart: 2.5, width: 6.0, height: 0.2, depth: 0.5)
-        
-        
-        super.finalize(vertices: verticesArray)
+        super.init()
+        appendCube()
     }
 }

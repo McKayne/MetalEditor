@@ -217,7 +217,7 @@
     
     MTLRenderPassDescriptor *renderPass = [MTLRenderPassDescriptor renderPassDescriptor];
     renderPass.colorAttachments[0].texture = self.framebufferTexture;
-    renderPass.colorAttachments[0].clearColor = MTLClearColorMake(0.9, 0.9, 0.9, 1);
+    renderPass.colorAttachments[0].clearColor = MTLClearColorMake(0.7, 0.7, 1.0, 1);
     renderPass.colorAttachments[0].storeAction = MTLStoreActionStore;
     renderPass.colorAttachments[0].loadAction = MTLLoadActionClear;
     
@@ -243,10 +243,14 @@
     
     
     if (false) {
-    [self.commandEncoder setFrontFacingWinding:MTLWindingCounterClockwise];
-    [self.commandEncoder setCullMode:MTLCullModeNone];
+        [self.commandEncoder setFrontFacingWinding:MTLWindingCounterClockwise];
+        [self.commandEncoder setCullMode:MTLCullModeNone];
     } else {
-        [self.commandEncoder setCullMode:MTLCullModeBack];
+        if (false) {
+            [self.commandEncoder setCullMode:MTLCullModeBack];
+        } else {
+            [self.commandEncoder setCullMode:MTLCullModeNone];
+        }
     }
 }
 
@@ -279,7 +283,7 @@
     id<MTLSamplerState> sampler = [self.device newSamplerStateWithDescriptor:descriptor];
     [self.commandEncoder setFragmentSamplerState:sampler atIndex:0];
     
-    MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatDepth32Float width:322 height:480 mipmapped:NO];
+    /*MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatDepth32Float width:322 height:480 mipmapped:NO];
     MTKTextureLoader *loader = [[MTKTextureLoader alloc] initWithDevice:self.device];
     
     id<MTLTexture> customTexture = [self.device newTextureWithDescriptor:desc];
@@ -312,7 +316,7 @@
     if (textureC == nil) {
         NSLog(@"NIL texture");
     }
-    [self.commandEncoder setFragmentTexture:textureD atIndex:3];
+    [self.commandEncoder setFragmentTexture:textureD atIndex:3];*/
     
     
     [self.commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
@@ -352,14 +356,21 @@
     self.mainView = view;
 }
 
-- (void)endFrame {
-    NSLog(@"END FRAME");
+- (void)takeScreenshot {
+    [self.commandBuffer waitUntilCompleted];
     
-    /*int width = (int)[self.framebufferTexture width];
+    int width = (int)[self.framebufferTexture width];
     int height = (int)[self.framebufferTexture height];
     int rowBytes = width * 4;
     int selfturesize = width * height * 4;
     NSLog(@">> %d %d", width, height);
+    
+    char* rgb = malloc(selfturesize);
+    [self.framebufferTexture getBytes:rgb bytesPerRow:rowBytes fromRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0];
+    /*for (int i = 0; i < 100; i++) {
+     NSLog(@"RGB %d %d %d %d", (int) rgb[i * 4] + 256, (int) rgb[i * 4 + 1] + 256, (int) rgb[i * 4 + 2] + 256, (int) rgb[i * 4 + 3] + 256);
+     }*/
+    
     
     void *p = malloc(selfturesize);
     
@@ -369,75 +380,45 @@
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little | kCGImageAlphaFirst;
     
-    CGDataProviderRef provider = CGDataProviderCreateWithData(nil, p, selfturesize, nil);
+    CGDataProviderRef provider = CGDataProviderCreateWithData(nil, rgb, selfturesize, nil);
     CGImageRef cgImageRef = CGImageCreate(width, height, 8, 32, rowBytes, colorSpace, bitmapInfo, provider, nil, true, (CGColorRenderingIntent)kCGRenderingIntentDefault);
     
     UIImage *getImage = [UIImage imageWithCGImage:cgImageRef];
     CFRelease(cgImageRef);
     free(p);
     
-    NSData *pngData = UIImagePNGRepresentation(getImage);
-    //NSData *pngData = UIImageJPEGRepresentation(getImage, 0.0);
-    UIImage *pngImage = [UIImage imageWithData:pngData];
+    if (getImage == nil) {
+        NSLog(@"Nil Image");
+    }
     
-    UIImageWriteToSavedPhotosAlbum(pngImage, self, @selector(completeSavedImage:didFinishSavingWithError:contextInfo:), nil);*/
+    NSData *jpgData = UIImageJPEGRepresentation(getImage, 1.0f);
+    UIImage *jpgImage = [UIImage imageWithData:jpgData];
+    
+    //UIImage *image = [UIImage imageWithData:[chart getImage]];
+    NSArray *activityItems = @[jpgImage];
+    UIActivityViewController *activityViewControntroller = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+    activityViewControntroller.excludedActivityTypes = @[];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+    activityViewControntroller.popoverPresentationController.sourceView = self.mainView.view;
+    activityViewControntroller.popoverPresentationController.sourceRect = CGRectMake(self.mainView.view.bounds.size.width/2, self.mainView.view.bounds.size.height/4, 0, 0);
+    }
+    [self.mainView presentViewController:activityViewControntroller animated:true completion:nil];
+    
+    //UIImageWriteToSavedPhotosAlbum(jpgImage, self, @selector(completeSavedImage:didFinishSavingWithError:contextInfo:), nil);
+}
+
+- (void)endFrame {
+    NSLog(@"END FRAME");
+    
     
     
     [self.commandEncoder endEncoding];
     
-    if (self.drawable)
-    {
+    if (self.drawable) {
         [self.commandBuffer presentDrawable:self.drawable];
         [self.commandBuffer commit];
         
-        [self.commandBuffer waitUntilCompleted];
-        
-        int width = (int)[self.framebufferTexture width];
-        int height = (int)[self.framebufferTexture height];
-        int rowBytes = width * 4;
-        int selfturesize = width * height * 4;
-        NSLog(@">> %d %d", width, height);
-        
-        char* rgb = malloc(selfturesize);
-        [self.framebufferTexture getBytes:rgb bytesPerRow:rowBytes fromRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0];
-        /*for (int i = 0; i < 100; i++) {
-            NSLog(@"RGB %d %d %d %d", (int) rgb[i * 4] + 256, (int) rgb[i * 4 + 1] + 256, (int) rgb[i * 4 + 2] + 256, (int) rgb[i * 4 + 3] + 256);
-        }*/
-        
-        
-        void *p = malloc(selfturesize);
-        
-        
-        [self.framebufferTexture getBytes:p bytesPerRow:rowBytes fromRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0];
-        
-        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-        CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little | kCGImageAlphaFirst;
-        
-        CGDataProviderRef provider = CGDataProviderCreateWithData(nil, rgb, selfturesize, nil);
-        CGImageRef cgImageRef = CGImageCreate(width, height, 8, 32, rowBytes, colorSpace, bitmapInfo, provider, nil, true, (CGColorRenderingIntent)kCGRenderingIntentDefault);
-        
-        UIImage *getImage = [UIImage imageWithCGImage:cgImageRef];
-        CFRelease(cgImageRef);
-        free(p);
-        
-        if (getImage == nil) {
-            NSLog(@"Nil Image");
-        }
-        
-        NSData *jpgData = UIImageJPEGRepresentation(getImage, 1.0f);
-        UIImage *jpgImage = [UIImage imageWithData:jpgData];
-        
-        //UIImage *image = [UIImage imageWithData:[chart getImage]];
-        NSArray *activityItems = @[jpgImage];
-        UIActivityViewController *activityViewControntroller = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
-        activityViewControntroller.excludedActivityTypes = @[];
-        //if (UI\_USER\_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-            activityViewControntroller.popoverPresentationController.sourceView = self.mainView.view;
-            activityViewControntroller.popoverPresentationController.sourceRect = CGRectMake(self.mainView.view.bounds.size.width/2, self.mainView.view.bounds.size.height/4, 0, 0);
-        //}
-        //[self.mainView presentViewController:activityViewControntroller animated:true completion:nil];
-        
-        //UIImageWriteToSavedPhotosAlbum(jpgImage, self, @selector(completeSavedImage:didFinishSavingWithError:contextInfo:), nil);
+        //[self takeScreenshot];
         
         
         

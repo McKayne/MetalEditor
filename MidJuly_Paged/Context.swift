@@ -12,4 +12,5 @@ enum Context: Int {
     
     case initial
     case scaling
+    case addition
 }

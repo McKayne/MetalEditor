@@ -12,11 +12,11 @@ typedef struct {
     float x, y, z, w;
 } customFloat4;
 
-typedef struct {
+/*typedef struct {
     customFloat4 position;
     customFloat4 normal;
     customFloat4 customColor;
-} customVertex;
+} customVertex;*/
 
 typedef struct {
     customFloat4 position;
@@ -39,11 +39,12 @@ typedef struct {
 @property (nonatomic, strong) CAMetalLayer *metal;
 
 - (void)demo1;
+- (void)demo2;
 
-- (void)testBridge:(customVertex)v;
-- (void)setVertexArrays:(Vertex *)bigVertices bigLineVertices:(Vertex *)bigLineVertices;
+//- (void)testBridge:(customVertex)v;
+- (void)setVertexArrays:(Vertex *)bigVertices bigLineVertices:(Vertex *)bigLineVertices bigIndices:(uint16_t *)bigIndices bigLineIndices:(uint16_t *)bigLineIndices;
 
-- (void)customMetalLayer:(CALayer *)layer bounds:(CGRect)bounds;
+- (void)customMetalLayer:(CALayer *)layer bounds:(CGRect)bounds indicesCount:(int)indicesCount;
 - (void)appendAction:(float)x y:(float)y z:(float)z;
 - (void)removeAction:(int)type;
 - (void)takeScreenshot;
@@ -52,6 +53,8 @@ typedef struct {
 - (NSString *)exportOBJ:(NSString *)filename;
 - (NSString *)exportMTL:(NSString *)filename;
 - (NSString *)exportZIP:(NSString *)filename items:(NSArray *)items;
+
+- (void)showExportDialog;
 
 - (int)appendCube:(float)x y:(float)y z:(float)z
              width:(float)width height:(float)height depth:(float)depth
@@ -64,16 +67,6 @@ typedef struct {
 - (void)appendStairs:(float)x y:(float)y z:(float)z
                width:(float)width stepWidth:(float)stepWidth stepHeight:(float)stepHeight depth:(float)depth
                  red:(int)red green:(int)green blue:(int)blue;
-
-- (void)appendPyramid;
-
-- (void)appendCone:(float)x y:(float)y z:(float)z
-            radius:(float)radius height:(float)height
-               red:(int)red green:(int)green blue:(int)blue;
-
-- (void)appendCylinder:(float)x y:(float)y z:(float)z
-                radius:(float)radius height:(float)height
-                   red:(int)red green:(int)green blue:(int)blue;
 
 - (void)appendSphere:(float)x y:(float)y z:(float)z
               radius:(float)radius
@@ -114,13 +107,13 @@ typedef struct {
 - (void)translateObject:(int)offset length:(int)length xTranslate:(float)xTranslate yTranslate:(float)yTranslate zTranslate:(float)zTranslate;
 
 - (void)translateVertex:(int)offset length:(int)length x:(float)x y:(float)y z:(float)z xTranslate:(float)xTranslate yTranslate:(float)yTranslate zTranslate:(float)zTranslate debug:(BOOL)debug;
-- (void)scaleObject:(int)offset length:(int)length xScale:(float)xScale yScale:(float)yScale zScale:(float)zScale;
 
 - (void)setFaceTexture:(int)offset nth:(int)nth texNth:(int)texNth;
 
 - (int)getTotalIndices;
 
 - (void)redraw;
+- (void)loadModel:(int)indicesCount;
 
 @end
 

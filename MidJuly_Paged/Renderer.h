@@ -12,6 +12,8 @@
 
 - (id<MTLBuffer>)newBufferWithBytes:(const void *)bytes length:(NSUInteger)length;
 
+- (void)takeScreenshot;
+
 - (void)startFrame;
 - (void)endFrame;
 

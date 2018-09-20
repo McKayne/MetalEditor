@@ -12,9 +12,12 @@ class RootViewController: UIViewController, UIPageViewControllerDelegate {
 
     var pageViewController: UIPageViewController?
 
-
+    static var scenes: [Scene] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        Demo1.demo()
         
         
         
@@ -73,6 +76,7 @@ class RootViewController: UIViewController, UIPageViewControllerDelegate {
 
         // In landscape orientation: Set set the spine location to "mid" and the page view controller's view controllers array to contain two view controllers. If the current page is even, set it to contain the current and next view controllers; if it is odd, set the array to contain the previous and current view controllers.
         let currentViewController = self.pageViewController!.viewControllers![0] as! DataViewController
+        
         var viewControllers: [UIViewController]
 
         let indexOfCurrentViewController = self.modelController.indexOfViewController(currentViewController)

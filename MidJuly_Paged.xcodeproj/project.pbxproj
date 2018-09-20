@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		7F2583AE214CB71600B332AC /* Export.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F2583AD214CB71600B332AC /* Export.swift */; };
-		7F311049214D4CDB005FEA89 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F311048214D4CDB005FEA89 /* Model.swift */; };
 		7F39E8EA2148AC7200252FF6 /* SSZipArchive.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8E62148AC7200252FF6 /* SSZipArchive.h */; };
 		7F39E8EB2148AC7200252FF6 /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8E72148AC7200252FF6 /* SSZipArchive.m */; };
 		7F39E8EC2148AC7200252FF6 /* SSZipCommon.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8E82148AC7200252FF6 /* SSZipCommon.h */; };
@@ -47,6 +46,16 @@
 		7F39E92F2148ACE900252FF6 /* pwd2key.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E91B2148ACE900252FF6 /* pwd2key.h */; };
 		7F39E9302148ACE900252FF6 /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E91C2148ACE900252FF6 /* sha1.c */; };
 		7F39E9312148ACE900252FF6 /* sha1.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E91D2148ACE900252FF6 /* sha1.h */; };
+		7F61E4542150D73300F0AA29 /* SceneObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F61E4532150D73300F0AA29 /* SceneObject.swift */; };
+		7F61E4562150D82300F0AA29 /* Cube.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F61E4552150D82300F0AA29 /* Cube.swift */; };
+		7F61E4582150DDF200F0AA29 /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F61E4572150DDF200F0AA29 /* Scene.swift */; };
+		7F61E45A2151132600F0AA29 /* PropertiesTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F61E4592151132600F0AA29 /* PropertiesTableViewDataSource.swift */; };
+		7F61E45C2151664200F0AA29 /* Face.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F61E45B2151664200F0AA29 /* Face.swift */; };
+		7F61E45E215171A800F0AA29 /* Cone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F61E45D215171A800F0AA29 /* Cone.swift */; };
+		7F61E460215177A000F0AA29 /* Pyramid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F61E45F215177A000F0AA29 /* Pyramid.swift */; };
+		7F61E46221517AC800F0AA29 /* Cylinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F61E46121517AC800F0AA29 /* Cylinder.swift */; };
+		7F61E46421518E6600F0AA29 /* Demo1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F61E46321518E6600F0AA29 /* Demo1.swift */; };
+		7F61E466215317A900F0AA29 /* CompoundRoof.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F61E465215317A900F0AA29 /* CompoundRoof.swift */; };
 		7F68312321001CBC00B8FC8E /* Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F68312221001CBC00B8FC8E /* Test.m */; };
 		7F68312621001D5F00B8FC8E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F68312521001D5F00B8FC8E /* AppDelegate.m */; };
 		7F68312921001D8A00B8FC8E /* MetalView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F68312821001D8A00B8FC8E /* MetalView.m */; };
@@ -68,7 +77,6 @@
 		7FEBAC2120F7C47F00D99284 /* MidJuly_PagedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC2020F7C47F00D99284 /* MidJuly_PagedTests.swift */; };
 		7FEBAC2C20F7C47F00D99284 /* MidJuly_PagedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC2B20F7C47F00D99284 /* MidJuly_PagedUITests.swift */; };
 		7FEBAC3A20F7CD2B00D99284 /* TopBlueprintViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC3920F7CD2B00D99284 /* TopBlueprintViewController.swift */; };
-		7FEBAC3C20F7F44200D99284 /* Cube.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC3B20F7F44200D99284 /* Cube.swift */; };
 		7FEBAC4020F7F49300D99284 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC3F20F7F49300D99284 /* Node.swift */; };
 		7FEBAC4220F7F4B700D99284 /* Matrix4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC4120F7F4B700D99284 /* Matrix4.swift */; };
 		7FEBAC4420F7F67D00D99284 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC4320F7F67D00D99284 /* Shaders.metal */; };
@@ -105,7 +113,6 @@
 
 /* Begin PBXFileReference section */
 		7F2583AD214CB71600B332AC /* Export.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Export.swift; sourceTree = "<group>"; };
-		7F311048214D4CDB005FEA89 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		7F39E8E62148AC7200252FF6 /* SSZipArchive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SSZipArchive.h; path = MidJuly_Paged/SSZipArchive/SSZipArchive.h; sourceTree = "<group>"; };
 		7F39E8E72148AC7200252FF6 /* SSZipArchive.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SSZipArchive.m; path = MidJuly_Paged/SSZipArchive/SSZipArchive.m; sourceTree = "<group>"; };
 		7F39E8E82148AC7200252FF6 /* SSZipCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SSZipCommon.h; path = MidJuly_Paged/SSZipArchive/SSZipCommon.h; sourceTree = "<group>"; };
@@ -144,6 +151,16 @@
 		7F39E91B2148ACE900252FF6 /* pwd2key.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pwd2key.h; path = MidJuly_Paged/SSZipArchive/minizip/aes/pwd2key.h; sourceTree = "<group>"; };
 		7F39E91C2148ACE900252FF6 /* sha1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = sha1.c; path = MidJuly_Paged/SSZipArchive/minizip/aes/sha1.c; sourceTree = "<group>"; };
 		7F39E91D2148ACE900252FF6 /* sha1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sha1.h; path = MidJuly_Paged/SSZipArchive/minizip/aes/sha1.h; sourceTree = "<group>"; };
+		7F61E4532150D73300F0AA29 /* SceneObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneObject.swift; sourceTree = "<group>"; };
+		7F61E4552150D82300F0AA29 /* Cube.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cube.swift; sourceTree = "<group>"; };
+		7F61E4572150DDF200F0AA29 /* Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
+		7F61E4592151132600F0AA29 /* PropertiesTableViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PropertiesTableViewDataSource.swift; sourceTree = "<group>"; };
+		7F61E45B2151664200F0AA29 /* Face.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Face.swift; sourceTree = "<group>"; };
+		7F61E45D215171A800F0AA29 /* Cone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cone.swift; sourceTree = "<group>"; };
+		7F61E45F215177A000F0AA29 /* Pyramid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pyramid.swift; sourceTree = "<group>"; };
+		7F61E46121517AC800F0AA29 /* Cylinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cylinder.swift; sourceTree = "<group>"; };
+		7F61E46321518E6600F0AA29 /* Demo1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Demo1.swift; sourceTree = "<group>"; };
+		7F61E465215317A900F0AA29 /* CompoundRoof.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompoundRoof.swift; sourceTree = "<group>"; };
 		7F68312121001CBC00B8FC8E /* MidJuly_Paged-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MidJuly_Paged-Bridging-Header.h"; sourceTree = "<group>"; };
 		7F68312221001CBC00B8FC8E /* Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test.m; sourceTree = "<group>"; };
 		7F68312421001D5F00B8FC8E /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -179,7 +196,6 @@
 		7FEBAC2B20F7C47F00D99284 /* MidJuly_PagedUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidJuly_PagedUITests.swift; sourceTree = "<group>"; };
 		7FEBAC2D20F7C47F00D99284 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7FEBAC3920F7CD2B00D99284 /* TopBlueprintViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopBlueprintViewController.swift; sourceTree = "<group>"; };
-		7FEBAC3B20F7F44200D99284 /* Cube.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cube.swift; sourceTree = "<group>"; };
 		7FEBAC3F20F7F49300D99284 /* Node.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 		7FEBAC4120F7F4B700D99284 /* Matrix4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix4.swift; sourceTree = "<group>"; };
 		7FEBAC4320F7F67D00D99284 /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
@@ -226,6 +242,7 @@
 		7FEBABFB20F7C47E00D99284 = {
 			isa = PBXGroup;
 			children = (
+				7F61E4572150DDF200F0AA29 /* Scene.swift */,
 				7F39E90A2148ACE900252FF6 /* aes_ni.c */,
 				7F39E90B2148ACE900252FF6 /* aes_ni.h */,
 				7F39E90C2148ACE900252FF6 /* aes.h */,
@@ -288,16 +305,18 @@
 				7FEEBC6D2148A9FC00023376 /* SSZipArchive */,
 				7FEBAC0720F7C47E00D99284 /* AppDelegate.swift */,
 				7FEBAC0920F7C47E00D99284 /* RootViewController.swift */,
+				7F61E46321518E6600F0AA29 /* Demo1.swift */,
+				7F61E465215317A900F0AA29 /* CompoundRoof.swift */,
 				7FEBAC0B20F7C47E00D99284 /* DataViewController.swift */,
 				7F8230DD214C6FEB00BD262C /* Context.swift */,
 				7F8230DB214C0CD900BD262C /* ActionsTableViewDataSource.swift */,
+				7F61E4592151132600F0AA29 /* PropertiesTableViewDataSource.swift */,
 				7F68313B2104038200B8FC8E /* Vertex.swift */,
 				7F68312221001CBC00B8FC8E /* Test.m */,
 				7FEBAC4920F9793000D99284 /* Triangle.swift */,
 				7FEBAC4B20F979F300D99284 /* Node2D.swift */,
 				7FEBAC4320F7F67D00D99284 /* Shaders.metal */,
 				7FEBAC0D20F7C47E00D99284 /* ModelController.swift */,
-				7FEBAC3B20F7F44200D99284 /* Cube.swift */,
 				7FEBAC4520F7FE9300D99284 /* Line.swift */,
 				7FEBAC4720F9747200D99284 /* Shaders2D.metal */,
 				7FEBAC3F20F7F49300D99284 /* Node.swift */,
@@ -314,7 +333,12 @@
 				7F68313421001DE400B8FC8E /* Transforms.mm */,
 				7F68313521001DE400B8FC8E /* ViewController.h */,
 				7F68313621001DE400B8FC8E /* ViewController.mm */,
-				7F311048214D4CDB005FEA89 /* Model.swift */,
+				7F61E45B2151664200F0AA29 /* Face.swift */,
+				7F61E4532150D73300F0AA29 /* SceneObject.swift */,
+				7F61E4552150D82300F0AA29 /* Cube.swift */,
+				7F61E45D215171A800F0AA29 /* Cone.swift */,
+				7F61E45F215177A000F0AA29 /* Pyramid.swift */,
+				7F61E46121517AC800F0AA29 /* Cylinder.swift */,
 				7F2583AD214CB71600B332AC /* Export.swift */,
 				7FEEBC502145DAEC00023376 /* texture3.jpg */,
 				7F68312A21001DA700B8FC8E /* OBJModel.h */,
@@ -506,17 +530,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7F311049214D4CDB005FEA89 /* Model.swift in Sources */,
 				7F39E91E2148ACE900252FF6 /* aes_ni.c in Sources */,
 				7F39E91F2148ACE900252FF6 /* aes_ni.h in Sources */,
 				7F39E9202148ACE900252FF6 /* aes.h in Sources */,
 				7F39E9212148ACE900252FF6 /* aescrypt.c in Sources */,
 				7F39E9222148ACE900252FF6 /* aeskey.c in Sources */,
 				7F39E9232148ACE900252FF6 /* aesopt.h in Sources */,
+				7F61E466215317A900F0AA29 /* CompoundRoof.swift in Sources */,
 				7F39E9242148ACE900252FF6 /* aestab.c in Sources */,
 				7F39E9252148ACE900252FF6 /* aestab.h in Sources */,
 				7F39E9262148ACE900252FF6 /* brg_endian.h in Sources */,
 				7F39E9272148ACE900252FF6 /* brg_types.h in Sources */,
+				7F61E45C2151664200F0AA29 /* Face.swift in Sources */,
 				7F39E9282148ACE900252FF6 /* fileenc.c in Sources */,
 				7F39E9292148ACE900252FF6 /* fileenc.h in Sources */,
 				7F39E92A2148ACE900252FF6 /* hmac.c in Sources */,
@@ -527,8 +552,11 @@
 				7F39E92E2148ACE900252FF6 /* pwd2key.c in Sources */,
 				7F39E92F2148ACE900252FF6 /* pwd2key.h in Sources */,
 				7F39E9302148ACE900252FF6 /* sha1.c in Sources */,
+				7F61E4582150DDF200F0AA29 /* Scene.swift in Sources */,
 				7F39E9312148ACE900252FF6 /* sha1.h in Sources */,
+				7F61E45E215171A800F0AA29 /* Cone.swift in Sources */,
 				7F39E8FC2148ACC000252FF6 /* crypt.c in Sources */,
+				7F61E46221517AC800F0AA29 /* Cylinder.swift in Sources */,
 				7F39E8FD2148ACC000252FF6 /* crypt.h in Sources */,
 				7F39E8FE2148ACC000252FF6 /* ioapi_buf.c in Sources */,
 				7F39E8FF2148ACC000252FF6 /* ioapi_buf.h in Sources */,
@@ -538,10 +566,12 @@
 				7F39E9032148ACC000252FF6 /* ioapi.h in Sources */,
 				7F39E9042148ACC000252FF6 /* minishared.c in Sources */,
 				7F39E9052148ACC000252FF6 /* minishared.h in Sources */,
+				7F61E460215177A000F0AA29 /* Pyramid.swift in Sources */,
 				7F39E9062148ACC000252FF6 /* unzip.c in Sources */,
 				7F39E9072148ACC000252FF6 /* unzip.h in Sources */,
 				7F8230DC214C0CD900BD262C /* ActionsTableViewDataSource.swift in Sources */,
 				7F39E9082148ACC000252FF6 /* zip.c in Sources */,
+				7F61E4562150D82300F0AA29 /* Cube.swift in Sources */,
 				7F39E9092148ACC000252FF6 /* zip.h in Sources */,
 				7F39E8EA2148AC7200252FF6 /* SSZipArchive.h in Sources */,
 				7F39E8EB2148AC7200252FF6 /* SSZipArchive.m in Sources */,
@@ -551,15 +581,17 @@
 				7FEBAC4A20F9793000D99284 /* Triangle.swift in Sources */,
 				7F68312F21001DA700B8FC8E /* Renderer.m in Sources */,
 				7FEBAC0E20F7C47E00D99284 /* ModelController.swift in Sources */,
-				7FEBAC3C20F7F44200D99284 /* Cube.swift in Sources */,
+				7F61E46421518E6600F0AA29 /* Demo1.swift in Sources */,
 				7F68313C2104038200B8FC8E /* Vertex.swift in Sources */,
 				7F68312E21001DA700B8FC8E /* OBJModel.mm in Sources */,
 				7F68312921001D8A00B8FC8E /* MetalView.m in Sources */,
+				7F61E4542150D73300F0AA29 /* SceneObject.swift in Sources */,
 				7FEBAC4020F7F49300D99284 /* Node.swift in Sources */,
 				7F68313921001DE400B8FC8E /* Transforms.mm in Sources */,
 				7FEBAC4820F9747200D99284 /* Shaders2D.metal in Sources */,
 				7F68313A21001DE400B8FC8E /* ViewController.mm in Sources */,
 				7FEBAC4420F7F67D00D99284 /* Shaders.metal in Sources */,
+				7F61E45A2151132600F0AA29 /* PropertiesTableViewDataSource.swift in Sources */,
 				7FEBAC3A20F7CD2B00D99284 /* TopBlueprintViewController.swift in Sources */,
 				7FEBAC0C20F7C47E00D99284 /* DataViewController.swift in Sources */,
 				7FEBAC0820F7C47E00D99284 /* AppDelegate.swift in Sources */,

@@ -17,8 +17,6 @@ struct Uniforms {
 
 @objc class DataViewController: UIViewController, UITableViewDelegate {
     
-    var model = Model()
-    
     var bigVertices = UnsafeMutablePointer<Vertex>.allocate(capacity: 100000)
     var bigLineVertices = UnsafeMutablePointer<Vertex>.allocate(capacity: 100000)
     
@@ -57,6 +55,9 @@ struct Uniforms {
     let actionsTableView = UITableView(frame: CGRect(x: 0, y: 100, width: 320, height: 300))
     var actionsDataSource: ActionsTableViewDataSource?
     
+    let propertiesTableView = UITableView(frame: CGRect(x: 0, y: 100, width: 320, height: 300))
+    var propertiesDataSource: PropertiesTableViewDataSource?
+    
     let item = UINavigationItem(title: "Perspective")
     let actionsButton = UIBarButtonItem(title: "Actions", style: .done, target: self, action: #selector(showActionsList(sender:)))
     
@@ -84,8 +85,7 @@ struct Uniforms {
     
     var projectionMatrix: Matrix4!
     
-    
-    /*let vertexData:[Float] = [
+        /*let vertexData:[Float] = [
         0.0, 1.0, 0.0,
         -1.0, -1.0, 0.0,
         1.0, -1.0, 0.0]
@@ -287,7 +287,7 @@ struct Uniforms {
     func takeScreenshot(sender: UIButton!) {
         print("Taking screenshot")
         
-        contr.takeScreenshot()
+        contr.showExportDialog()
     }
     
     func showActionsList(sender: UIButton!) {
@@ -296,12 +296,19 @@ struct Uniforms {
         if actionsTableView.isHidden {
             actionsTableView.isHidden = false
             actionsButton.title = "Cancel"
-        } else{
-            context = .initial
-            actionsTableView.reloadData()
+        } else {
+            if context != .initial {
+                propertiesTableView.isHidden = true
+                context = .initial
+                actionsTableView.reloadData()
+                
+                
+            } else {
+                actionsTableView.isHidden = true
+                actionsButton.title = "Actions"
+            }
             
-            actionsTableView.isHidden = true
-            actionsButton.title = "Actions"
+            
         }
         
         
@@ -311,12 +318,20 @@ struct Uniforms {
     func applyAction(sender: UIButton!) {
         print("Applying")
         
-        let xScale = Float((actionsDataSource?.xText.text!)!)!
-        let yScale = Float((actionsDataSource?.yText.text!)!)!
-        let zScale = Float((actionsDataSource?.zText.text!)!)!
+        if context == .scaling {
+            let xScale = Float((propertiesDataSource?.xText.text!)!)!
+            let yScale = Float((propertiesDataSource?.yText.text!)!)!
+            let zScale = Float((propertiesDataSource?.zText.text!)!)!
         
-        contr.scaleObject(0, length: contr.getTotalIndices(), xScale: xScale, yScale: yScale, zScale: zScale)
-        contr.redraw()
+            for object in RootViewController.scenes[0].objects {
+                object.scaleBy(widthMultiplier: 2, heightMultiplier: 2, depthMultiplier: 2)
+            }
+            
+            RootViewController.scenes[0].prepareForRender()
+            contr.loadModel(Int32(RootViewController.scenes[0].indicesCount))
+            //contr.scaleObject(0, length: contr.getTotalIndices(), xScale: xScale, yScale: yScale, zScale: zScale)
+            //contr.redraw()
+        }
         
         item.rightBarButtonItem = button
         
@@ -324,6 +339,8 @@ struct Uniforms {
         actionsTableView.reloadData()
         
         actionsTableView.isHidden = true
+        propertiesTableView.isHidden = true
+        
         actionsButton.title = "Actions"
     }
     
@@ -334,13 +351,42 @@ struct Uniforms {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(indexPath.row)
         
-        if context == .initial {
-            context = .scaling
+        switch indexPath.row {
+        case 0:
+            switch context {
+            case .addition:
+                print("Cube")
+                
+                propertiesTableView.isHidden = false
+            default:
+                print("dummy")
+            }
+        case 6:
+            if context == .initial {
+                context = .scaling
+                
+                propertiesTableView.reloadData()
+                propertiesTableView.isHidden = false
+                
+                item.rightBarButtonItem = applyButton
+            } else {
+                context = .initial
+            }
+        case 3:
+            print("Add object")
+            context = .addition
+            
+            propertiesTableView.reloadData()
             
             item.rightBarButtonItem = applyButton
-        } else {
-            context = .initial
+        case 10:
+            print("Exporting")
+            contr.takeScreenshot()
+        default:
+            print("dummy")
         }
+        
+        
         
         tableView.reloadData()
     }
@@ -402,6 +448,27 @@ struct Uniforms {
             actionsTableView.dataSource = actionsDataSource
             self.view.addSubview(actionsTableView)
             
+            actionsTableView.translatesAutoresizingMaskIntoConstraints = false;
+            actionsTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0.0).isActive = true
+            actionsTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0.0).isActive = true
+            actionsTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0.0).isActive = true
+            actionsTableView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 65.0).isActive = true
+            
+            propertiesTableView.tableFooterView = UIView(frame: .zero)
+            propertiesTableView.isHidden = true
+            
+            propertiesDataSource = PropertiesTableViewDataSource(controller: self)
+            
+            propertiesTableView.delegate = self
+            propertiesTableView.dataSource = propertiesDataSource
+            self.view.addSubview(propertiesTableView)
+            
+            propertiesTableView.translatesAutoresizingMaskIntoConstraints = false;
+            propertiesTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0.0).isActive = true
+            propertiesTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0.0).isActive = true
+            propertiesTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0.0).isActive = true
+            propertiesTableView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 65.0).isActive = true
+            
             let bar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: 320, height: 65))
             bar.isTranslucent = true
             
@@ -445,118 +512,19 @@ struct Uniforms {
         }*/
     }
     
-    func loadModel() {
-        var indices: [__uint16_t] = [] //[36];
-        for i in 0..<36 {
-            indices.append(__uint16_t(i))
-        }
-        
-        var normal: [customFloat4] = []
-        normal.append(customFloat4(x: 0.285806, y: 0.957545, z: 0.037708, w: 0.000000))
-        normal.append(customFloat4(x: 0.379109, y: 0.925352, z: -0.000000, w: 0.000000))
-        normal.append(customFloat4(x: 0.000000, y: 1.000000, z: 0.000000, w: 0.000000))
-        normal.append(customFloat4(x: 0.194152, y: 0.980637, z: 0.025618, w: 0.000000))
-        normal.append(customFloat4(x: 0.533366, y: 0.842427, z: 0.076408, w: 0.000000))
-        normal.append(customFloat4(x: 0.578218, y: 0.815882, z: -0.000000, w: 0.000000))
-        normal.append(customFloat4(x: 0.681751, y: 0.725877, z: 0.091197, w: 0.000000))
-        normal.append(customFloat4(x: 0.706222, y: 0.707990, z: -0.000000, w: 0.000000))
-        normal.append(customFloat4(x: 0.775360, y: 0.623030, z: 0.103201, w: 0.000000))
-        normal.append(customFloat4(x: 0.795363, y: 0.606133, z: 0.000000, w: 0.000000))
-        normal.append(customFloat4(x: 0.843645, y: 0.525092, z: 0.111991, w: 0.000000))
-        normal.append(customFloat4(x: 0.860854, y: 0.508852, z: 0.000000, w: 0.000000))
-        normal.append(customFloat4(x: 0.883783, y: 0.453058, z: 0.116900, w: 0.000000))
-        normal.append(customFloat4(x: 0.895511, y: 0.445040, z: 0.000000, w: 0.000000))
-        normal.append(customFloat4(x: 0.190036, y: 0.980666, z: 0.046704, w: 0.000000))
-        normal.append(customFloat4(x: 0.323050, y: 0.942658, z: 0.083871, w: 0.000000))
-        normal.append(customFloat4(x: 0.528220, y: 0.834889, z: 0.154737, w: 0.000000))
-        normal.append(customFloat4(x: 0.663562, y: 0.726167, z: 0.179908, w: 0.000000))
-        normal.append(customFloat4(x: 0.754776, y: 0.623418, z: 0.204117, w: 0.000000))
-        normal.append(customFloat4(x: 0.821388, y: 0.525466, z: 0.221827, w: 0.000000))
-        normal.append(customFloat4(x: 0.860580, y: 0.453416, z: 0.231983, w: 0.000000))
-        normal.append(customFloat4(x: 0.182056, y: 0.980710, z: 0.071154, w: 0.000000))
-        normal.append(customFloat4(x: 0.308975, y: 0.942767, z: 0.125400, w: 0.000000))
-        normal.append(customFloat4(x: 0.503013, y: 0.835158, z: 0.222461, w: 0.000000))
-        normal.append(customFloat4(x: 0.633884, y: 0.726537, z: 0.265209, w: 0.000000))
-        normal.append(customFloat4(x: 0.721239, y: 0.623771, z: 0.301205, w: 0.000000))
-        normal.append(customFloat4(x: 0.784988, y: 0.525861, z: 0.327513, w: 0.000000))
-        normal.append(customFloat4(x: 0.822565, y: 0.453784, z: 0.342735, w: 0.000000))
-        normal.append(customFloat4(x: 0.171057, y: 0.980744, z: 0.094243, w: 0.000000))
-        normal.append(customFloat4(x: 0.304037, y: 0.935812, z: 0.178373, w: 0.000000))
-        normal.append(customFloat4(x: 0.485684, y: 0.824244, z: 0.291090, w: 0.000000))
-        normal.append(customFloat4(x: 0.593620, y: 0.726799, z: 0.345512, w: 0.000000))
-        normal.append(customFloat4(x: 0.675513, y: 0.624142, z: 0.392592, w: 0.000000))
-        normal.append(customFloat4(x: 0.735370, y: 0.526186, z: 0.427035, w: 0.000000))
-        normal.append(customFloat4(x: 0.770661, y: 0.454121, z: 0.447052, w: 0.000000))
-        normal.append(customFloat4(x: 0.157290, y: 0.980761, z: 0.115620, w: 0.000000))
-        
-        var position: [customFloat4] = []
-        for _ in 0..<36 {
-            position.append(customFloat4(x: 0, y: 0, z: 0, w: 0))
-        }
-        // front
-        
-        position[0] = customFloat4(x: -0.25, y: -0.25, z: 0.25, w: 1.0)
-        position[1] = customFloat4(x: 0.25, y: -0.25, z: 0.25, w: 1.0)
-        position[2] = customFloat4(x: 0.25, y: 0.25, z: 0.25, w: 1.0)
-        
-        position[3] = customFloat4(x: 0.25, y: 0.25, z: 0.25, w: 1.0)
-        position[4] = customFloat4(x: -0.25, y: 0.25, z: 0.25, w: 1.0)
-        position[5] = customFloat4(x: -0.25, y: -0.25, z: 0.25, w: 1.0)
-        
-        //right
-        
-        position[6] = customFloat4(x: 0.25, y: -0.25, z: 0.25, w: 1.0)
-        position[7] = customFloat4(x: 0.25, y: -0.25, z: -0.25, w: 1.0)
-        position[8] = customFloat4(x: 0.25, y: 0.25, z: 0.25, w: 1.0)
-        
-        position[9] = customFloat4(x: 0.25, y: -0.25, z: -0.25, w: 1.0)
-        position[10] = customFloat4(x: 0.25, y: 0.25, z: -0.25, w: 1.0)
-        position[11] = customFloat4(x: 0.25, y: 0.25, z: 0.25, w: 1.0)
-        
-        // back
-        
-        position[12] = customFloat4(x: 0.25, y: -0.25, z: -0.25, w: 1.0)
-        position[13] = customFloat4(x: -0.25, y: -0.25, z: -0.25, w: 1.0)
-        position[14] = customFloat4(x: 0.25, y: 0.25, z: -0.25, w: 1.0)
-        
-        position[15] = customFloat4(x: -0.25, y: 0.25, z: -0.25, w: 1.0)
-        position[16] = customFloat4(x: 0.25, y: 0.25, z: -0.25, w: 1.0)
-        position[17] = customFloat4(x: -0.25, y: -0.25, z: -0.25, w: 1.0)
-        
-        // left
-        
-        position[18] = customFloat4(x: -0.25, y: -0.25, z: -0.25, w: 1.0)
-        position[19] = customFloat4(x: -0.25, y: -0.25, z: 0.25, w: 1.0)
-        position[20] = customFloat4(x: -0.25, y: 0.25, z: -0.25, w: 1.0)
-        
-        position[21] = customFloat4(x: -0.25, y: 0.25, z: 0.25, w: 1.0)
-        position[22] = customFloat4(x: -0.25, y: 0.25, z: -0.25, w: 1.0)
-        position[23] = customFloat4(x: -0.25, y: -0.25, z: 0.25, w: 1.0)
-        
-        var vertices: [Vertex] = []
-        for i in 0..<36 {
-            vertices.append(Vertex(position: position[i], normal: normal[i], customColor: position[i], texCoord: position[i]))
-        }
-        
-        
-
-        vertexBuffer = device.makeBuffer(bytes: vertices, length: MemoryLayout.size(ofValue: vertices[0]) * 36, options: [])
-        indexBuffer = device.makeBuffer(bytes: indices, length: MemoryLayout.size(ofValue: indices[0]) * 36, options: [])
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
         //DataViewController.mainView = self.view
         
-        contr.setVertexArrays(bigVertices, bigLineVertices: bigLineVertices)
-        contr.customMetalLayer(self.view.layer, bounds: self.view.bounds)
+        contr.setVertexArrays(RootViewController.scenes[0].bigVertices, bigLineVertices: RootViewController.scenes[0].bigLineVertices, bigIndices: RootViewController.scenes[0].bigIndices, bigLineIndices: RootViewController.scenes[0].bigLineIndices)
+        contr.customMetalLayer(self.view.layer, bounds: self.view.bounds, indicesCount: Int32(RootViewController.scenes[0].indicesCount))
         contr.setView(self)
         
         
-        var objcTest = customVertex(position: customFloat4(x: 1, y: 2, z: 3, w: 4), normal: customFloat4(x: 1, y: 2, z: 3, w: 4), customColor: customFloat4(x: 1, y: 2, z: 3, w: 4))
+        //var objcTest = customVertex(position: customFloat4(x: 1, y: 2, z: 3, w: 4), normal: customFloat4(x: 1, y: 2, z: 3, w: 4), customColor: customFloat4(x: 1, y: 2, z: 3, w: 4))
         
-        contr.testBridge(objcTest)
+        //contr.testBridge(objcTest)
         
         //self.renderer = Renderer(self.view.layer);
         //metalLayer = self.view.layer

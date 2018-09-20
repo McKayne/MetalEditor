@@ -48,19 +48,22 @@ static float DegToRad(float deg)
 
 @implementation ViewController
 
-- (void)setVertexArrays:(Vertex *)bigVertices bigLineVertices:(Vertex *)bigLineVertices {
+- (void)setVertexArrays:(Vertex *)bigVertices bigLineVertices:(Vertex *)bigLineVertices bigIndices:(uint16_t *)bigIndices bigLineIndices:(uint16_t *)bigLineIndices {
     self.bigVertices = bigVertices;
     self.bigLineVertices = bigLineVertices;
+    
+    self.bigIndices = bigIndices;
+    self.bigLineIndices = bigLineIndices;
 }
 
-- (void)testBridge:(customVertex)v {
+/*- (void)testBridge:(customVertex)v {
     NSLog(@"X = %f", v.position.x);
     NSLog(@"Y = %f", v.position.y);
     NSLog(@"Z = %f", v.position.z);
     NSLog(@"W = %f", v.position.w);
-}
+}*/
 
-- (void)customMetalLayer:(CALayer *)layer bounds:(CGRect)bounds {
+- (void)customMetalLayer:(CALayer *)layer bounds:(CGRect)bounds indicesCount:(int)indicesCount {
     NSLog(@"It works");
     
     self.bounds = bounds;
@@ -77,13 +80,13 @@ static float DegToRad(float deg)
     
     self.lastFrameTime = CFAbsoluteTimeGetCurrent();
     
-    [self loadModel];
+    [self loadModel:indicesCount];
     
     [layer addSublayer:self.metal];
     
-    //self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkDidFire:)];
-    //[self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
-    [self redraw];
+    self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkDidFire:)];
+    [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+    //[self redraw];
     
     /*
     
@@ -108,7 +111,7 @@ static float DegToRad(float deg)
     
     self.lastFrameTime = CFAbsoluteTimeGetCurrent();
 
-    [self loadModel];
+    //[self loadModel];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -136,169 +139,6 @@ static float DegToRad(float deg)
 {
     CGPoint velocity = [recognizer velocityInView:self.view];
     self.angularVelocity = CGPointMake(velocity.x * kVelocityScale, velocity.y * kVelocityScale);
-}
-
-- (void)appendPyramid {
-    for (int i = 0; i < 36; i++) {
-        self.bigIndices[i] = i;
-    }
-    
-    customFloat4 position[36];
-    
-    // front
-    
-    position[0] = {-0.25, -0.25, 0.25, 1.0};
-    position[1] = {0.25, -0.25, 0.25, 1.0};
-    position[2] = {0.0, 0.25, 0.0, 1.0};
-    
-    // right
-    
-    position[3] = {0.25, -0.25, 0.25, 1.0};
-    position[4] = {0.25, -0.25, -0.25, 1.0};
-    position[5] = {0.0, 0.25, 0.0, 1.0};
-    
-    // back
-    
-    position[6] = {0.25, -0.25, -0.25, 1.0};
-    position[7] = {-0.25, -0.25, -0.25, 1.0};
-    position[8] = {0.0, 0.25, 0.0, 1.0};
-    
-    // left
-    
-    position[9] = {-0.25, -0.25, -0.25, 1.0};
-    position[10] = {-0.25, -0.25, 0.25, 1.0};
-    position[11] = {0.0, 0.25, 0.0, 1.0};
-    
-    // bottom
-    
-    position[12] = {0.25, -0.25, 0.25, 1.0};
-    position[13] = {-0.25, -0.25, -0.25, 1.0};
-    position[14] = {0.25, -0.25, -0.25, 1.0};
-    
-    position[15] = {-0.25, -0.25, -0.25, 1.0};
-    position[16] = {0.25, -0.25, 0.25, 1.0};
-    position[17] = {-0.25, -0.25, 0.25, 1.0};
-    
-    for (int i = 0; i < 36; i++) {
-        self.bigVertices[i].normal = {1, 0, 1};
-        self.bigVertices[i].position = position[i];
-        
-        self.bigLineVertices[i].normal = {0, 0, 0};
-        self.bigLineVertices[i].position = position[i];
-    }
-    
-    for (int i = 0; i < 12; i++) {
-        self.bigLineIndices[i * 6 + 0] = i * 3;
-        self.bigLineIndices[i * 6 + 1] = i * 3 + 1;
-        
-        self.bigLineIndices[i * 6 + 2] = i * 3 + 1;
-        self.bigLineIndices[i * 6 + 3] = i * 3 + 2;
-        
-        self.bigLineIndices[i * 6 + 4] = i * 3 + 2;
-        self.bigLineIndices[i * 6 + 5] = i * 3;
-    }
-    
-    self.totalIndices += 18;
-}
-
-- (void)appendCone:(float)x y:(float)y z:(float)z radius:(float)radius height:(float)height red:(int)red green:(int)green blue:(int)blue {
-    
-    
-    int segments = 36;
-    
-    float segmentAngle = 360.0 / segments;
-    
-    customFloat4 position[segments * 3 * 2];
-    
-    int index = 0;
-    for (float angle = 0.0; angle < segmentAngle * segments; angle += segmentAngle) {
-        position[index++] = {x + static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * radius), y, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * radius), 1.0};
-        position[index++] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * radius), y, z + static_cast<float>(sin(angle * 3.14 / 180.0) * radius), 1.0};
-        position[index++] = {x, y + height, z, 1.0};
-    
-        // bottom
-        
-        position[index++] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * radius), y, z + static_cast<float>(sin(angle * 3.14 / 180.0) * radius), 1.0};
-        position[index++] = {x + static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * radius), y, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * radius), 1.0};
-        position[index++] = {x, y, z, 1.0};
-    }
-    
-    for (int i = 0; i < segments * 3 * 2; i++) {
-        self.bigIndices[i + self.totalIndices] = i + self.totalIndices;
-        
-        self.bigVertices[i + self.totalIndices].normal = {static_cast<float>((float) red / 255.0), static_cast<float>((float) green / 255.0), static_cast<float>((float) blue / 255.0)};
-        self.bigVertices[i + self.totalIndices].position = position[i];
-        
-        self.bigLineVertices[i + self.totalIndices].normal = {0, 0, 0};
-        self.bigLineVertices[i + self.totalIndices].position = position[i];
-    }
-    
-    for (int i = 0; i < segments * 2; i++) {
-        self.bigLineIndices[i * 6 + 0 + self.totalIndices * 2] = i * 3 + self.totalIndices;
-        self.bigLineIndices[i * 6 + 1 + self.totalIndices * 2] = i * 3 + 1 + self.totalIndices;
-        
-        self.bigLineIndices[i * 6 + 2 + self.totalIndices * 2] = i * 3 + 1 + self.totalIndices;
-        self.bigLineIndices[i * 6 + 3 + self.totalIndices * 2] = i * 3 + 2 + self.totalIndices;
-        
-        self.bigLineIndices[i * 6 + 4 + self.totalIndices * 2] = i * 3 + 2 + self.totalIndices;
-        self.bigLineIndices[i * 6 + 5 + self.totalIndices * 2] = i * 3 + self.totalIndices;
-    }
-    
-    self.totalIndices += segments * 3 * 2;
-}
-
-- (void)appendCylinder:(float)x y:(float)y z:(float)z radius:(float)radius height:(float)height red:(int)red green:(int)green blue:(int)blue {
-    int segments = 36;
-    
-    float segmentAngle = 360.0 / segments;
-    
-    customFloat4 position[segments * 3 * 4];
-    
-    int index = 0;
-    for (float angle = 0.0; angle < segmentAngle * segments; angle += segmentAngle) {
-        position[index++] = {x + static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * radius), y, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * radius), 1.0};
-        position[index++] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * radius), y, z + static_cast<float>(sin(angle * 3.14 / 180.0) * radius), 1.0};
-        position[index++] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * radius), y + height, z + static_cast<float>(sin(angle * 3.14 / 180.0) * radius), 1.0};
-        
-        position[index++] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * radius), y + height, z + static_cast<float>(sin(angle * 3.14 / 180.0) * radius), 1.0};
-        position[index++] = {x + static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * radius), y + height, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * radius), 1.0};
-        position[index++] = {x + static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * radius), y, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * radius), 1.0};
-        
-        // bottom
-        
-        position[index++] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * radius), y, z + static_cast<float>(sin(angle * 3.14 / 180.0) * radius), 1.0};
-        position[index++] = {x + static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * radius), y, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * radius), 1.0};
-        position[index++] = {x, y, z, 1.0};
-        
-        // top
-        
-        position[index++] = {x + static_cast<float>(cos((angle + segmentAngle) * 3.14 / 180.0) * radius), y + height, z + static_cast<float>(sin((angle + segmentAngle) * 3.14 / 180.0) * radius), 1.0};
-        position[index++] = {x + static_cast<float>(cos(angle * 3.14 / 180.0) * radius), y + height, z + static_cast<float>(sin(angle * 3.14 / 180.0) * radius), 1.0};
-        position[index++] = {x, y + height, z, 1.0};
-    }
-    
-    for (int i = 0; i < segments * 3 * 4; i++) {
-        self.bigIndices[i + self.totalIndices] = i + self.totalIndices;
-        
-        self.bigVertices[i + self.totalIndices].normal = {static_cast<float>((float) red / 255.0), static_cast<float>((float) green / 255.0), static_cast<float>((float) blue / 255.0)};
-        self.bigVertices[i + self.totalIndices].position = position[i];
-        
-        self.bigLineVertices[i + self.totalIndices].normal = {0, 0, 0};
-        self.bigLineVertices[i + self.totalIndices].position = position[i];
-    }
-    
-    for (int i = 0; i < segments * 4; i++) {
-        self.bigLineIndices[i * 6 + 0 + self.totalIndices * 2] = i * 3 + self.totalIndices;
-        self.bigLineIndices[i * 6 + 1 + self.totalIndices * 2] = i * 3 + 1 + self.totalIndices;
-        
-        self.bigLineIndices[i * 6 + 2 + self.totalIndices * 2] = i * 3 + 1 + self.totalIndices;
-        self.bigLineIndices[i * 6 + 3 + self.totalIndices * 2] = i * 3 + 2 + self.totalIndices;
-        
-        self.bigLineIndices[i * 6 + 4 + self.totalIndices * 2] = i * 3 + 2 + self.totalIndices;
-        self.bigLineIndices[i * 6 + 5 + self.totalIndices * 2] = i * 3 + self.totalIndices;
-    }
-    
-    self.totalIndices += segments * 3 * 4;
 }
 
 - (void)appendTorus {
@@ -1528,45 +1368,7 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     return self.totalIndices;
 }
 
-- (void)takeScreenshot {
-    NSLog(@"Now switching to another controller");
-    
-    //self.metalLayer nextDrawable
-    
-    /*id<CAMetalDrawable> lastDrawable = [self.renderer getDrawable];
-    if (lastDrawable == nil) {
-        NSLog(@"Last drawable Nil");
-    }*/
-    
-    /*id<MTLTexture> metalTexture = [self.renderer getDrawable];//[lastDrawable texture];
-    
-    int width = (int)[metalTexture width];
-    int height = (int)[metalTexture height];
-    int rowBytes = width * 4;
-    int selfturesize = width * height * 4;
-    
-    void *p = malloc(selfturesize);
-    
-    
-    [metalTexture getBytes:p bytesPerRow:rowBytes fromRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0];
-    
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little | kCGImageAlphaFirst;
-    
-    CGDataProviderRef provider = CGDataProviderCreateWithData(nil, p, selfturesize, nil);
-    CGImageRef cgImageRef = CGImageCreate(width, height, 8, 32, rowBytes, colorSpace, bitmapInfo, provider, nil, true, (CGColorRenderingIntent)kCGRenderingIntentDefault);
-    
-    UIImage *getImage = [UIImage imageWithCGImage:cgImageRef];
-    CFRelease(cgImageRef);
-    free(p);
-    
-    NSData *pngData = UIImagePNGRepresentation(getImage);
-    UIImage *pngImage = [UIImage imageWithData:pngData];*/
-    
-    //UIImageWriteToSavedPhotosAlbum(pngImage, self, @selector(completeSavedImage:didFinishSavingWithError:contextInfo:), nil);
-    
-    //UIImage *image = [UIImage imageWithData:[chart getImage]];
-    
+- (void)showExportDialog {
     [Export exportOBJWithModelName:@"iphone_app_export_obj_3"];
     //[Export exportOBJ:modelName @"fgfg"];
     //[Export exportOBJ:@"hfhf"];
@@ -1594,60 +1396,20 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     }
     
     //dispatch_async(dispatch_get_main_queue(), ^{
-        [self.mainView presentViewController:activityViewController animated:true completion:nil];
+    [self.mainView presentViewController:activityViewController animated:true completion:nil];
     //});
     //});
     //[self.mainView presentViewController:activityViewController animated:true completion:nil];
     
     //[self.renderer.drawa]
+}
+
+- (void)takeScreenshot {
+    /*
     
+    */
     
-    /*UIImageView *dot =[[UIImageView alloc] initWithFrame:CGRectMake(0, 50, 320, 320)];
-    
-    CGRect screenRect = self.bounds;
-    UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, 0.0);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextFillRect(context, screenRect);
-    
-    [self.metal renderInContext:context];
-    
-    UIImage *metalImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    if (metalImage == nil) {
-        NSLog(@"Metal image Nil");
-    }
-    
-    UIImage* serverImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString: @"https://upload.wikimedia.org/wikipedia/commons/6/63/Strokkur_geyser_eruption%2C_close-up_view.jpg"]]];
-    
-    dot.image = serverImage;
-    
-    if (serverImage == nil) {
-        NSLog(@"Nil");
-    }*/
-    
-    
-    
-    //UIImageWriteToSavedPhotosAlbum(metalImage, self, @selector(completeSavedImage:didFinishSavingWithError:contextInfo:), nil);
-    //UIImageWriteToSavedPhotosAlbum(serverImage, self, @selector(completeSavedImage:didFinishSavingWithError:contextInfo:), nil);
-    
-    //[self.view addSubview:dot];
-    //[controller.view addSubview:dot];
-    
-    /*[self addChildViewController:controller];
-    [controller didMoveToParentViewController:self];
-    [controller.view setFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height)];
-    [self.view addSubview:controller.view];
-    controller.view.backgroundColor = [UIColor whiteColor];
-    
-    UITextField* textField = [[UITextField alloc]initWithFrame:CGRectMake(100.0, 100.0, 200, 30.0)];
-    textField.borderStyle = UITextBorderStyleRoundedRect;*/
-    
-    //UIImageView *dot =[[UIImageView alloc] initWithFrame:CGRectMake(50, 50, 200, 200)];
-    //dot.image=[UIImage imageNamed:@"sampler.jpg"];
-    //[controller.view addSubview:dot];
-    
-    //[controller.view addSubview:textField];
+    [self.renderer takeScreenshot];
 }
 
 - (void)setView:(UIViewController *)view {
@@ -1941,16 +1703,6 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     }
 }
 
-- (void)scaleObject:(int)offset length:(int)length xScale:(float)xScale yScale:(float)yScale zScale:(float)zScale {
-    for (int i = offset; i < offset + length; i++) {
-        self.bigVertices[i].position.x *= xScale;
-        self.bigVertices[i].position.y *= yScale;
-        self.bigVertices[i].position.z *= zScale;
-        
-        self.bigLineVertices[i].position = self.bigVertices[i].position;
-    }
-}
-
 - (void)setFaceTexture:(int)offset nth:(int)nth texNth:(int)texNth {
     int nthOffset = nth * 6;
     int i = offset + nthOffset;
@@ -2121,7 +1873,7 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
         NSLog(@"%d: %f %f %f %f", i, self.bigVertices[i].texCoord.x, self.bigVertices[i].texCoord.y, self.bigVertices[i].texCoord.z, self.bigVertices[i].texCoord.w);
     }
     
-    [self scaleObject:0 length:self.totalIndices xScale:2 yScale:2 zScale:2];
+    //[self scaleObject:0 length:self.totalIndices xScale:2 yScale:2 zScale:2];
     
     for (int i = 0; i < self.totalIndices / 3; i++) {
         self.bigLineIndices[i * 6 + 0] = i * 3;
@@ -2144,7 +1896,6 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     float segmentWidth = width / lowerSegments;
     
     // front lower
-    float centerY = lowerHeight / 2, centerZ = depth / 2;
     float radius = sqrt(pow(lowerHeight / 2, 2) + pow(depth / 2, 2));
     
     float tg = (lowerHeight / 2) / (-depth / 2);
@@ -2238,17 +1989,7 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     return lastIndices;
 }
 
-- (void)loadModel {
-    
-    self.totalIndices = 0;
-    
-    __unused int numberOfObjects = 1;
-    self.bigIndices = (uint16_t*) malloc(sizeof(uint16_t) * 100000);
-    
-    self.bigLineIndices = (uint16_t*) malloc(sizeof(uint16_t) * 100000);
-    
-    //[self demo1];
-    
+- (void)demo2 {
     float widthA = 0.2, widthB = 0.1, currentY = -0.45;
     
     for (int i = 0; i < 5; i++) {
@@ -2751,6 +2492,11 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
         self.bigLineIndices[i * 6 + 4] = i * 3 + 2;
         self.bigLineIndices[i * 6 + 5] = i * 3;
     }
+}
+
+- (void)loadModel:(int)indicesCount {
+    
+    self.totalIndices = indicesCount;
     
     self.vertexBuffer = [self.renderer newBufferWithBytes:self.bigVertices length:sizeof(Vertex) * self.totalIndices];
     self.indexBuffer = [self.renderer newBufferWithBytes:self.bigIndices length:sizeof(IndexType) * self.totalIndices];
@@ -2783,7 +2529,7 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     //modelMatrix = Rotation(Y_AXIS, -self.angle.x) * modelMatrix;
     
     //self.angle.x = 10 * 3.14 / 180;
-    self.angle = CGPointMake(40 * 3.14 / 180, 10 * 3.14 / 180);//demo
+    self.angle = CGPointMake(0 * 3.14 / 180, 0 * 3.14 / 180);//demo
     //self.angle = CGPointMake(-180 * 3.14 / 180, 30 * 3.14 / 180);
     //NSLog(@"ANGLE %f %f", self.angle.x, self.angle.y);
     modelMatrix = Rotation(Y_AXIS, -self.angle.x) * modelMatrix;
@@ -2792,10 +2538,18 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     simd::float4x4 viewMatrix = Identity();
     viewMatrix.columns[3].z = -1; // translate camera back along Z axis
     
-    viewMatrix.columns[3].x = -0; // translate camera back along Z axis
-    viewMatrix.columns[3].y = -1.5; // translate camera back along Z axis
-    viewMatrix.columns[3].z = -3; // translate camera back along Z axis
-    //viewMatrix.columns[3].z = -0.5;
+    /*viewMatrix.columns[3].x = -2.5; // translate camera back along Z axis
+    viewMatrix.columns[3].y = 0; // translate camera back along Z axis
+    viewMatrix.columns[3].z = -8; // translate camera back along Z axis
+     */
+    
+    /*viewMatrix.columns[3].x = -2.6;
+    viewMatrix.columns[3].y = -1; // translate camera back along Z axis
+    viewMatrix.columns[3].z = -7;*/
+    
+    viewMatrix.columns[3].x = -2.6;
+    viewMatrix.columns[3].y = -1; // translate camera back along Z axis
+    viewMatrix.columns[3].z = -4;
     
     const float near = 0.1;
     const float far = 100;

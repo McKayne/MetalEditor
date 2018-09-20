@@ -37,10 +37,13 @@ class ActionsTableViewDataSource: NSObject, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if controller.context == .initial {
-            return 1
-        } else {
+        switch controller.context {
+        case .initial:
+            return 13
+        case .scaling:
             return 3
+        case .addition:
+            return 1
         }
     }
     
@@ -55,21 +58,58 @@ class ActionsTableViewDataSource: NSObject, UITableViewDataSource {
         
         switch indexPath.row {
         case 0:
-            if controller.context == .initial {
-                cell.textLabel!.text = "Scale object"
-            } else {
+            switch controller.context {
+            case .initial:
+                cell.textLabel!.text = "Undo or redo"
+            case .scaling:
                 cell.textLabel!.text = "Scale X to "
                 cell.accessoryView = xText
+            default:
+                cell.textLabel!.text = "Cube"
             }
         case 1:
-            cell.textLabel!.text = "Scale Y to "
-            
-            
-            
-            cell.accessoryView = yText
+            if controller.context == .initial {
+                cell.textLabel!.text = "New scene"
+            } else {
+                cell.textLabel!.text = "Scale Y to "
+                cell.accessoryView = yText
+            }
+            switch controller.context {
+            case .initial:
+                cell.textLabel!.text = "New scene"
+            case .scaling:
+                cell.textLabel!.text = "Scale Y to "
+                cell.accessoryView = yText
+            default:
+                cell.textLabel!.text = "Face"
+            }
         case 2:
-            cell.textLabel!.text = "Scale Z to "
-            cell.accessoryView = zText
+            if controller.context == .initial {
+                cell.textLabel!.text = "Manage scenes"
+            } else {
+                cell.textLabel!.text = "Scale Z to "
+                cell.accessoryView = zText
+            }
+        case 3:
+            cell.textLabel!.text = "Add object"
+        case 4:
+            cell.textLabel!.text = "Translate"
+        case 5:
+            cell.textLabel!.text = "Rotate"
+        case 6:
+            cell.textLabel!.text = "Scale object"
+        case 7:
+            cell.textLabel!.text = "Mirror"
+        case 8:
+            cell.textLabel!.text = "Clone object"
+        case 9:
+            cell.textLabel!.text = "Remove last"
+        case 10:
+            cell.textLabel!.text = "Import or export"
+        case 11:
+            cell.textLabel!.text = "Textures library"
+        case 12:
+            cell.textLabel!.text = "About"
         default:
             cell.textLabel!.text = "Dummy"
         }

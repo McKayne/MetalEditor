@@ -15,7 +15,7 @@ struct Uniforms {
     var normalMatrix: float3x3
 }
 
-@objc class DataViewController: UIViewController, UITableViewDelegate {
+@objc class DataViewController: UIViewController, UITableViewDelegate, UIActionSheetDelegate {
     
     var bigVertices = UnsafeMutablePointer<Vertex>.allocate(capacity: 100000)
     var bigLineVertices = UnsafeMutablePointer<Vertex>.allocate(capacity: 100000)
@@ -284,10 +284,48 @@ struct Uniforms {
         //contr.customMetalLayer(self.view.layer, bounds: self.view.bounds)
     }
     
-    func takeScreenshot(sender: UIButton!) {
-        print("Taking screenshot")
+    func actionSheet(_ actionSheet: UIActionSheet, clickedButtonAt buttonIndex: Int) {
         
-        contr.showExportDialog()
+        var activityItems:[Any] = []
+        
+        switch buttonIndex {
+        case 0:
+            contr.takeScreenshot()
+        case 1:
+            let objFile = Export.exportOBJ(scene: RootViewController.scenes[0])
+            let mtlFile = Export.exportMTL(scene: RootViewController.scenes[0])
+            
+            let docPath: String = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+            let filePath: String = docPath + "/" + (RootViewController.scenes[0].name + ".zip")
+            
+            SSZipArchive.createZipFile(atPath: filePath, withFilesAtPaths: [objFile, mtlFile])
+            activityItems = [URL(fileURLWithPath: filePath)]
+        case 2:
+            activityItems = [URL(fileURLWithPath: Export.exportSTL(scene: RootViewController.scenes[0]))]
+        case 3:
+            activityItems = [URL(fileURLWithPath: Export.exportPLY(scene: RootViewController.scenes[0]))]
+        default:
+            activityItems = [URL(fileURLWithPath: Export.exportSTL(scene: RootViewController.scenes[0]))]
+        }
+        
+        if activityItems.count > 0 {
+            let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities:nil)
+            activityViewController.excludedActivityTypes = []
+            activityViewController.popoverPresentationController?.sourceView = view
+            activityViewController.popoverPresentationController?.sourceRect = CGRect(x: view.bounds.size.width / 2, y: view.bounds.size.height / 4, width: 0, height: 0)
+            present(activityViewController, animated: true, completion:nil)
+        }
+    }
+    
+    func showExportDialog() {
+        let actionSheet = UIActionSheet(title: "Export as", delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: nil, otherButtonTitles: "Take screenshot", "Wavefront (.obj)", "Stl (.stl)", "Stanford (.ply)")
+    
+        actionSheet.delegate = self
+        actionSheet.show(in: self.view)
+    }
+
+    func takeScreenshot(sender: UIButton!) {
+        showExportDialog()
     }
     
     func showActionsList(sender: UIButton!) {

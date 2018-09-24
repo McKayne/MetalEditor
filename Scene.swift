@@ -10,6 +10,7 @@ import Foundation
 
 class Scene {
     
+    var name: String!
     var objects: [SceneObject] = []
     
     var bigVertices = UnsafeMutablePointer<Vertex>.allocate(capacity: 100000)
@@ -19,6 +20,10 @@ class Scene {
     var bigLineIndices = UnsafeMutablePointer<UInt16>.allocate(capacity: 100000)
     
     var indicesCount: Int = 0
+    
+    init(name: String) {
+        self.name = name
+    }
     
     func prepareForRender() {
         indicesCount = 0

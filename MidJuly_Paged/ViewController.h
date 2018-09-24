@@ -46,12 +46,6 @@ typedef struct {
 - (void)takeScreenshot;
 - (void)completeSavedImage:(UIImage *)_image didFinishSavingWithError:(NSError *)_error contextInfo:(void *)_contextInfo;
 
-- (NSString *)exportOBJ:(NSString *)filename;
-- (NSString *)exportMTL:(NSString *)filename;
-- (NSString *)exportZIP:(NSString *)filename items:(NSArray *)items;
-
-- (void)showExportDialog;
-
 - (void)appendStairs:(float)x y:(float)y z:(float)z
                width:(float)width stepWidth:(float)stepWidth stepHeight:(float)stepHeight depth:(float)depth
                  red:(int)red green:(int)green blue:(int)blue;
@@ -85,11 +79,7 @@ typedef struct {
 
 - (void)setView:(UIViewController *)view;
 
-- (void)rotateObjectX:(int)offset length:(int)length xAngle:(float)xAngle;
-- (void)rotateObjectZ:(int)offset length:(int)length zAngle:(float)zAngle;
-
 - (void)removeFace:(int)offset nth:(int)nth;
-- (void)cloneObject:(int)offset length:(int)length xTranslate:(float)xTranslate yTranslate:(float)yTranslate zTranslate:(float)zTranslate;
 - (void)translateObject:(int)offset length:(int)length xTranslate:(float)xTranslate yTranslate:(float)yTranslate zTranslate:(float)zTranslate;
 
 - (void)translateVertex:(int)offset length:(int)length x:(float)x y:(float)y z:(float)z xTranslate:(float)xTranslate yTranslate:(float)yTranslate zTranslate:(float)zTranslate debug:(BOOL)debug;

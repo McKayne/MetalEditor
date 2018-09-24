@@ -58,13 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/ViewController.mm"
-            timestampString = "559124249.508938"
+            timestampString = "559473712.8615251"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2556"
-            endingLineNumber = "2556"
-            landmarkName = "-updateUniforms"
-            landmarkType = "7">
+            startingLineNumber = "2330"
+            endingLineNumber = "2330">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -122,13 +120,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/ViewController.mm"
-            timestampString = "558992967.9896981"
+            timestampString = "559473712.8615251"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1548"
-            endingLineNumber = "1548"
-            landmarkName = "-rotateObjectX:length:xAngle:"
-            landmarkType = "7">
+            startingLineNumber = "1322"
+            endingLineNumber = "1322">
             <Locations>
                <Location
                   shouldBeEnabled = "No"
@@ -169,28 +165,12 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MidJuly_Paged/ViewController.mm"
-            timestampString = "558992967.9896981"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1277"
-            endingLineNumber = "1277"
-            landmarkName = "-exportOBJ:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "558967423.549203"
+            timestampString = "559473712.8615251"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "370"
-            endingLineNumber = "370"
+            startingLineNumber = "408"
+            endingLineNumber = "408"
             landmarkName = "tableView(_:didSelectRowAt:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -202,11 +182,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "558967423.549203"
+            timestampString = "559473712.8615251"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "521"
-            endingLineNumber = "521"
+            startingLineNumber = "559"
+            endingLineNumber = "559"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -218,11 +198,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Scene.swift"
-            timestampString = "558984591.0679491"
+            timestampString = "559471795.579375"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "24"
-            endingLineNumber = "24"
+            startingLineNumber = "29"
+            endingLineNumber = "29"
             landmarkName = "prepareForRender()"
             landmarkType = "7">
          </BreakpointContent>
@@ -266,11 +246,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "558967423.549203"
+            timestampString = "559473712.8615251"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "519"
-            endingLineNumber = "519"
+            startingLineNumber = "557"
+            endingLineNumber = "557"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -298,11 +278,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Scene.swift"
-            timestampString = "559078288.238079"
+            timestampString = "559471795.579375"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "38"
-            endingLineNumber = "38"
+            startingLineNumber = "43"
+            endingLineNumber = "43"
             landmarkName = "prepareForRender()"
             landmarkType = "7">
          </BreakpointContent>
@@ -314,11 +294,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "558967423.549203"
+            timestampString = "559473712.8615251"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "381"
-            endingLineNumber = "381"
+            startingLineNumber = "419"
+            endingLineNumber = "419"
             landmarkName = "tableView(_:didSelectRowAt:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -330,12 +310,44 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "558967423.549203"
+            timestampString = "559473712.8615251"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "332"
-            endingLineNumber = "332"
+            startingLineNumber = "370"
+            endingLineNumber = "370"
             landmarkName = "applyAction(sender:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MidJuly_Paged/ViewController.mm"
+            timestampString = "559473712.8615251"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "961"
+            endingLineNumber = "961"
+            landmarkName = "-importOBJ:green:blue:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MidJuly_Paged/ViewController.mm"
+            timestampString = "559473712.8615251"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "991"
+            endingLineNumber = "991"
+            landmarkName = "-removeFace:nth:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

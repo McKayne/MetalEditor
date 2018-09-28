@@ -11,8 +11,11 @@ import UIKit
 class RootViewController: UIViewController, UIPageViewControllerDelegate {
 
     var pageViewController: UIPageViewController?
+    
+    static var contr: ViewController!
 
     static var scenes: [Scene] = []
+    static var currentScene: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()

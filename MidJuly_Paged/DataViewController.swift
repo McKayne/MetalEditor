@@ -285,13 +285,14 @@ struct Uniforms {
     }
     
     func actionSheet(_ actionSheet: UIActionSheet, clickedButtonAt buttonIndex: Int) {
+        print(buttonIndex)
         
         var activityItems:[Any] = []
         
         switch buttonIndex {
-        case 0:
-            contr.takeScreenshot()
         case 1:
+            contr.takeScreenshot()
+        case 2:
             let objFile = Export.exportOBJ(scene: RootViewController.scenes[0])
             let mtlFile = Export.exportMTL(scene: RootViewController.scenes[0])
             
@@ -300,9 +301,9 @@ struct Uniforms {
             
             SSZipArchive.createZipFile(atPath: filePath, withFilesAtPaths: [objFile, mtlFile])
             activityItems = [URL(fileURLWithPath: filePath)]
-        case 2:
-            activityItems = [URL(fileURLWithPath: Export.exportSTL(scene: RootViewController.scenes[0]))]
         case 3:
+            activityItems = [URL(fileURLWithPath: Export.exportSTL(scene: RootViewController.scenes[0]))]
+        case 4:
             activityItems = [URL(fileURLWithPath: Export.exportPLY(scene: RootViewController.scenes[0]))]
         default:
             activityItems = [URL(fileURLWithPath: Export.exportSTL(scene: RootViewController.scenes[0]))]
@@ -362,7 +363,7 @@ struct Uniforms {
             let zScale = Float((propertiesDataSource?.zText.text!)!)!
         
             for object in RootViewController.scenes[0].objects {
-                object.scaleBy(widthMultiplier: 2, heightMultiplier: 2, depthMultiplier: 2)
+                object.scaleBy(widthMultiplier: xScale, heightMultiplier: yScale, depthMultiplier: zScale)
             }
             
             RootViewController.scenes[0].prepareForRender()
@@ -554,7 +555,7 @@ struct Uniforms {
         super.viewDidLoad()
 
         //DataViewController.mainView = self.view
-        
+        RootViewController.contr = contr
         contr.setVertexArrays(RootViewController.scenes[0].bigVertices, bigLineVertices: RootViewController.scenes[0].bigLineVertices, bigIndices: RootViewController.scenes[0].bigIndices, bigLineIndices: RootViewController.scenes[0].bigLineIndices)
         contr.customMetalLayer(self.view.layer, bounds: self.view.bounds, indicesCount: Int32(RootViewController.scenes[0].indicesCount))
         contr.setView(self)

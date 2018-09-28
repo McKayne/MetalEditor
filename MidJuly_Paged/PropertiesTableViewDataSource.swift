@@ -36,7 +36,7 @@ class PropertiesTableViewDataSource: NSObject, UITableViewDataSource {
         yText.textAlignment = .center
         zText.textAlignment = .center
         
-        xText.text = "2.0"
+        xText.text = "1.0"
         yText.text = "1.0"
         zText.text = "1.0"
         

@@ -206,6 +206,9 @@ class Demo1 {
         wallLeft.translateTo(xTranslate: 0, yTranslate: 0.1, zTranslate: 0)
         wallRight.translateTo(xTranslate: 0, yTranslate: 0.1, zTranslate: 0)
         
+        //wallLeft.translateTo(xTranslate: 0, yTranslate: -3, zTranslate: 0)
+        //wallRight.translateTo(xTranslate: 0, yTranslate: -3, zTranslate: 0)
+        //bottom.translateTo(xTranslate: 0, yTranslate: -3, zTranslate: 0)
         
         scene.appendObject(object: wallLeft)
         scene.appendObject(object: wallRight)

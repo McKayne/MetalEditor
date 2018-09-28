@@ -41,6 +41,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        
+        
+        // 1
+        switch url.pathExtension {
+        case "obj":
+            print("Received obj")
+        case "stl":
+            print("Received stl")
+            let obj = Import.importSTL(modelURL: url)
+            RootViewController.scenes[0].appendObject(object: obj)
+            RootViewController.scenes[0].prepareForRender()
+            RootViewController.contr.loadModel(Int32(RootViewController.scenes[0].indicesCount))
+        case "ply":
+            print("Received ply")
+            let obj = Import.importPLY(modelURL: url)
+            RootViewController.scenes[0].appendObject(object: obj)
+            RootViewController.scenes[0].prepareForRender()
+            RootViewController.contr.loadModel(Int32(RootViewController.scenes[0].indicesCount))
+        default:
+            return false
+        }
+        
+        return true
+    }
 }
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7F21383D215A147900553605 /* Import.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F21383C215A147900553605 /* Import.swift */; };
 		7F2583AE214CB71600B332AC /* Export.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F2583AD214CB71600B332AC /* Export.swift */; };
 		7F39E8EA2148AC7200252FF6 /* SSZipArchive.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8E62148AC7200252FF6 /* SSZipArchive.h */; };
 		7F39E8EB2148AC7200252FF6 /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8E72148AC7200252FF6 /* SSZipArchive.m */; };
@@ -84,12 +85,6 @@
 		7FEBAC4820F9747200D99284 /* Shaders2D.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC4720F9747200D99284 /* Shaders2D.metal */; };
 		7FEBAC4A20F9793000D99284 /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC4920F9793000D99284 /* Triangle.swift */; };
 		7FEBAC4C20F979F300D99284 /* Node2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FEBAC4B20F979F300D99284 /* Node2D.swift */; };
-		7FED96D3213DE95D00A916AE /* IMG_0299.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7FED96D2213DE95D00A916AE /* IMG_0299.jpg */; };
-		7FED96D5213DEABC00A916AE /* coords.png in Resources */ = {isa = PBXBuildFile; fileRef = 7FED96D4213DEABC00A916AE /* coords.png */; };
-		7FEEBC4D2145A62800023376 /* texture1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7FEEBC4C2145A62800023376 /* texture1.jpg */; };
-		7FEEBC4F2145AF2800023376 /* texture2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7FEEBC4E2145AF2800023376 /* texture2.jpg */; };
-		7FEEBC512145DAEC00023376 /* texture3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7FEEBC502145DAEC00023376 /* texture3.jpg */; };
-		7FEEBC532145E04800023376 /* texture4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7FEEBC522145E04800023376 /* texture4.jpg */; };
 		7FEEBC6E2148A9FC00023376 /* SSZipArchive in Resources */ = {isa = PBXBuildFile; fileRef = 7FEEBC6D2148A9FC00023376 /* SSZipArchive */; };
 		7FEEBC712148AA8B00023376 /* libz.1.2.8.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FEEBC702148AA8B00023376 /* libz.1.2.8.tbd */; };
 /* End PBXBuildFile section */
@@ -112,6 +107,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7F21383C215A147900553605 /* Import.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Import.swift; sourceTree = "<group>"; };
 		7F2583AD214CB71600B332AC /* Export.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Export.swift; sourceTree = "<group>"; };
 		7F39E8E62148AC7200252FF6 /* SSZipArchive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SSZipArchive.h; path = MidJuly_Paged/SSZipArchive/SSZipArchive.h; sourceTree = "<group>"; };
 		7F39E8E72148AC7200252FF6 /* SSZipArchive.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SSZipArchive.m; path = MidJuly_Paged/SSZipArchive/SSZipArchive.m; sourceTree = "<group>"; };
@@ -153,7 +149,7 @@
 		7F39E91D2148ACE900252FF6 /* sha1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sha1.h; path = MidJuly_Paged/SSZipArchive/minizip/aes/sha1.h; sourceTree = "<group>"; };
 		7F61E4532150D73300F0AA29 /* SceneObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneObject.swift; sourceTree = "<group>"; };
 		7F61E4552150D82300F0AA29 /* Cube.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cube.swift; sourceTree = "<group>"; };
-		7F61E4572150DDF200F0AA29 /* Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
+		7F61E4572150DDF200F0AA29 /* Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Scene.swift; path = ../Scene.swift; sourceTree = "<group>"; };
 		7F61E4592151132600F0AA29 /* PropertiesTableViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PropertiesTableViewDataSource.swift; sourceTree = "<group>"; };
 		7F61E45B2151664200F0AA29 /* Face.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Face.swift; sourceTree = "<group>"; };
 		7F61E45D215171A800F0AA29 /* Cone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cone.swift; sourceTree = "<group>"; };
@@ -203,12 +199,6 @@
 		7FEBAC4720F9747200D99284 /* Shaders2D.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders2D.metal; sourceTree = "<group>"; };
 		7FEBAC4920F9793000D99284 /* Triangle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
 		7FEBAC4B20F979F300D99284 /* Node2D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Node2D.swift; sourceTree = "<group>"; };
-		7FED96D2213DE95D00A916AE /* IMG_0299.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = IMG_0299.jpg; path = ../../IMG_0299.jpg; sourceTree = "<group>"; };
-		7FED96D4213DEABC00A916AE /* coords.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = coords.png; path = ../../coords.png; sourceTree = "<group>"; };
-		7FEEBC4C2145A62800023376 /* texture1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = texture1.jpg; path = ../../texture1.jpg; sourceTree = "<group>"; };
-		7FEEBC4E2145AF2800023376 /* texture2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = texture2.jpg; path = ../../texture2.jpg; sourceTree = "<group>"; };
-		7FEEBC502145DAEC00023376 /* texture3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = texture3.jpg; path = ../../texture3.jpg; sourceTree = "<group>"; };
-		7FEEBC522145E04800023376 /* texture4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = texture4.jpg; path = ../../texture4.jpg; sourceTree = "<group>"; };
 		7FEEBC6D2148A9FC00023376 /* SSZipArchive */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SSZipArchive; sourceTree = "<group>"; };
 		7FEEBC702148AA8B00023376 /* libz.1.2.8.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.2.8.tbd; path = usr/lib/libz.1.2.8.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -242,7 +232,6 @@
 		7FEBABFB20F7C47E00D99284 = {
 			isa = PBXGroup;
 			children = (
-				7F61E4572150DDF200F0AA29 /* Scene.swift */,
 				7F39E90A2148ACE900252FF6 /* aes_ni.c */,
 				7F39E90B2148ACE900252FF6 /* aes_ni.h */,
 				7F39E90C2148ACE900252FF6 /* aes.h */,
@@ -305,6 +294,8 @@
 				7FEEBC6D2148A9FC00023376 /* SSZipArchive */,
 				7FEBAC0720F7C47E00D99284 /* AppDelegate.swift */,
 				7FEBAC0920F7C47E00D99284 /* RootViewController.swift */,
+				7F21383C215A147900553605 /* Import.swift */,
+				7F2583AD214CB71600B332AC /* Export.swift */,
 				7F61E46321518E6600F0AA29 /* Demo1.swift */,
 				7F61E465215317A900F0AA29 /* CompoundRoof.swift */,
 				7FEBAC0B20F7C47E00D99284 /* DataViewController.swift */,
@@ -334,22 +325,16 @@
 				7F68313521001DE400B8FC8E /* ViewController.h */,
 				7F68313621001DE400B8FC8E /* ViewController.mm */,
 				7F61E45B2151664200F0AA29 /* Face.swift */,
+				7F61E4572150DDF200F0AA29 /* Scene.swift */,
 				7F61E4532150D73300F0AA29 /* SceneObject.swift */,
 				7F61E4552150D82300F0AA29 /* Cube.swift */,
 				7F61E45D215171A800F0AA29 /* Cone.swift */,
 				7F61E45F215177A000F0AA29 /* Pyramid.swift */,
 				7F61E46121517AC800F0AA29 /* Cylinder.swift */,
-				7F2583AD214CB71600B332AC /* Export.swift */,
-				7FEEBC502145DAEC00023376 /* texture3.jpg */,
 				7F68312A21001DA700B8FC8E /* OBJModel.h */,
 				7F68312B21001DA700B8FC8E /* OBJModel.mm */,
 				7F68312C21001DA700B8FC8E /* Renderer.h */,
 				7F68312D21001DA700B8FC8E /* Renderer.m */,
-				7FEEBC522145E04800023376 /* texture4.jpg */,
-				7FEEBC4E2145AF2800023376 /* texture2.jpg */,
-				7FEEBC4C2145A62800023376 /* texture1.jpg */,
-				7FED96D4213DEABC00A916AE /* coords.png */,
-				7FED96D2213DE95D00A916AE /* IMG_0299.jpg */,
 				7F68312721001D8A00B8FC8E /* MetalView.h */,
 				7F68312821001D8A00B8FC8E /* MetalView.m */,
 				7F68312421001D5F00B8FC8E /* AppDelegate.h */,
@@ -495,16 +480,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7FEEBC4D2145A62800023376 /* texture1.jpg in Resources */,
-				7FEEBC512145DAEC00023376 /* texture3.jpg in Resources */,
 				7F68313821001DE400B8FC8E /* teapot.obj in Resources */,
-				7FED96D3213DE95D00A916AE /* IMG_0299.jpg in Resources */,
 				7FEBAC1620F7C47E00D99284 /* LaunchScreen.storyboard in Resources */,
-				7FED96D5213DEABC00A916AE /* coords.png in Resources */,
 				7FEEBC6E2148A9FC00023376 /* SSZipArchive in Resources */,
-				7FEEBC532145E04800023376 /* texture4.jpg in Resources */,
 				7FEBAC1320F7C47E00D99284 /* Assets.xcassets in Resources */,
-				7FEEBC4F2145AF2800023376 /* texture2.jpg in Resources */,
 				7FEBAC1120F7C47E00D99284 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -548,6 +527,7 @@
 				7F39E92B2148ACE900252FF6 /* hmac.h in Sources */,
 				7F39E92C2148ACE900252FF6 /* prng.c in Sources */,
 				7F2583AE214CB71600B332AC /* Export.swift in Sources */,
+				7F21383D215A147900553605 /* Import.swift in Sources */,
 				7F39E92D2148ACE900252FF6 /* prng.h in Sources */,
 				7F39E92E2148ACE900252FF6 /* pwd2key.c in Sources */,
 				7F39E92F2148ACE900252FF6 /* pwd2key.h in Sources */,

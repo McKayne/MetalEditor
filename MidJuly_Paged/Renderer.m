@@ -408,7 +408,7 @@
 }
 
 - (void)endFrame {
-    NSLog(@"END FRAME");
+    //NSLog(@"END FRAME");
     
     
     

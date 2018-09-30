@@ -17,6 +17,10 @@ struct Uniforms {
 
 @objc class DataViewController: UIViewController, UITableViewDelegate, UIActionSheetDelegate {
     
+    var panGestureRecognizer: UIGestureRecognizer!
+    var angularVelocity: CGPoint!
+
+    var nth = 0
     var bigVertices = UnsafeMutablePointer<Vertex>.allocate(capacity: 100000)
     var bigLineVertices = UnsafeMutablePointer<Vertex>.allocate(capacity: 100000)
     
@@ -58,7 +62,7 @@ struct Uniforms {
     let propertiesTableView = UITableView(frame: CGRect(x: 0, y: 100, width: 320, height: 300))
     var propertiesDataSource: PropertiesTableViewDataSource?
     
-    let item = UINavigationItem(title: "Perspective")
+    let item = UINavigationItem(title: RootViewController.scenes[0].name)
     let actionsButton = UIBarButtonItem(title: "Actions", style: .done, target: self, action: #selector(showActionsList(sender:)))
     
     let button = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(takeScreenshot(sender:)))
@@ -473,10 +477,27 @@ struct Uniforms {
         //    action:@selector(shareAction:)];
         
         if nth != 0 {
-            timer = CADisplayLink(target: self, selector: #selector(self.gameloop))
-            timer.add(to: RunLoop.main, forMode: RunLoopMode.defaultRunLoopMode)
+            //timer = CADisplayLink(target: self, selector: #selector(self.gameloop))
+            //timer.add(to: RunLoop.main, forMode: RunLoopMode.defaultRunLoopMode)
         }
-        if nth == 0 {
+        if nth > -1 {
+            
+            let tabBar = UITabBar(frame: CGRect(x: 0, y: 300, width: 320, height: 100))
+            view.addSubview(tabBar)
+            tabBar.translatesAutoresizingMaskIntoConstraints = false
+            tabBar.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0.0).isActive = true
+            tabBar.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0.0).isActive = true
+            tabBar.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0.0).isActive = true
+            tabBar.topAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -65.0).isActive = true
+            
+            let tabBarItem = UITabBarItem(title: "Perspective", image: nil, selectedImage: nil)
+            let tabBarItem2 = UITabBarItem(title: "Front", image: nil, selectedImage: nil)
+            let tabBarItem3 = UITabBarItem(title: "Right", image: nil, selectedImage: nil)
+            let tabBarItem4 = UITabBarItem(title: "Back", image: nil, selectedImage: nil)
+            let tabBarItem5 = UITabBarItem(title: "Left", image: nil, selectedImage: nil)
+            let tabBarItem6 = UITabBarItem(title: "Top", image: nil, selectedImage: nil)
+            let tabBarItem7 = UITabBarItem(title: "Bottom", image: nil, selectedImage: nil)
+            tabBar.setItems([tabBarItem, tabBarItem2, tabBarItem3, tabBarItem4, tabBarItem5, tabBarItem6, tabBarItem7], animated: false)
             
             actionsTableView.tableFooterView = UIView(frame: .zero)
             actionsTableView.isHidden = true
@@ -511,7 +532,7 @@ struct Uniforms {
             let bar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: 320, height: 65))
             bar.isTranslucent = true
             
-            
+            item.title = RootViewController.scenes[self.nth].name
             
             item.rightBarButtonItem = button
             item.hidesBackButton = true
@@ -551,13 +572,38 @@ struct Uniforms {
         }*/
     }
     
+    func gestureRecognizerDidRecognize(recognizer: UIPanGestureRecognizer) {
+        let velocity = recognizer.velocity(in: self.view)
+        let kVelocityScale: CGFloat = 0.01
+        angularVelocity = CGPoint(x: velocity.x * kVelocityScale, y: velocity.y * kVelocityScale)
+        
+        RootViewController.scenes[nth].xAngle += (Float(angularVelocity.x))
+        RootViewController.scenes[nth].yAngle += (Float(angularVelocity.y))
+        contr.setAngle(RootViewController.scenes[nth].xAngle, y: RootViewController.scenes[nth].yAngle)
+        //print(RootViewController.scenes[0].xAngle)
+        //RootViewController.scenes[nth].xAngle +=
+        //self.angle = CGPointMake(self.angle.x + self.angularVelocity.x * frameDuration,
+        //                         self.angle.y + self.angularVelocity.y * frameDuration);
+        //self.angularVelocity = CGPointMake(self.angularVelocity.x * (1 - kDamping),
+        //                                   self.angularVelocity.y * (1 - kDamping));
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(gestureRecognizerDidRecognize(recognizer:)))
+        self.view.addGestureRecognizer(panGestureRecognizer)
+        /*self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
+            action:@selector(gestureRecognizerDidRecognize:)];
+        [self.view addGestureRecognizer:self.panGestureRecognizer];
+        
+        self.lastFrameTime = CFAbsoluteTimeGetCurrent();*/
 
         //DataViewController.mainView = self.view
         RootViewController.contr = contr
-        contr.setVertexArrays(RootViewController.scenes[0].bigVertices, bigLineVertices: RootViewController.scenes[0].bigLineVertices, bigIndices: RootViewController.scenes[0].bigIndices, bigLineIndices: RootViewController.scenes[0].bigLineIndices)
-        contr.customMetalLayer(self.view.layer, bounds: self.view.bounds, indicesCount: Int32(RootViewController.scenes[0].indicesCount))
+        contr.setVertexArrays(RootViewController.scenes[nth].bigVertices, bigLineVertices: RootViewController.scenes[nth].bigLineVertices, bigIndices: RootViewController.scenes[nth].bigIndices, bigLineIndices: RootViewController.scenes[nth].bigLineIndices)
+        contr.customMetalLayer(self.view.layer, bounds: self.view.bounds, indicesCount: Int32(RootViewController.scenes[nth].indicesCount), x: RootViewController.scenes[nth].x, y: RootViewController.scenes[nth].y, z: RootViewController.scenes[nth].z, xAngle: RootViewController.scenes[nth].xAngle, yAngle: RootViewController.scenes[nth].yAngle)
         contr.setView(self)
         
         

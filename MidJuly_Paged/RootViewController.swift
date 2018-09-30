@@ -22,6 +22,17 @@ class RootViewController: UIViewController, UIPageViewControllerDelegate {
         
         Demo1.demo()
         
+        let scene = Scene(name: "demoA")
+        scene.z = -2
+        scene.xAngle = -45
+        scene.yAngle = 45
+        let cube = Cube(x: -0.25, y: -0.25, z: 0.25, width: 0.5, height: 0.5, depth: 0.5, rgb: (255, 0, 0))
+        scene.appendObject(object: cube)
+        scene.prepareForRender()
+        
+        RootViewController.scenes.append(scene)
+        //RootViewController.scenes[0] = scene
+        
         
         
         // Do any additional setup after loading the view, typically from a nib.
@@ -36,6 +47,8 @@ class RootViewController: UIViewController, UIPageViewControllerDelegate {
         self.pageViewController!.dataSource = self.modelController
 
         self.addChildViewController(self.pageViewController!)
+        
+        //self.pageViewController?.view.isUserInteractionEnabled = false
         self.view.addSubview(self.pageViewController!.view)
 
         // Set the page view controller's bounds using an inset rect so that self's view is visible around the edges of the pages.

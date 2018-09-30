@@ -10,6 +10,9 @@ import Foundation
 
 class Scene {
     
+    var x: Float = 0.0, y: Float = 0.0, z: Float = 0.0
+    var xAngle: Float = 0.0, yAngle: Float = 0.0
+    
     var name: String!
     var objects: [SceneObject] = []
     
@@ -27,7 +30,6 @@ class Scene {
     
     func prepareForRender() {
         indicesCount = 0
-        var lineIndicesCount = 0
         
         for object in objects {
             

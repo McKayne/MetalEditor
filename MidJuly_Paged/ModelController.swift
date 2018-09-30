@@ -41,7 +41,9 @@ class ModelController: NSObject, UIPageViewControllerDataSource {
         // Create the data model.
         let dateFormatter = DateFormatter()
         //pageData = dateFormatter.monthSymbols
-        pageData = ["Perspective", "Left", "Right", "Top", "Bottom"]
+        for scene in RootViewController.scenes {
+            pageData.append(scene.name)
+        }
         
     }
 
@@ -53,43 +55,15 @@ class ModelController: NSObject, UIPageViewControllerDataSource {
 
         
         
-        switch index {
-        case 0:
-            
-            if controllerA == nil {
-                // Create a new view controller and pass suitable data.
-                controllerA = storyboard.instantiateViewController(withIdentifier: "DataViewController") as! DataViewController
-                controllerA!.nthPage = 0
-                controllerA!.dataObject = self.pageData[index]
-                controllerA!.appendUI(nth: 0)
-            }
-            
-            //dataViewController.view.addSubview(textFieldA)
-            
-            return controllerA
-        case 1:
-            if controllerB == nil {
-                // Create a new view controller and pass suitable data.
-                controllerB = storyboard.instantiateViewController(withIdentifier: "DataViewController") as! DataViewController
-                controllerB!.nthPage = 1
-                controllerB!.dataObject = self.pageData[index]
-                controllerB!.appendUI(nth: 1)
-            }
-            
-            //dataViewController.view.addSubview(textFieldA)
-            
-            return controllerB
-        default:
-            // Create a new view controller and pass suitable data.
+        // Create a new view controller and pass suitable data.
             let dataViewController = storyboard.instantiateViewController(withIdentifier: "DataViewController") as! DataViewController
+            dataViewController.nth = index
             dataViewController.nthPage = 1
             dataViewController.dataObject = self.pageData[index]
             dataViewController.appendUI(nth: 1)
-            
-            print("Dummy")
+        
             
             return dataViewController
-        }
         
         
     }

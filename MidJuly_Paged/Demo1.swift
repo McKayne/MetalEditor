@@ -27,6 +27,12 @@ class Demo1 {
     
     static func demo() {
         let scene = Scene(name: "iphone_app_export_test_3")
+        scene.x = -2.6
+        scene.y = -1
+        scene.z = -4
+        
+        scene.xAngle = 0
+        scene.yAngle = 0
         
         let wallCellA = Face(x: -0.3, y: -0.25, z: 0.25, width: 0.1, height: 0.1, rgb: (254, 254, 252))
         wallCellA.attachObject(object: Face(x: -0.3 + 0.1, y: -0.25, z: 0.25, width: 0.1, height: 0.1, rgb: (254, 254, 252)))

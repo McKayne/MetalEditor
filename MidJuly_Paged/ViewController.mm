@@ -5,7 +5,6 @@
 #import "Transforms.h"
 
 #import <QuartzCore/CAMetalLayer.h>
-//#import <QuartzCore/CAMetalDrawable.h>
 #import <Metal/Metal.h>
 
 #import <time.h>
@@ -14,11 +13,9 @@
 
 int lastObject;
 
-static const float kVelocityScale = 0.01;
 static const float kDamping = 0.05;
 
-static float DegToRad(float deg)
-{
+static float DegToRad(float deg) {
     return deg * (M_PI / 180);
 }
 
@@ -44,6 +41,8 @@ static float DegToRad(float deg)
 
 @property (nonatomic, strong) UIViewController *mainView;
 
+@property (assign) float x, y, z, xAngle, yAngle;
+
 @end
 
 @implementation ViewController
@@ -56,17 +55,16 @@ static float DegToRad(float deg)
     self.bigLineIndices = bigLineIndices;
 }
 
-/*- (void)testBridge:(customVertex)v {
-    NSLog(@"X = %f", v.position.x);
-    NSLog(@"Y = %f", v.position.y);
-    NSLog(@"Z = %f", v.position.z);
-    NSLog(@"W = %f", v.position.w);
-}*/
-
-- (void)customMetalLayer:(CALayer *)layer bounds:(CGRect)bounds indicesCount:(int)indicesCount {
-    NSLog(@"It works");
+- (void)customMetalLayer:(CALayer *)layer bounds:(CGRect)bounds indicesCount:(int)indicesCount x:(float)x y:(float)y z:(float)z xAngle:(float)xAngle yAngle:(float)yAngle {
     
     self.bounds = bounds;
+    
+    self.x = x;
+    self.y = y;
+    self.z = z;
+    
+    self.xAngle = xAngle;
+    self.yAngle = yAngle;
     
     self.metal = [CAMetalLayer new];
     self.metal.frame = bounds;// CGRectMake(10.0, 100.0, 300.0, 300.0);
@@ -88,57 +86,11 @@ static float DegToRad(float deg)
     [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
     //[self redraw];
     
-    /*
-    
-    self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
-                                                                        action:@selector(gestureRecognizerDidRecognize:)];
-    [self.view addGestureRecognizer:self.panGestureRecognizer];
-    
-    */
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    
-    self.renderer = [[Renderer alloc] initWithLayer:(CAMetalLayer *)self.view.layer];
-    self.renderer.vertexFunctionName = @"vertex_main";
-    self.renderer.fragmentFunctionName = @"fragment_main";
-    
-    self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
-                                                                        action:@selector(gestureRecognizerDidRecognize:)];
-    [self.view addGestureRecognizer:self.panGestureRecognizer];
-    
-    self.lastFrameTime = CFAbsoluteTimeGetCurrent();
-
-    //[self loadModel];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkDidFire:)];
-    [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [self.displayLink invalidate];
-    self.displayLink = nil;
-}
-
-- (BOOL)prefersStatusBarHidden {
-    return YES;
 }
 
 - (void)displayLinkDidFire:(CADisplayLink *)displayLink
 {
     [self redraw];
-}
-
-- (void)gestureRecognizerDidRecognize:(UIPanGestureRecognizer *)recognizer
-{
-    CGPoint velocity = [recognizer velocityInView:self.view];
-    self.angularVelocity = CGPointMake(velocity.x * kVelocityScale, velocity.y * kVelocityScale);
 }
 
 - (void)appendTorus {
@@ -830,40 +782,6 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     self.totalIndices += segments * 3 * 2 * 2 * 2 * 2;
 }
 
-- (void)removeAction:(int)type {
-    NSLog(@"Remove action");
-    
-    if (lastObject + 36 < self.totalIndices) {
-        for (int i = lastObject; i < self.totalIndices; i++) {
-            self.bigVertices[i] = self.bigVertices[i + 36];
-            self.bigIndices[i] = self.bigIndices[i + 36];
-            self.bigLineVertices[i] = self.bigLineVertices[i + 36];
-            //self.bigLineIndices[i] = self.bigLineIndices[i + 36];
-        }
-        for (int i = lastObject * 2; i < self.totalIndices * 2; i++) {
-            self.bigLineIndices[i] = self.bigLineIndices[i + 72];
-        }
-    }
-    self.totalIndices -= 36;
-    
-    self.vertexBuffer = [self.renderer newBufferWithBytes:self.bigVertices length:sizeof(Vertex) * self.totalIndices];
-    self.indexBuffer = [self.renderer newBufferWithBytes:self.bigIndices length:sizeof(IndexType) * self.totalIndices];
-    
-    self.lineVertexBuffer = [self.renderer newBufferWithBytes:self.bigLineVertices length:sizeof(Vertex) * self.totalIndices];
-    self.lineIndexBuffer = [self.renderer newBufferWithBytes:self.bigLineIndices length:sizeof(uint16_t) * (self.totalIndices * 2)];
-}
-
-- (void)appendAction:(float)x y:(float)y z:(float)z {
-    NSLog(@"Append action");
-    
-    //lastObject = [self appendCube:x y:y z:z width:0.5 height:0.5 depth:0.5 red:0 green:255 blue:0];
-    
-    self.vertexBuffer = [self.renderer newBufferWithBytes:self.bigVertices length:sizeof(Vertex) * self.totalIndices];
-    self.indexBuffer = [self.renderer newBufferWithBytes:self.bigIndices length:sizeof(IndexType) * self.totalIndices];
-    
-    self.lineVertexBuffer = [self.renderer newBufferWithBytes:self.bigLineVertices length:sizeof(Vertex) * self.totalIndices];
-    self.lineIndexBuffer = [self.renderer newBufferWithBytes:self.bigLineIndices length:sizeof(uint16_t) * (self.totalIndices * 2)];
-}
 
 - (void)completeSavedImage:(UIImage *)_image didFinishSavingWithError:(NSError *)_error contextInfo:(void *)_contextInfo {
     if (!_error) {
@@ -947,15 +865,7 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     }
 }
 
-- (void)translateObject:(int)offset length:(int)length xTranslate:(float)xTranslate yTranslate:(float)yTranslate zTranslate:(float)zTranslate {
-    for (int i = offset; i < offset + length; i++) {
-        self.bigVertices[i].position.x += xTranslate;
-        self.bigVertices[i].position.y += yTranslate;
-        self.bigVertices[i].position.z += zTranslate;
-        
-        self.bigLineVertices[i].position = self.bigVertices[i].position;
-    }
-}
+
 
 - (void)translateVertex:(int)offset length:(int)length x:(float)x y:(float)y z:(float)z xTranslate:(float)xTranslate yTranslate:(float)yTranslate zTranslate:(float)zTranslate debug:(BOOL)debug {
     for (int i = offset; i < offset + length; i++) {
@@ -1041,6 +951,11 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     }
 }
 
+- (void)setAngle:(float)x y:(float)y {
+    self.xAngle = x;
+    self.yAngle = y;
+}
+
 - (void)updateUniforms {
     static const simd::float3 X_AXIS = { 1, 0, 0 };
     static const simd::float3 Y_AXIS = { 0, 1, 0 };
@@ -1050,9 +965,9 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     //modelMatrix = Rotation(Y_AXIS, -self.angle.x) * modelMatrix;
     
     //self.angle.x = 10 * 3.14 / 180;
-    self.angle = CGPointMake(0 * 3.14 / 180, 0 * 3.14 / 180);//demo
+    self.angle = CGPointMake(self.xAngle * M_PI / 180, self.yAngle * M_PI / 180);//demo
     //self.angle = CGPointMake(-180 * 3.14 / 180, 30 * 3.14 / 180);
-    //NSLog(@"ANGLE %f %f", self.angle.x, self.angle.y);
+    NSLog(@"ANGLE %f %f", self.xAngle, self.yAngle);
     modelMatrix = Rotation(Y_AXIS, -self.angle.x) * modelMatrix;
     modelMatrix = Rotation(X_AXIS, -self.angle.y) * modelMatrix;
     
@@ -1071,6 +986,10 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     viewMatrix.columns[3].x = -2.6;
     viewMatrix.columns[3].y = -1; // translate camera back along Z axis
     viewMatrix.columns[3].z = -4;
+    
+    viewMatrix.columns[3].x = self.x;
+    viewMatrix.columns[3].y = self.y; // translate camera back along Z axis
+    viewMatrix.columns[3].z = self.z;
     
     const float near = 0.1;
     const float far = 100;

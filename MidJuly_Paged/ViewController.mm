@@ -982,7 +982,7 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     //self.angle.x = 10 * 3.14 / 180;
     self.angle = CGPointMake(self.xAngle * M_PI / 180, self.yAngle * M_PI / 180);//demo
     //self.angle = CGPointMake(-180 * 3.14 / 180, 30 * 3.14 / 180);
-    NSLog(@"ANGLE %f %f", self.xAngle, self.yAngle);
+    //NSLog(@"ANGLE %f %f", self.xAngle, self.yAngle);
     modelMatrix = Rotation(Y_AXIS, -self.angle.x) * modelMatrix;
     modelMatrix = Rotation(X_AXIS, -self.angle.y) * modelMatrix;
     

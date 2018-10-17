@@ -6,6 +6,7 @@
 //  Copyright © 2018 для интернета. All rights reserved.
 //
 
+import CoreMotion
 import UIKit
 import simd
 
@@ -18,6 +19,8 @@ struct Uniforms {
 @objc class DataViewController: UIViewController, UITableViewDelegate, UIActionSheetDelegate, UIGestureRecognizerDelegate {
     
     //var touchViews = [UITouch:TouchSpotView]()
+    
+    let motionManager = CMMotionManager()
     
     var panGestureRecognizer: UIGestureRecognizer!
     var angularVelocity: CGPoint!
@@ -866,8 +869,42 @@ struct Uniforms {
         }*/
     }
     
+    func accHandler(acceleration: CMAcceleration) {
+        
+        print(acceleration.x)
+        print(acceleration.y)
+        print(acceleration.z)
+        
+        let lockZ = true
+        
+        if abs(Float(acceleration.x)) >= 0.1 {
+            RootViewController.scenes[nth].x -= (Float(acceleration.x) * 0.01)
+        }
+        if abs(Float(acceleration.y)) >= 0.1 {
+            RootViewController.scenes[nth].y -= (Float(acceleration.y) * 0.01)
+        }
+        
+        if !lockZ {
+            if abs(Float(acceleration.z) + 1.0) >= 0.1 {
+                RootViewController.scenes[nth].z += ((Float(acceleration.z) + 1.0) * 0.01)
+            }
+        }
+            //
+        
+        contr.translateCamera(RootViewController.scenes[nth].x, y: RootViewController.scenes[nth].y, z: RootViewController.scenes[nth].z)
+        contr.setAngle(RootViewController.scenes[nth].xAngle, y: RootViewController.scenes[nth].yAngle)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        motionManager.accelerometerUpdateInterval = 0.01
+        if motionManager.isAccelerometerAvailable {
+            let queue = OperationQueue.current
+            motionManager.startAccelerometerUpdates(to: queue!, withHandler: {(accelData: CMAccelerometerData?, error: Error?) in self.accHandler(acceleration: (accelData?.acceleration)!)
+            } as! CMAccelerometerHandler)
+        }
         
         view.isMultipleTouchEnabled = true
         

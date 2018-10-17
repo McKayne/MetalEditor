@@ -166,11 +166,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "561419389.432379"
+            timestampString = "561450070.5746911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "633"
-            endingLineNumber = "633"
+            startingLineNumber = "636"
+            endingLineNumber = "636"
             landmarkName = "tableView(_:didSelectRowAt:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -182,11 +182,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "561420245.887659"
+            timestampString = "561451734.816144"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "886"
-            endingLineNumber = "886"
+            startingLineNumber = "923"
+            endingLineNumber = "923"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -246,11 +246,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "561420245.887659"
+            timestampString = "561450070.5746911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "838"
-            endingLineNumber = "838"
+            startingLineNumber = "841"
+            endingLineNumber = "841"
             landmarkName = "DataViewController"
             landmarkType = "3">
          </BreakpointContent>
@@ -326,11 +326,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "561419389.432379"
+            timestampString = "561450070.5746911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "322"
-            endingLineNumber = "322"
+            startingLineNumber = "325"
+            endingLineNumber = "325"
             landmarkName = "actionSheet(_:clickedButtonAt:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -342,11 +342,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "561419389.432379"
+            timestampString = "561450070.5746911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "306"
-            endingLineNumber = "306"
+            startingLineNumber = "309"
+            endingLineNumber = "309"
             landmarkName = "actionSheet(_:clickedButtonAt:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -374,11 +374,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "561420245.887659"
+            timestampString = "561450070.5746911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "821"
-            endingLineNumber = "821"
+            startingLineNumber = "824"
+            endingLineNumber = "824"
             landmarkName = "gestureRecognizerDidRecognize(recognizer:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -390,11 +390,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "561420245.887659"
+            timestampString = "561450070.5746911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "829"
-            endingLineNumber = "829"
+            startingLineNumber = "832"
+            endingLineNumber = "832"
             landmarkName = "tap(recognizer:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -470,11 +470,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "561419389.432379"
+            timestampString = "561450070.5746911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "489"
-            endingLineNumber = "489"
+            startingLineNumber = "492"
+            endingLineNumber = "492"
             landmarkName = "applyAction(sender:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -486,11 +486,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "561419389.432379"
+            timestampString = "561450070.5746911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "422"
-            endingLineNumber = "422"
+            startingLineNumber = "425"
+            endingLineNumber = "425"
             landmarkName = "applyAction(sender:)"
             landmarkType = "7">
             <Locations>
@@ -534,11 +534,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "561419389.432379"
+            timestampString = "561450070.5746911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "415"
-            endingLineNumber = "415"
+            startingLineNumber = "418"
+            endingLineNumber = "418"
             landmarkName = "applyAction(sender:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -550,11 +550,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "561419389.432379"
+            timestampString = "561450070.5746911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "548"
-            endingLineNumber = "548"
+            startingLineNumber = "551"
+            endingLineNumber = "551"
             landmarkName = "tableView(_:didSelectRowAt:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -566,11 +566,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "561419389.432379"
+            timestampString = "561450070.5746911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "654"
-            endingLineNumber = "654"
+            startingLineNumber = "657"
+            endingLineNumber = "657"
             landmarkName = "tableView(_:didSelectRowAt:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -582,11 +582,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "561420245.887659"
+            timestampString = "561450070.5746911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "852"
-            endingLineNumber = "852"
+            startingLineNumber = "855"
+            endingLineNumber = "855"
             landmarkName = "pinchAction(recognizer:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -598,11 +598,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "561420245.887659"
+            timestampString = "561450070.5746911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "844"
-            endingLineNumber = "844"
+            startingLineNumber = "847"
+            endingLineNumber = "847"
             landmarkName = "pinchAction(recognizer:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -614,12 +614,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MidJuly_Paged/DataViewController.swift"
-            timestampString = "561420245.887659"
+            timestampString = "561450070.5746911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "860"
-            endingLineNumber = "860"
+            startingLineNumber = "863"
+            endingLineNumber = "863"
             landmarkName = "touchesMoved(_:with:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MidJuly_Paged/DataViewController.swift"
+            timestampString = "561451734.816144"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "884"
+            endingLineNumber = "884"
+            landmarkName = "accHandler(acceleration:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

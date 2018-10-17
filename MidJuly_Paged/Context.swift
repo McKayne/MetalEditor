@@ -11,6 +11,9 @@ import Foundation
 enum Context: Int {
     
     case initial
-    case scaling
     case addition
+    case translation
+    case rotation
+    case scaling
+    
 }

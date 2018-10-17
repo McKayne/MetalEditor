@@ -11,18 +11,49 @@ import Foundation
 class PropertiesTableViewDataSource: NSObject, UITableViewDataSource {
     
     var controller: DataViewController
+    
+    // Position
     let xText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
     let yText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
     let zText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
+    
+    // Dimensions
     let widthText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
     let heightText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
     let depthText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
+    
+    // Translation
+    let xTranslationText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
+    let yTranslationText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
+    let zTranslationText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
+    
+    // Rotation
     let xAngleText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
     let yAngleText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
     let zAngleText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
+    
+    // Color
     let redText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
     let greenText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
     let blueText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
+    
+    func clearTranslationParams() {
+        xTranslationText.text = "0.0"
+        yTranslationText.text = "0.0"
+        zTranslationText.text = "0.0"
+    }
+    
+    func clearRotationParams() {
+        xAngleText.text = "0.0"
+        yAngleText.text = "0.0"
+        zAngleText.text = "0.0"
+    }
+    
+    func clearColorParams() {
+        redText.text = "255"
+        greenText.text = "0"
+        blueText.text = "0"
+    }
     
     init(controller: DataViewController) {
         self.controller = controller
@@ -52,6 +83,18 @@ class PropertiesTableViewDataSource: NSObject, UITableViewDataSource {
         heightText.text = "1.0"
         depthText.text = "1.0"
         
+        // Translation
+        xTranslationText.borderStyle = .roundedRect
+        yTranslationText.borderStyle = .roundedRect
+        zTranslationText.borderStyle = .roundedRect
+        
+        xTranslationText.textAlignment = .center
+        yTranslationText.textAlignment = .center
+        zTranslationText.textAlignment = .center
+        
+        clearTranslationParams()
+        
+        // Rotation
         xAngleText.borderStyle = .roundedRect
         yAngleText.borderStyle = .roundedRect
         zAngleText.borderStyle = .roundedRect
@@ -60,9 +103,7 @@ class PropertiesTableViewDataSource: NSObject, UITableViewDataSource {
         yAngleText.textAlignment = .center
         zAngleText.textAlignment = .center
         
-        xAngleText.text = "0.0"
-        yAngleText.text = "0.0"
-        zAngleText.text = "0.0"
+        clearRotationParams()
         
         redText.borderStyle = .roundedRect
         greenText.borderStyle = .roundedRect
@@ -72,9 +113,7 @@ class PropertiesTableViewDataSource: NSObject, UITableViewDataSource {
         greenText.textAlignment = .center
         blueText.textAlignment = .center
         
-        redText.text = "255"
-        greenText.text = "0"
-        blueText.text = "0"
+        clearColorParams()
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -85,10 +124,14 @@ class PropertiesTableViewDataSource: NSObject, UITableViewDataSource {
         switch controller.context {
         case .initial:
             return 1
-        case .scaling:
-            return 3
         case .addition:
             return 16
+        case .translation:
+            return 3
+        case .rotation:
+            return 3
+        case .scaling:
+            return 3
         }
     }
     
@@ -103,27 +146,54 @@ class PropertiesTableViewDataSource: NSObject, UITableViewDataSource {
         
         switch indexPath.row {
         case 0:
-            if controller.context == .scaling {
-                cell.textLabel!.text = "Scale X to "
-                cell.accessoryView = xText
-            } else {
+            switch controller.context {
+            case .initial:
+                cell.textLabel!.text = "Dummy"
+            case .addition:
                 cell.textLabel!.text = "Position"
+            case .translation:
+                cell.textLabel!.text = "Translate X to "
+                cell.accessoryView = xTranslationText
+            case .rotation:
+                cell.textLabel!.text = "Rotate X to "
+                cell.accessoryView = xAngleText
+            case .scaling:
+                cell.textLabel!.text = "Scale X to "
+                cell.accessoryView = widthText
             }
         case 1:
-            if controller.context == .scaling {
-                cell.textLabel!.text = "Scale Y to "
-                cell.accessoryView = yText
-            } else {
+            switch controller.context {
+            case .initial:
+                cell.textLabel!.text = "Dummy"
+            case .addition:
                 cell.textLabel!.text = "X = "
                 cell.accessoryView = xText
+            case .translation:
+                cell.textLabel!.text = "Translate Y to "
+                cell.accessoryView = yTranslationText
+            case .rotation:
+                cell.textLabel!.text = "Rotate Y to "
+                cell.accessoryView = yAngleText
+            case .scaling:
+                cell.textLabel!.text = "Scale Y to "
+                cell.accessoryView = heightText
             }
         case 2:
-            if controller.context == .scaling {
-                cell.textLabel!.text = "Scale Z to "
-                cell.accessoryView = zText
-            } else {
+            switch controller.context {
+            case .initial:
+                cell.textLabel!.text = "Dummy"
+            case .addition:
                 cell.textLabel!.text = "Y = "
                 cell.accessoryView = yText
+            case .translation:
+                cell.textLabel!.text = "Translate Z to "
+                cell.accessoryView = zTranslationText
+            case .rotation:
+                cell.textLabel!.text = "Rotate Z to "
+                cell.accessoryView = zAngleText
+            case .scaling:
+                cell.textLabel!.text = "Scale Z to "
+                cell.accessoryView = depthText
             }
         case 3:
             cell.textLabel!.text = "Z = "

@@ -9,11 +9,14 @@
 import Foundation
 
 class SceneObject {
+    
+    var isSelected = false
+    
     var vertices: [Vertex] = []
     var lineVertices: [Vertex] = []
     
-    var indices: [Int] = []
-    var lineIndices: [Int] = []
+    //var indices: [Int] = []
+    //var lineIndices: [Int] = []
     
     func translateTo(xTranslate: Float, yTranslate: Float, zTranslate: Float) {
         for i in 0..<vertices.count {

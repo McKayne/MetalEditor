@@ -14,7 +14,7 @@ class RootViewController: UIViewController, UIPageViewControllerDelegate {
     
     static var contr: ViewController!
 
-    static var scenes: [Scene] = []
+    @objc static var scenes: [Scene] = []
     static var currentScene: Int = 0
     
     override func viewDidLoad() {
@@ -30,7 +30,7 @@ class RootViewController: UIViewController, UIPageViewControllerDelegate {
         scene.appendObject(object: cube)
         scene.prepareForRender()
         
-        RootViewController.scenes.append(scene)
+        //RootViewController.scenes.append(scene)
         //RootViewController.scenes[0] = scene
         
         

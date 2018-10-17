@@ -27,12 +27,16 @@
 @property (nonatomic, strong) MTLVertexDescriptor *vertexDescriptor;
 @property (nonatomic, strong) UIViewController *mainView;
 
+
+
 @end
 
 @implementation Renderer
 
 @synthesize vertexFunctionName=_vertexFunctionName;
 @synthesize fragmentFunctionName=_fragmentFunctionName;
+
+@synthesize isSelectionMode;
 
 - (instancetype)initWithLayer:(CAMetalLayer *)metalLayer
 {
@@ -254,7 +258,7 @@
     }
 }
 
-- (void)drawTrianglesWithInterleavedBuffer:(id<MTLBuffer>)positionBuffer lineVertexBuffer:(id<MTLBuffer>)lineVertexBuffer
+- (void)drawTrianglesWithInterleavedBuffer:(id<MTLBuffer>)positionBuffer selectionVertexBuffer:(id<MTLBuffer>)selectionVertexBuffer lineVertexBuffer:(id<MTLBuffer>)lineVertexBuffer
                                indexBuffer:(id<MTLBuffer>)indexBuffer lineIndexBuffer:(id<MTLBuffer>)lineIndexBuffer
                              uniformBuffer:(id<MTLBuffer>)uniformBuffer
                                 indexCount:(size_t)indexCount numberOfObjects:(int)numberOfObjects texture:(id<MTLTexture>) texture {
@@ -263,7 +267,12 @@
         return;
     }
     
-    [self.commandEncoder setVertexBuffer:positionBuffer offset:0 atIndex:0];
+    if (!isSelectionMode) {
+        [self.commandEncoder setVertexBuffer:positionBuffer offset:0 atIndex:0];
+    } else {
+        [self.commandEncoder setVertexBuffer:selectionVertexBuffer offset:0 atIndex:0];
+    }
+    
     [self.commandEncoder setVertexBuffer:uniformBuffer offset:0 atIndex:1];
     [self.commandEncoder setFragmentBuffer:uniformBuffer offset:0 atIndex:0];
     
@@ -318,13 +327,12 @@
     }
     [self.commandEncoder setFragmentTexture:textureD atIndex:3];*/
     
-    
+    if (numberOfObjects > 0) {
     [self.commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
                                     indexCount:numberOfObjects
                                      indexType:MTLIndexTypeUInt16
                                    indexBuffer:indexBuffer
                              indexBufferOffset:0];
-    
     
     
     /*[self.commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeLine
@@ -333,7 +341,7 @@
      indexBuffer:indexBuffer
      indexBufferOffset:36];*/
     
-    if (true) {
+    if (!isSelectionMode) {
         [self.commandEncoder setVertexBuffer:lineVertexBuffer offset:0 atIndex:0];
         [self.commandEncoder setVertexBuffer:uniformBuffer offset:0 atIndex:1];
         [self.commandEncoder setFragmentBuffer:uniformBuffer offset:0 atIndex:0];
@@ -343,6 +351,7 @@
                                      indexType:MTLIndexTypeUInt16
                                    indexBuffer:lineIndexBuffer
                              indexBufferOffset:0];
+    }
     }
 }
 
@@ -354,6 +363,69 @@
 
 - (void)setView:(UIViewController *)view {
     self.mainView = view;
+}
+
+- (int*)pixelColor:(int)x y:(int)y {
+    [self.commandBuffer waitUntilCompleted];
+    
+    int width = (int)[self.framebufferTexture width];
+    int height = (int)[self.framebufferTexture height];
+    int rowBytes = width * 4;
+    int selfturesize = width * height * 4;
+    NSLog(@">> %d %d", width, height);
+    
+    char* rgb = malloc(selfturesize);
+    [self.framebufferTexture getBytes:rgb bytesPerRow:rowBytes fromRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0];
+    /*for (int i = 0; i < 10; i++) {
+        NSLog(@"%d", rgb[i] + 256);
+    }*/
+    
+    int* color = (int*) malloc(sizeof(int) * 3);
+    int red = (int) rgb[4 * x + y * rowBytes];
+    int green = (int) rgb[4 * x + y * rowBytes + 1];
+    int blue = (int) rgb[4 * x + y * rowBytes + 2];
+    
+    if (red < 0) {
+        red += 256;
+    }
+    if (green < 0) {
+        green += 256;
+    }
+    if (blue < 0) {
+        blue += 256;
+    }
+    
+    color[0] = red;
+    color[1] = green;
+    color[2] = blue;
+    
+    
+    
+    void *p = malloc(selfturesize);
+    
+    
+    [self.framebufferTexture getBytes:p bytesPerRow:rowBytes fromRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0];
+    
+    
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little | kCGImageAlphaFirst;
+    
+    CGDataProviderRef provider = CGDataProviderCreateWithData(nil, rgb, selfturesize, nil);
+    CGImageRef cgImageRef = CGImageCreate(width, height, 8, 32, rowBytes, colorSpace, bitmapInfo, provider, nil, true, (CGColorRenderingIntent)kCGRenderingIntentDefault);
+    
+    UIImage *getImage = [UIImage imageWithCGImage:cgImageRef];
+    CFRelease(cgImageRef);
+    free(p);
+    
+    if (getImage == nil) {
+        NSLog(@"Nil Image");
+    }
+    
+    NSData *jpgData = UIImageJPEGRepresentation(getImage, 1.0f);
+    UIImage *jpgImage = [UIImage imageWithData:jpgData];
+    
+    return color;
 }
 
 - (void)takeScreenshot {

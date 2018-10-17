@@ -15,7 +15,9 @@ struct Uniforms {
     var normalMatrix: float3x3
 }
 
-@objc class DataViewController: UIViewController, UITableViewDelegate, UIActionSheetDelegate {
+@objc class DataViewController: UIViewController, UITableViewDelegate, UIActionSheetDelegate, UIGestureRecognizerDelegate {
+    
+    //var touchViews = [UITouch:TouchSpotView]()
     
     var panGestureRecognizer: UIGestureRecognizer!
     var angularVelocity: CGPoint!
@@ -54,7 +56,7 @@ struct Uniforms {
     
     
     
-    var context: Context = .initial
+    var context: Context = .initial, additionContext: AdditionContext = .face
     
     let actionsTableView = UITableView(frame: CGRect(x: 0, y: 100, width: 320, height: 300))
     var actionsDataSource: ActionsTableViewDataSource?
@@ -116,6 +118,17 @@ struct Uniforms {
         /*drawable = metalLayer?.nextDrawable()!
          objectToDrawB.render(commandQueue: commandQueue, pipelineState: pipelineState, drawable: drawable!, clearColor: nil)*/
     }*/
+    
+    // UITapGestureRecognizer конфликтует с выделением UITableView, поэтому тапы по UITableView необходимо исключать
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if (touch.view?.isDescendant(of: actionsTableView))! {
+            return false
+        }
+        if (touch.view?.isDescendant(of: propertiesTableView))! {
+            return false
+        }
+        return true
+    }
     
     func lineRender() {
         guard let drawable = metalLayer?.nextDrawable() else { return }
@@ -360,22 +373,165 @@ struct Uniforms {
     
     func applyAction(sender: UIButton!) {
         print("Applying")
+        view.endEditing(true)
         
-        if context == .scaling {
-            let xScale = Float((propertiesDataSource?.xText.text!)!)!
-            let yScale = Float((propertiesDataSource?.yText.text!)!)!
-            let zScale = Float((propertiesDataSource?.zText.text!)!)!
-        
-            for object in RootViewController.scenes[0].objects {
-                object.scaleBy(widthMultiplier: xScale, heightMultiplier: yScale, depthMultiplier: zScale)
+        switch context {
+        case .initial:
+            print("Dummy")
+        case .addition:
+            
+            // Position
+            let x = Float((propertiesDataSource?.xText.text!)!)!
+            let y = Float((propertiesDataSource?.yText.text!)!)!
+            let z = Float((propertiesDataSource?.zText.text!)!)!
+            
+            // Dimensions
+            let width = Float((propertiesDataSource?.widthText.text!)!)!
+            let height = Float((propertiesDataSource?.heightText.text!)!)!
+            let depth = Float((propertiesDataSource?.depthText.text!)!)!
+            
+            // Rotation
+            let xAngle = Float((propertiesDataSource?.xAngleText.text!)!)!
+            let yAngle = Float((propertiesDataSource?.yAngleText.text!)!)!
+            let zAngle = Float((propertiesDataSource?.zAngleText.text!)!)!
+            
+            // Color
+            let red = Int((propertiesDataSource?.redText.text!)!)!
+            let green = Int((propertiesDataSource?.greenText.text!)!)!
+            let blue = Int((propertiesDataSource?.blueText.text!)!)!
+            
+            switch additionContext {
+            case .face:
+                let face = Face(x: x, y: y, z: z, width: width, height: height, rgb: (red, green, blue))
+                RootViewController.scenes[0].appendObject(object: face)
+            case .cube:
+                let cube = Cube(x: x, y: y, z: z, width: width, height: height, depth: depth, rgb: (red, green, blue))
+                cube.rotate(xAngle: xAngle, yAngle: yAngle, zAngle: zAngle)
+                RootViewController.scenes[0].appendObject(object: cube)
+            case .cone:
+                let cone = Cone(x: x, y: y, z: z, radius: 0.5, height: height, segments: 36, rgb: (red, green, blue))
+                RootViewController.scenes[0].appendObject(object: cone)
+            case .pyramid:
+                let pyramid = Pyramid(x: x, y: y, z: z, width: width, height: height, depth: depth, rgb: (red, green, blue))
+                RootViewController.scenes[0].appendObject(object: pyramid)
+            case .cylinder:
+                let cylinder = Cylinder(x: x, y: y, z: z, radius: 0.5, height: height, segments: 36, rgb: (red, green, blue))
+                RootViewController.scenes[0].appendObject(object: cylinder)
             }
             
             RootViewController.scenes[0].prepareForRender()
             contr.loadModel(Int32(RootViewController.scenes[0].indicesCount))
-            //contr.scaleObject(0, length: contr.getTotalIndices(), xScale: xScale, yScale: yScale, zScale: zScale)
-            //contr.redraw()
+        case .translation:
+            let xTranslate = Float((propertiesDataSource?.xTranslationText.text!)!)!
+            let yTranslate = Float((propertiesDataSource?.yTranslationText.text!)!)!
+            let zTranslate = Float((propertiesDataSource?.zTranslationText.text!)!)!
+            
+            var isAnyObjectSelected = false
+            for object in RootViewController.scenes[0].objects {
+                if object.isSelected {
+                    isAnyObjectSelected = true
+                    object.translateTo(xTranslate: xTranslate, yTranslate: yTranslate, zTranslate: zTranslate)
+                }
+            }
+            
+            if !isAnyObjectSelected {
+                for object in RootViewController.scenes[0].objects {
+                    object.isSelected = true
+                    object.translateTo(xTranslate: xTranslate, yTranslate: yTranslate, zTranslate: zTranslate)
+                }
+            }
+            
+            RootViewController.scenes[0].prepareForRender()
+            contr.loadModel(Int32(RootViewController.scenes[0].indicesCount))
+        case .rotation:
+            let xAngle = Float((propertiesDataSource?.xAngleText.text!)!)!
+            let yAngle = Float((propertiesDataSource?.yAngleText.text!)!)!
+            let zAngle = Float((propertiesDataSource?.zAngleText.text!)!)!
+            
+            var isAnyObjectSelected = false
+            for object in RootViewController.scenes[0].objects {
+                if object.isSelected {
+                    isAnyObjectSelected = true
+                    object.rotate(xAngle: xAngle, yAngle: yAngle, zAngle: zAngle)
+                }
+            }
+            
+            if !isAnyObjectSelected {
+                for object in RootViewController.scenes[0].objects {
+                    object.isSelected = true
+                    object.rotate(xAngle: xAngle, yAngle: yAngle, zAngle: zAngle)
+                }
+            }
+            
+            RootViewController.scenes[0].prepareForRender()
+            contr.loadModel(Int32(RootViewController.scenes[0].indicesCount))
+        case .scaling:
+            let widthScale = Float((propertiesDataSource?.widthText.text!)!)!
+            let heightScale = Float((propertiesDataSource?.heightText.text!)!)!
+            let depthScale = Float((propertiesDataSource?.depthText.text!)!)!
+            
+            var isAnyObjectSelected = false
+            for object in RootViewController.scenes[0].objects {
+                if object.isSelected {
+                    isAnyObjectSelected = true
+                    object.scaleBy(widthMultiplier: widthScale, heightMultiplier: heightScale, depthMultiplier: depthScale)
+                }
+            }
+            
+            if !isAnyObjectSelected {
+                for object in RootViewController.scenes[0].objects {
+                    object.isSelected = true
+                    object.scaleBy(widthMultiplier: widthScale, heightMultiplier: heightScale, depthMultiplier: depthScale)
+                }
+            }
+            
+            RootViewController.scenes[0].prepareForRender()
+            contr.loadModel(Int32(RootViewController.scenes[0].indicesCount))
         }
         
+        propertiesDataSource?.clearTranslationParams()
+        propertiesDataSource?.clearRotationParams()
+        propertiesDataSource?.clearColorParams()
+        hideActions()
+    }
+    
+    private func attachAction() {
+        var objectsToAttach: [Int] = []
+        for i in 0..<RootViewController.scenes[nth].objects.count {
+            objectsToAttach.append(i)
+        }
+        RootViewController.scenes[nth].attachObjects(objectsToAttach: objectsToAttach)
+        RootViewController.scenes[nth].prepareForRender()
+        contr.loadModel(Int32(RootViewController.scenes[nth].indicesCount))
+        
+        hideActions()
+    }
+    
+    func removeAction() {
+        var isAnyObjectSelected = false
+        // TODO fix multiple selection
+        for i in 0..<RootViewController.scenes[0].objects.count {
+            if RootViewController.scenes[0].objects[i].isSelected {
+                isAnyObjectSelected = true
+                RootViewController.scenes[0].removeObject(nth: i)
+                break
+            }
+        }
+        
+        if !isAnyObjectSelected {
+            RootViewController.scenes[0].removeAll(nth: 0)
+            /*for i in 0..<RootViewController.scenes[0].objects.count {
+                object.rotate(xAngle: xAngle, yAngle: yAngle, zAngle: zAngle)
+            }*/
+        }
+        
+        RootViewController.scenes[0].prepareForRender()
+        contr.loadModel(Int32(RootViewController.scenes[0].indicesCount))
+        
+        hideActions()
+    }
+    
+    func hideActions() {
         item.rightBarButtonItem = button
         
         context = .initial
@@ -387,10 +543,6 @@ struct Uniforms {
         actionsButton.title = "Actions"
     }
     
-    /*func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 30.0
-    }*/
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(indexPath.row)
         
@@ -398,7 +550,79 @@ struct Uniforms {
         case 0:
             switch context {
             case .addition:
+                print("Face")
+                additionContext = .face
+                
+                propertiesTableView.isHidden = false
+            default:
+                print("dummy")
+            }
+        case 1:
+            switch context {
+            case .addition:
                 print("Cube")
+                additionContext = .cube
+                
+                propertiesTableView.isHidden = false
+            default:
+                print("dummy")
+            }
+        case 2:
+            switch context {
+            case .addition:
+                print("Cone")
+                additionContext = .cone
+                
+                propertiesTableView.isHidden = false
+            default:
+                print("dummy")
+            }
+        case 3:
+            switch context {
+            case .initial:
+                print("Add object")
+                context = .addition
+                
+                propertiesTableView.reloadData()
+                
+                item.rightBarButtonItem = applyButton
+            case .addition:
+                print("Pyramid")
+                additionContext = .pyramid
+                
+                propertiesTableView.isHidden = false
+            default:
+                print("Dummy")
+            }
+        case 4:
+            switch context {
+            case .initial:
+                context = .translation
+                
+                propertiesTableView.reloadData()
+                propertiesTableView.isHidden = false
+                
+                item.rightBarButtonItem = applyButton
+            case .addition:
+                print("Cylinder")
+                additionContext = .cylinder
+                
+                propertiesTableView.isHidden = false
+            default:
+                print("dummy")
+            }
+        case 5:
+            switch context {
+            case .initial:
+                context = .rotation
+                
+                propertiesTableView.reloadData()
+                propertiesTableView.isHidden = false
+                
+                item.rightBarButtonItem = applyButton
+            case .addition:
+                print("Cylinder")
+                additionContext = .cylinder
                 
                 propertiesTableView.isHidden = false
             default:
@@ -415,14 +639,13 @@ struct Uniforms {
             } else {
                 context = .initial
             }
-        case 3:
-            print("Add object")
-            context = .addition
-            
-            propertiesTableView.reloadData()
-            
-            item.rightBarButtonItem = applyButton
+        case 9:
+            print("Attach")
+            attachAction()
         case 10:
+            print("Deletion")
+            removeAction()
+        case 11:
             print("Exporting")
             contr.takeScreenshot()
         default:
@@ -575,11 +798,24 @@ struct Uniforms {
     func gestureRecognizerDidRecognize(recognizer: UIPanGestureRecognizer) {
         let velocity = recognizer.velocity(in: self.view)
         let kVelocityScale: CGFloat = 0.01
-        angularVelocity = CGPoint(x: velocity.x * kVelocityScale, y: velocity.y * kVelocityScale)
         
-        RootViewController.scenes[nth].xAngle += (Float(angularVelocity.x))
-        RootViewController.scenes[nth].yAngle += (Float(angularVelocity.y))
-        contr.setAngle(RootViewController.scenes[nth].xAngle, y: RootViewController.scenes[nth].yAngle)
+        if recognizer.numberOfTouches > 1 {
+            angularVelocity = CGPoint(x: velocity.x * kVelocityScale, y: velocity.y * kVelocityScale)
+            RootViewController.scenes[nth].x += (Float(angularVelocity.x) * 0.01)
+            RootViewController.scenes[nth].y -= (Float(angularVelocity.y) * 0.01)
+            
+            contr.translateCamera(RootViewController.scenes[nth].x, y: RootViewController.scenes[nth].y, z: RootViewController.scenes[nth].z)
+            contr.setAngle(RootViewController.scenes[nth].xAngle, y: RootViewController.scenes[nth].yAngle)
+        } else {
+            angularVelocity = CGPoint(x: velocity.x * kVelocityScale, y: velocity.y * kVelocityScale)
+            RootViewController.scenes[nth].xAngle += (Float(angularVelocity.x))
+            RootViewController.scenes[nth].yAngle += (Float(angularVelocity.y))
+            contr.setAngle(RootViewController.scenes[nth].xAngle, y: RootViewController.scenes[nth].yAngle)
+        }
+            
+        print(recognizer.numberOfTouches)
+        
+        
         //print(RootViewController.scenes[0].xAngle)
         //RootViewController.scenes[nth].xAngle +=
         //self.angle = CGPointMake(self.angle.x + self.angularVelocity.x * frameDuration,
@@ -589,11 +825,62 @@ struct Uniforms {
         
     }
     
+    func tap(recognizer: UITapGestureRecognizer) {
+        
+        let point = recognizer.location(in: recognizer.view)
+        print(point.x)
+        print(point.y)
+        
+        contr.setTapPoint(Int32(point.x), y: Int32(point.y))
+        contr.toggleSelectionMode()
+        //contr.loadModel(Int32(RootViewController.scenes[nth].indicesCount))
+    }
+    
+    func pinchAction(recognizer: UIPinchGestureRecognizer) {
+        //RootViewController.scenes[nth].z *= CGFloat(recognizer.scale)
+        
+        let scale: Float = (Float(recognizer.scale) - 1.0) * 0.1
+        print(recognizer.scale)
+        
+        RootViewController.scenes[nth].z += scale
+        RootViewController.scenes[nth].prepareForRender()
+        
+        contr.translateCamera(RootViewController.scenes[nth].x, y: RootViewController.scenes[nth].y, z: RootViewController.scenes[nth].z)
+        contr.loadModel(Int32(RootViewController.scenes[nth].indicesCount))
+        
+        print(recognizer.scale)
+        
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if touches.count > 1 {
+            
+        }
+        print(touches.count)
+        
+        /*for touch in touches {
+            let view = viewForTouch(touch: touch)
+            // Move the view to the new location.
+            let newLocation = touch.location(in: self)
+            view?.center = newLocation
+        }*/
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.isMultipleTouchEnabled = true
+        
+        let pinchGestureRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(pinchAction(recognizer:)))
+        view.addGestureRecognizer(pinchGestureRecognizer)
+        
         panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(gestureRecognizerDidRecognize(recognizer:)))
         self.view.addGestureRecognizer(panGestureRecognizer)
+        
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(tap(recognizer:)))
+        gesture.delegate = self
+        self.view.addGestureRecognizer(gesture)
+        
         /*self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
             action:@selector(gestureRecognizerDidRecognize:)];
         [self.view addGestureRecognizer:self.panGestureRecognizer];
@@ -602,7 +889,7 @@ struct Uniforms {
 
         //DataViewController.mainView = self.view
         RootViewController.contr = contr
-        contr.setVertexArrays(RootViewController.scenes[nth].bigVertices, bigLineVertices: RootViewController.scenes[nth].bigLineVertices, bigIndices: RootViewController.scenes[nth].bigIndices, bigLineIndices: RootViewController.scenes[nth].bigLineIndices)
+        contr.setVertexArrays(RootViewController.scenes[nth].bigVertices, bigLineVertices: RootViewController.scenes[nth].bigLineVertices, selectedVertices:RootViewController.scenes[nth].selectionVertices, bigIndices: RootViewController.scenes[nth].bigIndices, bigLineIndices: RootViewController.scenes[nth].bigLineIndices)
         contr.customMetalLayer(self.view.layer, bounds: self.view.bounds, indicesCount: Int32(RootViewController.scenes[nth].indicesCount), x: RootViewController.scenes[nth].x, y: RootViewController.scenes[nth].y, z: RootViewController.scenes[nth].z, xAngle: RootViewController.scenes[nth].xAngle, yAngle: RootViewController.scenes[nth].yAngle)
         contr.setView(self)
         

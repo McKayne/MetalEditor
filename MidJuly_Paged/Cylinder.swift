@@ -42,7 +42,7 @@ class Cylinder: SceneObject {
         }
         
         for i in 0..<segments * 3 * 4 {
-            indices.append(i)
+            //indices.append(i)
             
             var vertex: Vertex = Vertex()
             vertex.position = position[i]

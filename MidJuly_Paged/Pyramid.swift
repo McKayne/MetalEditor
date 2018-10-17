@@ -19,40 +19,40 @@ class Pyramid: SceneObject {
         
         // front face
         
-        position.append(customFloat4(x: -0.25, y: -0.25, z: 0.25, w: 1.0))
-        position.append(customFloat4(x: 0.25, y: -0.25, z: 0.25, w: 1.0))
-        position.append(customFloat4(x: 0.0, y: 0.25, z: 0.0, w: 1.0))
+        position.append(customFloat4(x: x, y: y, z: z, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y, z: z, w: 1.0))
+        position.append(customFloat4(x: x + width / 2.0, y: y + height, z: z - depth / 2.0, w: 1.0))
         
         // right face
         
-        position.append(customFloat4(x: 0.25, y: -0.25, z: 0.25, w: 1.0))
-        position.append(customFloat4(x: 0.25, y: -0.25, z: -0.25, w: 1.0))
-        position.append(customFloat4(x: 0.0, y: 0.25, z: 0.0, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y, z: z, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x + width / 2.0, y: y + height, z: z - depth / 2.0, w: 1.0))
         
         // back face
         
-        position.append(customFloat4(x: 0.25, y: -0.25, z: -0.25, w: 1.0))
-        position.append(customFloat4(x: -0.25, y: -0.25, z: -0.25, w: 1.0))
-        position.append(customFloat4(x: 0.0, y: 0.25, z: 0.0, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x, y: y, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x + width / 2.0, y: y + height, z: z - depth / 2.0, w: 1.0))
         
         // left face
         
-        position.append(customFloat4(x: -0.25, y: -0.25, z: -0.25, w: 1.0))
-        position.append(customFloat4(x: -0.25, y: -0.25, z: 0.25, w: 1.0))
-        position.append(customFloat4(x: 0.0, y: 0.25, z: 0.0, w: 1.0))
+        position.append(customFloat4(x: x, y: y, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x, y: y, z: z, w: 1.0))
+        position.append(customFloat4(x: x + width / 2.0, y: y + height, z: z - depth / 2.0, w: 1.0))
         
         // bottom face
         
-        position.append(customFloat4(x: 0.25, y: -0.25, z: 0.25, w: 1.0))
-        position.append(customFloat4(x: -0.25, y: -0.25, z: -0.25, w: 1.0))
-        position.append(customFloat4(x: 0.25, y: -0.25, z: -0.25, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y, z: z, w: 1.0))
+        position.append(customFloat4(x: x, y: y, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y, z: z - depth, w: 1.0))
         
-        position.append(customFloat4(x: -0.25, y: -0.25, z: -0.25, w: 1.0))
-        position.append(customFloat4(x: 0.25, y: -0.25, z: 0.25, w: 1.0))
-        position.append(customFloat4(x: -0.25, y: -0.25, z: 0.25, w: 1.0))
+        position.append(customFloat4(x: x, y: y, z: z - depth, w: 1.0))
+        position.append(customFloat4(x: x + width, y: y, z: z, w: 1.0))
+        position.append(customFloat4(x: x, y: y, z: z, w: 1.0))
         
         for i in 0..<18 {
-            indices.append(i)
+            //indices.append(i)
             
             var vertex: Vertex = Vertex()
             vertex.position = position[i]

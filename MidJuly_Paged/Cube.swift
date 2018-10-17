@@ -80,7 +80,7 @@ class Cube: SceneObject {
         position.append(customFloat4(x: x, y: y, z: z, w: 1.0))
 
         for i in 0..<36 {
-            indices.append(i)
+            //indices.append(i)
             
             var vertex: Vertex = Vertex()
             vertex.position = position[i]

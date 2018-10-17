@@ -26,11 +26,11 @@ static float DegToRad(float deg) {
 @property (nonatomic, assign) CGPoint angularVelocity;
 @property (nonatomic, assign) CGPoint angle;
 
-@property (nonatomic, strong) id<MTLBuffer> vertexBuffer, lineVertexBuffer;
+@property (nonatomic, strong) id<MTLBuffer> vertexBuffer, lineVertexBuffer, selectionBuffer;
 @property (nonatomic, strong) id<MTLBuffer> indexBuffer, lineIndexBuffer;
 @property (nonatomic, strong) id<MTLBuffer> uniformBuffer;
 
-@property (nonatomic, assign) Vertex *bigVertices, *bigLineVertices;
+@property (nonatomic, assign) Vertex *bigVertices, *bigLineVertices, *selectedVertices;
 @property (nonatomic, assign) uint16_t *bigIndices, *bigLineIndices;
 
 @property (nonatomic, assign) simd::float4x4 projectionMatrix;
@@ -47,9 +47,16 @@ static float DegToRad(float deg) {
 
 @implementation ViewController
 
-- (void)setVertexArrays:(Vertex *)bigVertices bigLineVertices:(Vertex *)bigLineVertices bigIndices:(uint16_t *)bigIndices bigLineIndices:(uint16_t *)bigLineIndices {
+- (void)translateCamera:(float)x y:(float)y z:(float)z {
+    self.x = x;
+    self.y = y;
+    self.z = z;
+}
+
+- (void)setVertexArrays:(Vertex *)bigVertices bigLineVertices:(Vertex *)bigLineVertices selectedVertices:(Vertex *)selectedVertices bigIndices:(uint16_t *)bigIndices bigLineIndices:(uint16_t *)bigLineIndices {
     self.bigVertices = bigVertices;
     self.bigLineVertices = bigLineVertices;
+    self.selectedVertices = selectedVertices;
     
     self.bigIndices = bigIndices;
     self.bigLineIndices = bigLineIndices;
@@ -925,15 +932,23 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     }
 }
 
+- (void)toggleSelectionMode {
+    self.renderer.isSelectionMode = true;
+}
+
 - (void)loadModel:(int)indicesCount {
     
     self.totalIndices = indicesCount;
     
+    if (indicesCount > 0) {
     self.vertexBuffer = [self.renderer newBufferWithBytes:self.bigVertices length:sizeof(Vertex) * self.totalIndices];
+    self.selectionBuffer = [self.renderer newBufferWithBytes:self.selectedVertices length:sizeof(Vertex) * self.totalIndices];
+    
     self.indexBuffer = [self.renderer newBufferWithBytes:self.bigIndices length:sizeof(IndexType) * self.totalIndices];
     
     self.lineVertexBuffer = [self.renderer newBufferWithBytes:self.bigLineVertices length:sizeof(Vertex) * self.totalIndices];
     self.lineIndexBuffer = [self.renderer newBufferWithBytes:self.bigLineIndices length:sizeof(uint16_t) * (self.totalIndices * 2)];
+    }
 }
 
 - (void)updateMotion
@@ -992,7 +1007,7 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     viewMatrix.columns[3].z = self.z;
     
     const float near = 0.1;
-    const float far = 100;
+    const float far = 200;
     //const float aspect = self.view.bounds.size.width / self.view.bounds.size.height;
     const float aspect = self.bounds.size.width / self.bounds.size.height;
     simd::float4x4 projectionMatrix = PerspectiveProjection(aspect, DegToRad(75), near, far);
@@ -1011,6 +1026,11 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     self.uniformBuffer = [self.renderer newBufferWithBytes:(void *)&uniforms length:sizeof(Uniforms)];
 }
 
+- (void)setTapPoint:(int)x y:(int)y {
+    self.tapX = x;
+    self.tapY = y;
+}
+
 - (void)redraw {
     [self updateMotion];
     [self updateUniforms];
@@ -1020,12 +1040,27 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     
     
     
-    [self.renderer drawTrianglesWithInterleavedBuffer:self.vertexBuffer lineVertexBuffer:self.lineVertexBuffer
+    [self.renderer drawTrianglesWithInterleavedBuffer:self.vertexBuffer selectionVertexBuffer:self.selectionBuffer lineVertexBuffer:self.lineVertexBuffer
                                           indexBuffer:self.indexBuffer lineIndexBuffer:self.lineIndexBuffer
                                         uniformBuffer:self.uniformBuffer
                                            indexCount:[self.indexBuffer length] / sizeof(IndexType) numberOfObjects:self.totalIndices texture:nil];
     
     [self.renderer endFrame];
+    
+    if (self.renderer.isSelectionMode) {
+        //sleep(2);
+        int* color = [self.renderer pixelColor:self.tapX y:self.tapY];
+        self.renderer.isSelectionMode = false;
+        
+        NSLog(@"Red = %d", color[0]);
+        NSLog(@"Green = %d", color[1]);
+        NSLog(@"Blue = %d", color[2]);
+        
+        [RootViewController.scenes[0] selectObjectWithColorWithRgb:color];
+        [self loadModel:RootViewController.scenes[0].indicesCount];
+        //RootViewController.scenes
+        
+    }
 }
 
 @end

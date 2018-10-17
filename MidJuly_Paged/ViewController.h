@@ -38,9 +38,15 @@ typedef struct {
 @property (nonatomic, strong) CADisplayLink *displayLink;
 @property (nonatomic, strong) CAMetalLayer *metal;
 
+@property (assign) int tapX, tapY;
+
+- (void)translateCamera:(float)x y:(float)y z:(float)z;
+
+- (void)toggleSelectionMode;
+- (void)setTapPoint:(int)x y:(int)y;
 - (void)setAngle:(float)x y:(float)y;
 
-- (void)setVertexArrays:(Vertex *)bigVertices bigLineVertices:(Vertex *)bigLineVertices bigIndices:(uint16_t *)bigIndices bigLineIndices:(uint16_t *)bigLineIndices;
+- (void)setVertexArrays:(Vertex *)bigVertices bigLineVertices:(Vertex *)bigLineVertices selectedVertices:(Vertex *)selectedVertices bigIndices:(uint16_t *)bigIndices bigLineIndices:(uint16_t *)bigLineIndices;
 
 - (void)customMetalLayer:(CALayer *)layer bounds:(CGRect)bounds indicesCount:(int)indicesCount x:(float)x y:(float)y z:(float)z xAngle:(float)xAngle yAngle:(float)yAngle;
 - (void)appendAction:(float)x y:(float)y z:(float)z;

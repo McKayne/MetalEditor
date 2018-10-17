@@ -26,7 +26,7 @@ class Face: SceneObject {
         position.append(customFloat4(x: x, y: y, z: z, w: 1.0))
         
         for i in 0..<6 {
-            indices.append(i)
+            //indices.append(i)
             
             var vertex: Vertex = Vertex()
             vertex.position = position[i]

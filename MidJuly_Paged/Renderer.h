@@ -7,17 +7,19 @@
 
 @property (nonatomic, copy) NSString *vertexFunctionName;
 @property (nonatomic, copy) NSString *fragmentFunctionName;
+@property (assign) BOOL isSelectionMode;
 
 - (instancetype)initWithLayer:(CAMetalLayer *)metalLayer;
 
 - (id<MTLBuffer>)newBufferWithBytes:(const void *)bytes length:(NSUInteger)length;
 
 - (void)takeScreenshot;
+- (int*)pixelColor:(int)x y:(int)y;
 
 - (void)startFrame;
 - (void)endFrame;
 
-- (void)drawTrianglesWithInterleavedBuffer:(id<MTLBuffer>)positionBuffer lineVertexBuffer:(id<MTLBuffer>)lineVertexBuffer
+- (void)drawTrianglesWithInterleavedBuffer:(id<MTLBuffer>)positionBuffer selectionVertexBuffer:(id<MTLBuffer>)selectionVertexBuffer lineVertexBuffer:(id<MTLBuffer>)lineVertexBuffer
                                indexBuffer:(id<MTLBuffer>)indexBuffer lineIndexBuffer:(id<MTLBuffer>)lineIndexBuffer
                              uniformBuffer:(id<MTLBuffer>)uniformBuffer
                                 indexCount:(size_t)indexCount numberOfObjects:(int)numberOfObjects texture:(id<MTLTexture>) texture;

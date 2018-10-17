@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		7F21383D215A147900553605 /* Import.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F21383C215A147900553605 /* Import.swift */; };
 		7F2583AE214CB71600B332AC /* Export.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F2583AD214CB71600B332AC /* Export.swift */; };
+		7F37AC262170A6180041425E /* AdditionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F37AC252170A6180041425E /* AdditionContext.swift */; };
 		7F39E8EA2148AC7200252FF6 /* SSZipArchive.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8E62148AC7200252FF6 /* SSZipArchive.h */; };
 		7F39E8EB2148AC7200252FF6 /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8E72148AC7200252FF6 /* SSZipArchive.m */; };
 		7F39E8EC2148AC7200252FF6 /* SSZipCommon.h in Sources */ = {isa = PBXBuildFile; fileRef = 7F39E8E82148AC7200252FF6 /* SSZipCommon.h */; };
@@ -57,9 +58,6 @@
 		7F61E46221517AC800F0AA29 /* Cylinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F61E46121517AC800F0AA29 /* Cylinder.swift */; };
 		7F61E46421518E6600F0AA29 /* Demo1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F61E46321518E6600F0AA29 /* Demo1.swift */; };
 		7F61E466215317A900F0AA29 /* CompoundRoof.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F61E465215317A900F0AA29 /* CompoundRoof.swift */; };
-		7F68312321001CBC00B8FC8E /* Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F68312221001CBC00B8FC8E /* Test.m */; };
-		7F68312621001D5F00B8FC8E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F68312521001D5F00B8FC8E /* AppDelegate.m */; };
-		7F68312921001D8A00B8FC8E /* MetalView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F68312821001D8A00B8FC8E /* MetalView.m */; };
 		7F68312E21001DA700B8FC8E /* OBJModel.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F68312B21001DA700B8FC8E /* OBJModel.mm */; };
 		7F68312F21001DA700B8FC8E /* Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F68312D21001DA700B8FC8E /* Renderer.m */; };
 		7F68313821001DE400B8FC8E /* teapot.obj in Resources */ = {isa = PBXBuildFile; fileRef = 7F68313221001DE400B8FC8E /* teapot.obj */; };
@@ -109,6 +107,7 @@
 /* Begin PBXFileReference section */
 		7F21383C215A147900553605 /* Import.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Import.swift; sourceTree = "<group>"; };
 		7F2583AD214CB71600B332AC /* Export.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Export.swift; sourceTree = "<group>"; };
+		7F37AC252170A6180041425E /* AdditionContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdditionContext.swift; sourceTree = "<group>"; };
 		7F39E8E62148AC7200252FF6 /* SSZipArchive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SSZipArchive.h; path = MidJuly_Paged/SSZipArchive/SSZipArchive.h; sourceTree = "<group>"; };
 		7F39E8E72148AC7200252FF6 /* SSZipArchive.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SSZipArchive.m; path = MidJuly_Paged/SSZipArchive/SSZipArchive.m; sourceTree = "<group>"; };
 		7F39E8E82148AC7200252FF6 /* SSZipCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SSZipCommon.h; path = MidJuly_Paged/SSZipArchive/SSZipCommon.h; sourceTree = "<group>"; };
@@ -158,11 +157,6 @@
 		7F61E46321518E6600F0AA29 /* Demo1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Demo1.swift; sourceTree = "<group>"; };
 		7F61E465215317A900F0AA29 /* CompoundRoof.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompoundRoof.swift; sourceTree = "<group>"; };
 		7F68312121001CBC00B8FC8E /* MidJuly_Paged-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MidJuly_Paged-Bridging-Header.h"; sourceTree = "<group>"; };
-		7F68312221001CBC00B8FC8E /* Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test.m; sourceTree = "<group>"; };
-		7F68312421001D5F00B8FC8E /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		7F68312521001D5F00B8FC8E /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		7F68312721001D8A00B8FC8E /* MetalView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalView.h; sourceTree = "<group>"; };
-		7F68312821001D8A00B8FC8E /* MetalView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MetalView.m; sourceTree = "<group>"; };
 		7F68312A21001DA700B8FC8E /* OBJModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBJModel.h; sourceTree = "<group>"; };
 		7F68312B21001DA700B8FC8E /* OBJModel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OBJModel.mm; sourceTree = "<group>"; };
 		7F68312C21001DA700B8FC8E /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
@@ -301,10 +295,10 @@
 				7F61E46321518E6600F0AA29 /* Demo1.swift */,
 				7F61E465215317A900F0AA29 /* CompoundRoof.swift */,
 				7F8230DD214C6FEB00BD262C /* Context.swift */,
+				7F37AC252170A6180041425E /* AdditionContext.swift */,
 				7F8230DB214C0CD900BD262C /* ActionsTableViewDataSource.swift */,
 				7F61E4592151132600F0AA29 /* PropertiesTableViewDataSource.swift */,
 				7F68313B2104038200B8FC8E /* Vertex.swift */,
-				7F68312221001CBC00B8FC8E /* Test.m */,
 				7FEBAC4920F9793000D99284 /* Triangle.swift */,
 				7FEBAC4B20F979F300D99284 /* Node2D.swift */,
 				7FEBAC4320F7F67D00D99284 /* Shaders.metal */,
@@ -335,10 +329,6 @@
 				7F68312B21001DA700B8FC8E /* OBJModel.mm */,
 				7F68312C21001DA700B8FC8E /* Renderer.h */,
 				7F68312D21001DA700B8FC8E /* Renderer.m */,
-				7F68312721001D8A00B8FC8E /* MetalView.h */,
-				7F68312821001D8A00B8FC8E /* MetalView.m */,
-				7F68312421001D5F00B8FC8E /* AppDelegate.h */,
-				7F68312521001D5F00B8FC8E /* AppDelegate.m */,
 			);
 			path = MidJuly_Paged;
 			sourceTree = "<group>";
@@ -554,6 +544,7 @@
 				7F61E4562150D82300F0AA29 /* Cube.swift in Sources */,
 				7F39E9092148ACC000252FF6 /* zip.h in Sources */,
 				7F39E8EA2148AC7200252FF6 /* SSZipArchive.h in Sources */,
+				7F37AC262170A6180041425E /* AdditionContext.swift in Sources */,
 				7F39E8EB2148AC7200252FF6 /* SSZipArchive.m in Sources */,
 				7F39E8EC2148AC7200252FF6 /* SSZipCommon.h in Sources */,
 				7F39E8ED2148AC7200252FF6 /* ZipArchive.h in Sources */,
@@ -564,7 +555,6 @@
 				7F61E46421518E6600F0AA29 /* Demo1.swift in Sources */,
 				7F68313C2104038200B8FC8E /* Vertex.swift in Sources */,
 				7F68312E21001DA700B8FC8E /* OBJModel.mm in Sources */,
-				7F68312921001D8A00B8FC8E /* MetalView.m in Sources */,
 				7F61E4542150D73300F0AA29 /* SceneObject.swift in Sources */,
 				7FEBAC4020F7F49300D99284 /* Node.swift in Sources */,
 				7F68313921001DE400B8FC8E /* Transforms.mm in Sources */,
@@ -576,10 +566,8 @@
 				7FEBAC0C20F7C47E00D99284 /* DataViewController.swift in Sources */,
 				7FEBAC0820F7C47E00D99284 /* AppDelegate.swift in Sources */,
 				7FEBAC4C20F979F300D99284 /* Node2D.swift in Sources */,
-				7F68312321001CBC00B8FC8E /* Test.m in Sources */,
 				7FEBAC4620F7FE9300D99284 /* Line.swift in Sources */,
 				7FEBAC4220F7F4B700D99284 /* Matrix4.swift in Sources */,
-				7F68312621001D5F00B8FC8E /* AppDelegate.m in Sources */,
 				7F8230DE214C6FEB00BD262C /* Context.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

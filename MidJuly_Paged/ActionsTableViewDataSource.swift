@@ -10,6 +10,8 @@ import Foundation
 
 class ActionsTableViewDataSource: NSObject, UITableViewDataSource {
     
+    private let actionsList = ["Undo or redo", "New scene", "Manage scenes", "Add object", "Translate", "Rotate", "Scale object", "Mirror", "Clone object", "Attach", "Remove", "Import or export", "Textures library", "About"]
+    
     var controller: DataViewController
     let xText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
     let yText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
@@ -39,11 +41,16 @@ class ActionsTableViewDataSource: NSObject, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch controller.context {
         case .initial:
-            return 13
+            return actionsList.count
+        case .addition:
+            return 5
+        case .translation:
+            return 3
+        case .rotation:
+            return 5
         case .scaling:
             return 3
-        case .addition:
-            return 1
+        
         }
     }
     
@@ -60,56 +67,68 @@ class ActionsTableViewDataSource: NSObject, UITableViewDataSource {
         case 0:
             switch controller.context {
             case .initial:
-                cell.textLabel!.text = "Undo or redo"
+                cell.textLabel!.text = actionsList[indexPath.row]
+            case .addition:
+                cell.textLabel!.text = "Face"
             case .scaling:
                 cell.textLabel!.text = "Scale X to "
                 cell.accessoryView = xText
             default:
-                cell.textLabel!.text = "Cube"
+                cell.textLabel!.text = "Dummy"
             }
         case 1:
-            if controller.context == .initial {
-                cell.textLabel!.text = "New scene"
-            } else {
-                cell.textLabel!.text = "Scale Y to "
-                cell.accessoryView = yText
-            }
             switch controller.context {
             case .initial:
-                cell.textLabel!.text = "New scene"
+                cell.textLabel!.text = actionsList[indexPath.row]
+            case .addition:
+                cell.textLabel!.text = "Cube"
             case .scaling:
                 cell.textLabel!.text = "Scale Y to "
                 cell.accessoryView = yText
             default:
-                cell.textLabel!.text = "Face"
+                cell.textLabel!.text = "Dummy"
             }
         case 2:
-            if controller.context == .initial {
-                cell.textLabel!.text = "Manage scenes"
-            } else {
+            switch controller.context {
+            case .initial:
+                cell.textLabel!.text = actionsList[indexPath.row]
+            case .addition:
+                cell.textLabel!.text = "Cone"
+            case .scaling:
                 cell.textLabel!.text = "Scale Z to "
                 cell.accessoryView = zText
+            default:
+                cell.textLabel!.text = "Dummy"
             }
         case 3:
-            cell.textLabel!.text = "Add object"
+            switch controller.context {
+            case .initial:
+                cell.textLabel!.text = actionsList[indexPath.row]
+            case .addition:
+                cell.textLabel!.text = "Pyramid"
+            default:
+                cell.textLabel!.text = "Dummy"
+            }
         case 4:
-            cell.textLabel!.text = "Translate"
+            switch controller.context {
+            case .initial:
+                cell.textLabel!.text = actionsList[indexPath.row]
+            case .addition:
+                cell.textLabel!.text = "Cylinder"
+            default:
+                cell.textLabel!.text = "Dummy"
+            }
         case 5:
-            cell.textLabel!.text = "Rotate"
-        case 6:
-            cell.textLabel!.text = "Scale object"
-        case 7:
-            cell.textLabel!.text = "Mirror"
-        case 8:
-            cell.textLabel!.text = "Clone object"
-        case 9:
-            cell.textLabel!.text = "Remove last"
-        case 10:
-            cell.textLabel!.text = "Import or export"
-        case 11:
-            cell.textLabel!.text = "Textures library"
-        case 12:
-            cell.textLabel!.text = "About"
+            switch controller.context {
+            case .initial:
+                cell.textLabel!.text = actionsList[indexPath.row]
+            case .addition:
+                cell.textLabel!.text = "123"
+            default:
+                cell.textLabel!.text = "Dummy"
+            }
+        case 6...12:
+            cell.textLabel!.text = actionsList[indexPath.row]
         default:
             cell.textLabel!.text = "Dummy"
         }

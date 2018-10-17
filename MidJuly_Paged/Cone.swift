@@ -30,7 +30,7 @@ class Cone: SceneObject {
         }
         
         for i in 0..<segments * 3 * 2 {
-            indices.append(i)
+            //indices.append(i)
             
             var vertex: Vertex = Vertex()
             vertex.position = position[i]

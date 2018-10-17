@@ -869,24 +869,24 @@ struct Uniforms {
         }*/
     }
     
-    func accHandler(acceleration: CMAcceleration) {
+    func accHandler(x: Float, y: Float, z: Float) {
         
-        print(acceleration.x)
-        print(acceleration.y)
-        print(acceleration.z)
+        //print(x)
+        //print(y)
+        //print(z)
         
         let lockZ = true
         
-        if abs(Float(acceleration.x)) >= 0.1 {
-            RootViewController.scenes[nth].x -= (Float(acceleration.x) * 0.01)
+        if abs(x) >= 0.1 {
+            RootViewController.scenes[nth].x -= (x * 0.01)
         }
-        if abs(Float(acceleration.y)) >= 0.1 {
-            RootViewController.scenes[nth].y -= (Float(acceleration.y) * 0.01)
+        if abs(y) >= 0.1 {
+            RootViewController.scenes[nth].y -= (y * 0.01)
         }
         
         if !lockZ {
-            if abs(Float(acceleration.z) + 1.0) >= 0.1 {
-                RootViewController.scenes[nth].z += ((Float(acceleration.z) + 1.0) * 0.01)
+            if abs(z + 1.0) >= 0.1 {
+                RootViewController.scenes[nth].z += ((z + 1.0) * 0.01)
             }
         }
             //
@@ -902,7 +902,7 @@ struct Uniforms {
         motionManager.accelerometerUpdateInterval = 0.01
         if motionManager.isAccelerometerAvailable {
             let queue = OperationQueue.current
-            motionManager.startAccelerometerUpdates(to: queue!, withHandler: {(accelData: CMAccelerometerData?, error: Error?) in self.accHandler(acceleration: (accelData?.acceleration)!)
+            motionManager.startAccelerometerUpdates(to: queue!, withHandler: {(accelData: CMAccelerometerData?, error: Error?) in self.accHandler(x: Float((accelData?.acceleration.x)!), y: Float((accelData?.acceleration.y)!), z: Float((accelData?.acceleration.z)!))
             } as! CMAccelerometerHandler)
         }
         

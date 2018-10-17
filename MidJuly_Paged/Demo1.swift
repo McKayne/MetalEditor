@@ -50,6 +50,9 @@ class Demo1 {
         
         let wallLeft = faceGrid(object: wallCellA, widthDiff: 0.3, heightDiff: 0.3, rows: 4, cols: 4)
         
+        let wallLeftBack = wallLeft.cloneAndTranslateTo(xTranslate: 0, yTranslate: 0, zTranslate: -0.6)
+        wallLeft.attachObject(object: wallLeftBack)
+        
         let wall3x2 = faceGrid(object: wallCellA, widthDiff: 0.3, heightDiff: 0.3, rows: 3, cols: 2)
         wall3x2.rotateX(xAngle: -90)
         wall3x2.translateTo(xTranslate: -0.3 * 2 + 0.3, yTranslate: 0.3, zTranslate: -0.3)
@@ -57,7 +60,12 @@ class Demo1 {
         
         let wall4x5 = faceGrid(object: wallCellA, widthDiff: 0.3, heightDiff: 0.3, rows: 5, cols: 4)
         wall4x5.translateTo(xTranslate: 0.3 * 4, yTranslate: 0, zTranslate: 0)
+        
+        let wall4x5Back = wall4x5.cloneAndTranslateTo(xTranslate: 0, yTranslate: 0, zTranslate: -0.6)
+        
         wallLeft.attachObject(object: wall4x5)
+        
+        wallLeft.attachObject(object: wall4x5Back)
         
         var roof1 = CompoundRoof(x: -0.3 - 0.05, y: 0.3 * 3, z: 0.25, width: 0.05, lowerSegments: 1, rgb: (28, 44, 80))
         wallLeft.attachObject(object: roof1)

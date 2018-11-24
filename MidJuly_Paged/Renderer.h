@@ -17,10 +17,14 @@
 - (int*)pixelColor:(int)x y:(int)y;
 
 - (void)startFrame;
+- (void)startAxisFrame;
 - (void)endFrame;
 
-- (void)drawTrianglesWithInterleavedBuffer:(id<MTLBuffer>)positionBuffer selectionVertexBuffer:(id<MTLBuffer>)selectionVertexBuffer lineVertexBuffer:(id<MTLBuffer>)lineVertexBuffer
-                               indexBuffer:(id<MTLBuffer>)indexBuffer lineIndexBuffer:(id<MTLBuffer>)lineIndexBuffer
+- (void)drawTrianglesWithInterleavedBuffer:(id<MTLBuffer>)positionBuffer selectionVertexBuffer:(id<MTLBuffer>)selectionVertexBuffer lineVertexBuffer:(id<MTLBuffer>)lineVertexBuffer gridVertexBuffer:(id<MTLBuffer>)gridVertexBuffer
+                               indexBuffer:(id<MTLBuffer>)indexBuffer lineIndexBuffer:(id<MTLBuffer>)lineIndexBuffer gridIndexBuffer:(id<MTLBuffer>)gridIndexBuffer
+                             uniformBuffer:(id<MTLBuffer>)uniformBuffer
+                                indexCount:(size_t)indexCount numberOfObjects:(int)numberOfObjects texture:(id<MTLTexture>) texture;
+- (void)drawAxis:(id<MTLBuffer>)positionBuffer selectionVertexBuffer:(id<MTLBuffer>)selectionVertexBuffer lineVertexBuffer:(id<MTLBuffer>)lineVertexBuffer gridVertexBuffer:(id<MTLBuffer>)gridVertexBuffer axisVertexBuffer:(id<MTLBuffer>)axisVertexBuffer indexBuffer:(id<MTLBuffer>)indexBuffer lineIndexBuffer:(id<MTLBuffer>)lineIndexBuffer gridIndexBuffer:(id<MTLBuffer>)gridIndexBuffer
                              uniformBuffer:(id<MTLBuffer>)uniformBuffer
                                 indexCount:(size_t)indexCount numberOfObjects:(int)numberOfObjects texture:(id<MTLTexture>) texture;
 

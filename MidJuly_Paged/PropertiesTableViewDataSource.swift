@@ -67,9 +67,9 @@ class PropertiesTableViewDataSource: NSObject, UITableViewDataSource {
         yText.textAlignment = .center
         zText.textAlignment = .center
         
-        xText.text = "1.0"
-        yText.text = "1.0"
-        zText.text = "1.0"
+        xText.text = "-0.5"
+        yText.text = "-0.5"
+        zText.text = "-0.5"
         
         widthText.borderStyle = .roundedRect
         heightText.borderStyle = .roundedRect
@@ -125,7 +125,12 @@ class PropertiesTableViewDataSource: NSObject, UITableViewDataSource {
         case .initial:
             return 1
         case .addition:
-            return 16
+            switch controller.additionContext {
+            case .stairs:
+                return 14
+            default:
+                return 16
+            }
         case .translation:
             return 3
         case .rotation:
@@ -210,21 +215,71 @@ class PropertiesTableViewDataSource: NSObject, UITableViewDataSource {
             cell.textLabel!.text = "Depth = "
             cell.accessoryView = depthText
         case 8:
-            cell.textLabel!.text = "Rotation"
+            switch controller.additionContext {
+            case .stairs:
+                cell.textLabel!.text = "Stairs properties"
+            default:
+                cell.textLabel!.text = "Rotation"
+            }
         case 9:
-            cell.textLabel!.text = "X angle = "
-            cell.accessoryView = xAngleText
+            switch controller.additionContext {
+            case .stairs:
+                cell.textLabel!.text = "Number of steps = "
+                
+                Stairs.numberOfSteps.borderStyle = .roundedRect
+                //Stairs.numberOfSteps.text = "5"
+                
+                cell.accessoryView = Stairs.numberOfSteps
+            default:
+                cell.textLabel!.text = "X angle = "
+                cell.accessoryView = xAngleText
+            }
         case 10:
-            cell.textLabel!.text = "Y angle = "
-            cell.accessoryView = yAngleText
+            switch controller.additionContext {
+            case .stairs:
+                cell.textLabel!.text = "Rotation"
+            default:
+                cell.textLabel!.text = "Y angle = "
+                cell.accessoryView = yAngleText
+            }
         case 11:
-            cell.textLabel!.text = "Z angle = "
-            cell.accessoryView = zAngleText
+            switch controller.additionContext {
+            case .stairs:
+                cell.textLabel!.text = "X angle = "
+                
+                Stairs.xAngle.borderStyle = .roundedRect
+                //Stairs.xAngle.text = "0.0"
+                
+                cell.accessoryView = Stairs.xAngle
+            default:
+                cell.textLabel!.text = "Z angle = "
+                cell.accessoryView = zAngleText
+            }
         case 12:
-            cell.textLabel!.text = "Color"
+            switch controller.additionContext {
+            case .stairs:
+                cell.textLabel!.text = "Y angle = "
+                
+                Stairs.yAngle.borderStyle = .roundedRect
+                //Stairs.yAngle.text = "0.0"
+                
+                cell.accessoryView = Stairs.yAngle
+            default:
+                cell.textLabel!.text = "Color"
+            }
         case 13:
-            cell.textLabel!.text = "Red = "
-            cell.accessoryView = redText
+            switch controller.additionContext {
+            case .stairs:
+                cell.textLabel!.text = "Z angle = "
+                
+                Stairs.zAngle.borderStyle = .roundedRect
+                //Stairs.zAngle.text = "0.0"
+                
+                cell.accessoryView = Stairs.zAngle
+            default:
+                cell.textLabel!.text = "Red = "
+                cell.accessoryView = redText
+            }
         case 14:
             cell.textLabel!.text = "Green = "
             cell.accessoryView = greenText

@@ -26,7 +26,7 @@ class Demo1 {
     }
     
     static func demo() {
-        let scene = Scene(name: "iphone_app_export_test_3")
+        let scene = Scene(name: "iphone_app_export_test_3", fromDatabase: false)
         scene.x = -2.6
         scene.y = -1
         scene.z = -4
@@ -51,7 +51,10 @@ class Demo1 {
         let wallLeft = faceGrid(object: wallCellA, widthDiff: 0.3, heightDiff: 0.3, rows: 4, cols: 4)
         
         let wallLeftBack = wallLeft.cloneAndTranslateTo(xTranslate: 0, yTranslate: 0, zTranslate: -0.6)
+        let wallLeftBackMirror = wallLeftBack.cloneAndTranslateTo(xTranslate: 0, yTranslate: 0, zTranslate: 0)
+        wallLeftBackMirror.mirrorX()
         wallLeft.attachObject(object: wallLeftBack)
+        wallLeft.attachObject(object: wallLeftBackMirror)
         
         let wall3x2 = faceGrid(object: wallCellA, widthDiff: 0.3, heightDiff: 0.3, rows: 3, cols: 2)
         wall3x2.rotateX(xAngle: -90)
@@ -229,6 +232,8 @@ class Demo1 {
         scene.appendObject(object: bottom)
         
         scene.prepareForRender()
+        
+        scene.updateDatabase()
         
         RootViewController.scenes.append(scene)
     }

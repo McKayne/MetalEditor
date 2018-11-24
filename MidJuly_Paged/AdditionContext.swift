@@ -14,4 +14,7 @@ enum AdditionContext {
     case cone
     case pyramid
     case cylinder
+    case stairs
+    case surface
+    case height
 }

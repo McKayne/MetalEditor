@@ -12,7 +12,71 @@ import Foundation
     
     // OBJ format export
     
-    static func exportOBJ(scene: Scene) -> String {
+    static func exportOBJ(scene: Scene) -> URL {
+        
+        print("\(scene.name ?? "").obj")
+        
+        let url = URL(fileURLWithPath: NSTemporaryDirectory() + "\(scene.name ?? "").obj")
+        
+        var contents = "# Modeled on iPhone\n\nmtllib ./\(scene.name ?? "").mtl\n"
+        
+        contents += "\n# List of geometric vertices\n"
+        
+        // vertices
+        
+        let includeColor = true
+        if includeColor {
+            for i in 0..<scene.indicesCount {
+                contents += "\nv \(scene.bigVertices[i].position.x) \(scene.bigVertices[i].position.y) \(scene.bigVertices[i].position.z) \(scene.bigVertices[i].customColor.x) \(scene.bigVertices[i].customColor.y) \(scene.bigVertices[i].customColor.z)"
+            }
+        } else {
+            for i in 0..<scene.indicesCount {
+                contents += "\nv \(scene.bigVertices[i].position.x) \(scene.bigVertices[i].position.y) \(scene.bigVertices[i].position.z)"
+            }
+        }
+        
+        // texture coords
+        
+        contents += "\n\n# List of texture coordinates\n"
+        
+        for i in 0..<scene.indicesCount {
+            contents += "\nvt \(scene.bigVertices[i].texCoord.y) \(scene.bigVertices[i].texCoord.z)"
+        }
+        
+        // normals
+        
+        contents += "\n\n# List of lighting normals\n"
+        
+        for i in 0..<scene.indicesCount {
+            contents += "\nvn \(scene.bigVertices[i].normal.x) \(scene.bigVertices[i].normal.y) \(scene.bigVertices[i].normal.z)"
+        }
+        
+        // faces
+        
+        contents += "\n\n# List of face indices\n"
+        
+        var nth = 1
+        var lastMaterial = -1
+        for _ in 0..<(scene.indicesCount / 3) {
+            if scene.bigVertices[nth].texCoord.w == 1 {
+                if Int(scene.bigVertices[nth].texCoord.x) != lastMaterial {
+                    lastMaterial = Int(scene.bigVertices[nth].texCoord.x)
+                    contents += "\n\nusemtl material\(lastMaterial)"
+                }
+            }
+            
+            contents += "\nf \(nth)"; nth += 1
+            contents += " \(nth)"; nth += 1
+            contents += " \(nth)"; nth += 1
+        }
+        
+        let data = contents.data(using: .utf8)
+        try! data?.write(to: url)
+        
+        return url
+    }
+    
+    static func exportOBJfile(scene: Scene) -> String {
         let docPath: String = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         let filePath: String = docPath + "/" + (scene.name + ".obj")
 

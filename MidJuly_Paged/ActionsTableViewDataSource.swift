@@ -10,7 +10,7 @@ import Foundation
 
 class ActionsTableViewDataSource: NSObject, UITableViewDataSource {
     
-    private let actionsList = ["Undo or redo", "New scene", "Manage scenes", "Add object", "Translate", "Rotate", "Scale object", "Mirror", "Clone object", "Attach", "Remove", "Import or export", "Textures library", "About"]
+    private let actionsList = ["Undo or redo", "New scene", "Switch scene", "Duplicate scene", "Delete scene", "Add object", "Translate", "Rotate", "Scale object", "Mirror", "Copy objects", "Paste objects", "Attach", "Remove", "Import or export", "Textures library", "About"]
     
     var controller: DataViewController
     let xText = UITextField(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
@@ -40,10 +40,8 @@ class ActionsTableViewDataSource: NSObject, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch controller.context {
-        case .initial:
+        case .initial, .addition:
             return actionsList.count
-        case .addition:
-            return 5
         case .translation:
             return 3
         case .rotation:
@@ -66,10 +64,8 @@ class ActionsTableViewDataSource: NSObject, UITableViewDataSource {
         switch indexPath.row {
         case 0:
             switch controller.context {
-            case .initial:
+            case .initial, .addition:
                 cell.textLabel!.text = actionsList[indexPath.row]
-            case .addition:
-                cell.textLabel!.text = "Face"
             case .scaling:
                 cell.textLabel!.text = "Scale X to "
                 cell.accessoryView = xText
@@ -78,10 +74,8 @@ class ActionsTableViewDataSource: NSObject, UITableViewDataSource {
             }
         case 1:
             switch controller.context {
-            case .initial:
+            case .initial, .addition:
                 cell.textLabel!.text = actionsList[indexPath.row]
-            case .addition:
-                cell.textLabel!.text = "Cube"
             case .scaling:
                 cell.textLabel!.text = "Scale Y to "
                 cell.accessoryView = yText
@@ -90,10 +84,8 @@ class ActionsTableViewDataSource: NSObject, UITableViewDataSource {
             }
         case 2:
             switch controller.context {
-            case .initial:
+            case .initial, .addition:
                 cell.textLabel!.text = actionsList[indexPath.row]
-            case .addition:
-                cell.textLabel!.text = "Cone"
             case .scaling:
                 cell.textLabel!.text = "Scale Z to "
                 cell.accessoryView = zText
@@ -102,28 +94,22 @@ class ActionsTableViewDataSource: NSObject, UITableViewDataSource {
             }
         case 3:
             switch controller.context {
-            case .initial:
+            case .initial, .addition:
                 cell.textLabel!.text = actionsList[indexPath.row]
-            case .addition:
-                cell.textLabel!.text = "Pyramid"
             default:
                 cell.textLabel!.text = "Dummy"
             }
         case 4:
             switch controller.context {
-            case .initial:
+            case .initial, .addition:
                 cell.textLabel!.text = actionsList[indexPath.row]
-            case .addition:
-                cell.textLabel!.text = "Cylinder"
             default:
                 cell.textLabel!.text = "Dummy"
             }
         case 5:
             switch controller.context {
-            case .initial:
+            case .initial, .addition:
                 cell.textLabel!.text = actionsList[indexPath.row]
-            case .addition:
-                cell.textLabel!.text = "123"
             default:
                 cell.textLabel!.text = "Dummy"
             }

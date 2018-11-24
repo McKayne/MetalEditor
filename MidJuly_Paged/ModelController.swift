@@ -41,9 +41,11 @@ class ModelController: NSObject, UIPageViewControllerDataSource {
         // Create the data model.
         let dateFormatter = DateFormatter()
         //pageData = dateFormatter.monthSymbols
-        for scene in RootViewController.scenes {
+        
+        /*for scene in RootViewController.scenes {
             pageData.append(scene.name)
-        }
+        }*/
+        pageData.append(RootViewController.scenes[0].name)
         
     }
 
@@ -57,11 +59,12 @@ class ModelController: NSObject, UIPageViewControllerDataSource {
         
         // Create a new view controller and pass suitable data.
             let dataViewController = storyboard.instantiateViewController(withIdentifier: "DataViewController") as! DataViewController
-            dataViewController.nth = index
+            dataViewController.currentScene = index
             dataViewController.nthPage = 1
             dataViewController.dataObject = self.pageData[index]
             dataViewController.appendUI(nth: 1)
         
+        RootViewController.sceneControllers.append(dataViewController)
             
             return dataViewController
         

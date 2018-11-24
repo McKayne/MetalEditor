@@ -201,8 +201,7 @@
                                    options:MTLResourceOptionCPUCacheModeDefault];
 }
 
-- (void)startFrame
-{
+- (void)startAxisFrame {
     self.drawable = [self.metalLayer nextDrawable];
     //id<MTLTexture> framebufferTexture = self.drawable.texture;
     self.framebufferTexture = self.drawable.texture;
@@ -221,7 +220,64 @@
     
     MTLRenderPassDescriptor *renderPass = [MTLRenderPassDescriptor renderPassDescriptor];
     renderPass.colorAttachments[0].texture = self.framebufferTexture;
-    renderPass.colorAttachments[0].clearColor = MTLClearColorMake(0.7, 0.7, 1.0, 1);
+    //renderPass.colorAttachments[0].clearColor = MTLClearColorMake(255.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 1);
+    renderPass.colorAttachments[0].clearColor = MTLClearColorMake(0.0 / 255.0, 0.0 / 255.0, 0.0 / 255.0, 0);
+    renderPass.colorAttachments[0].storeAction = MTLStoreActionStore;
+    renderPass.colorAttachments[0].loadAction = MTLLoadActionClear;
+    
+    MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatDepth32Float width:1000 height:1000 mipmapped:NO];
+    id<MTLTexture> texture = [_device newTextureWithDescriptor:desc];
+    
+    MTLRenderPassDepthAttachmentDescriptor *att = [MTLRenderPassDepthAttachmentDescriptor new];
+    
+    
+    renderPass.depthAttachment.texture = texture;
+    
+    self.commandBuffer = [self.commandQueue commandBuffer];
+    /*[self.commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer){
+     self.lastDrawable = self.drawable;
+     }];*/
+    
+    self.commandEncoder = [self.commandBuffer renderCommandEncoderWithDescriptor:renderPass];
+    [self.commandEncoder setRenderPipelineState:self.pipeline];
+    
+    [self.commandEncoder setDepthStencilState:self.depthStencilState];
+    
+    [self.commandEncoder setFrontFacingWinding:MTLWindingCounterClockwise];
+    
+    
+    if (false) {
+        [self.commandEncoder setFrontFacingWinding:MTLWindingCounterClockwise];
+        [self.commandEncoder setCullMode:MTLCullModeNone];
+    } else {
+        if (false) {
+            [self.commandEncoder setCullMode:MTLCullModeBack];
+        } else {
+            [self.commandEncoder setCullMode:MTLCullModeNone];
+        }
+    }
+}
+
+- (void)startFrame {
+    self.drawable = [self.metalLayer nextDrawable];
+    //id<MTLTexture> framebufferTexture = self.drawable.texture;
+    self.framebufferTexture = self.drawable.texture;
+    
+    if (!self.framebufferTexture)
+    {
+        NSLog(@"Unable to retrieve texture; drawable may be nil");
+        return;
+    }
+    
+    if (self.pipelineIsDirty)
+    {
+        [self buildPipeline];
+        self.pipelineDirty = NO;
+    }
+    
+    MTLRenderPassDescriptor *renderPass = [MTLRenderPassDescriptor renderPassDescriptor];
+    renderPass.colorAttachments[0].texture = self.framebufferTexture;
+    renderPass.colorAttachments[0].clearColor = MTLClearColorMake(57.0 / 255.0, 57.0 / 255.0, 57.0 / 255.0, 1);
     renderPass.colorAttachments[0].storeAction = MTLStoreActionStore;
     renderPass.colorAttachments[0].loadAction = MTLLoadActionClear;
     
@@ -250,7 +306,7 @@
         [self.commandEncoder setFrontFacingWinding:MTLWindingCounterClockwise];
         [self.commandEncoder setCullMode:MTLCullModeNone];
     } else {
-        if (false) {
+        if (true) {
             [self.commandEncoder setCullMode:MTLCullModeBack];
         } else {
             [self.commandEncoder setCullMode:MTLCullModeNone];
@@ -258,8 +314,8 @@
     }
 }
 
-- (void)drawTrianglesWithInterleavedBuffer:(id<MTLBuffer>)positionBuffer selectionVertexBuffer:(id<MTLBuffer>)selectionVertexBuffer lineVertexBuffer:(id<MTLBuffer>)lineVertexBuffer
-                               indexBuffer:(id<MTLBuffer>)indexBuffer lineIndexBuffer:(id<MTLBuffer>)lineIndexBuffer
+- (void)drawTrianglesWithInterleavedBuffer:(id<MTLBuffer>)positionBuffer selectionVertexBuffer:(id<MTLBuffer>)selectionVertexBuffer lineVertexBuffer:(id<MTLBuffer>)lineVertexBuffer gridVertexBuffer:(id<MTLBuffer>)gridVertexBuffer
+                               indexBuffer:(id<MTLBuffer>)indexBuffer lineIndexBuffer:(id<MTLBuffer>)lineIndexBuffer gridIndexBuffer:(id<MTLBuffer>)gridIndexBuffer
                              uniformBuffer:(id<MTLBuffer>)uniformBuffer
                                 indexCount:(size_t)indexCount numberOfObjects:(int)numberOfObjects texture:(id<MTLTexture>) texture {
     if (!positionBuffer || !indexBuffer || !uniformBuffer)
@@ -328,7 +384,7 @@
     [self.commandEncoder setFragmentTexture:textureD atIndex:3];*/
     
     if (numberOfObjects > 0) {
-    [self.commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
+        [self.commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
                                     indexCount:numberOfObjects
                                      indexType:MTLIndexTypeUInt16
                                    indexBuffer:indexBuffer
@@ -341,18 +397,73 @@
      indexBuffer:indexBuffer
      indexBufferOffset:36];*/
     
-    if (!isSelectionMode) {
-        [self.commandEncoder setVertexBuffer:lineVertexBuffer offset:0 atIndex:0];
-        [self.commandEncoder setVertexBuffer:uniformBuffer offset:0 atIndex:1];
-        [self.commandEncoder setFragmentBuffer:uniformBuffer offset:0 atIndex:0];
+        if (!isSelectionMode) {
+            [self.commandEncoder setVertexBuffer:lineVertexBuffer offset:0 atIndex:0];
+            [self.commandEncoder setVertexBuffer:uniformBuffer offset:0 atIndex:1];
+            [self.commandEncoder setFragmentBuffer:uniformBuffer offset:0 atIndex:0];
     
-        [self.commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeLine
+            [self.commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeLine
                                     indexCount:(numberOfObjects * 2)
                                      indexType:MTLIndexTypeUInt16
                                    indexBuffer:lineIndexBuffer
                              indexBufferOffset:0];
+        }
+        
+        
     }
+    [self.commandEncoder setVertexBuffer:gridVertexBuffer offset:0 atIndex:0];
+    [self.commandEncoder setVertexBuffer:uniformBuffer offset:0 atIndex:1];
+    [self.commandEncoder setFragmentBuffer:uniformBuffer offset:0 atIndex:0];
+    
+    [self.commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeLine
+                                    indexCount:6 * 34
+                                     indexType:MTLIndexTypeUInt16
+                                   indexBuffer:gridIndexBuffer
+                             indexBufferOffset:0];
+}
+
+- (void)drawAxis:(id<MTLBuffer>)positionBuffer selectionVertexBuffer:(id<MTLBuffer>)selectionVertexBuffer lineVertexBuffer:(id<MTLBuffer>)lineVertexBuffer gridVertexBuffer:(id<MTLBuffer>)gridVertexBuffer axisVertexBuffer:(id<MTLBuffer>)axisVertexBuffer indexBuffer:(id<MTLBuffer>)indexBuffer lineIndexBuffer:(id<MTLBuffer>)lineIndexBuffer gridIndexBuffer:(id<MTLBuffer>)gridIndexBuffer
+                             uniformBuffer:(id<MTLBuffer>)uniformBuffer
+                                indexCount:(size_t)indexCount numberOfObjects:(int)numberOfObjects texture:(id<MTLTexture>) texture {
+    if (!positionBuffer || !indexBuffer || !uniformBuffer)
+    {
+        return;
     }
+    
+    if (!isSelectionMode) {
+        [self.commandEncoder setVertexBuffer:positionBuffer offset:0 atIndex:0];
+    } else {
+        [self.commandEncoder setVertexBuffer:selectionVertexBuffer offset:0 atIndex:0];
+    }
+    
+    [self.commandEncoder setVertexBuffer:uniformBuffer offset:0 atIndex:1];
+    [self.commandEncoder setFragmentBuffer:uniformBuffer offset:0 atIndex:0];
+    
+    
+    
+    MTLSamplerDescriptor* descriptor = [[MTLSamplerDescriptor alloc] init];
+    descriptor.minFilter             = MTLSamplerMinMagFilterNearest;
+    descriptor.magFilter             = MTLSamplerMinMagFilterNearest;
+    descriptor.mipFilter             = MTLSamplerMipFilterNearest;
+    descriptor.maxAnisotropy         = 1;
+    descriptor.sAddressMode          = MTLSamplerAddressModeClampToEdge;
+    descriptor.tAddressMode          = MTLSamplerAddressModeClampToEdge;
+    descriptor.rAddressMode          = MTLSamplerAddressModeClampToEdge;
+    descriptor.normalizedCoordinates = true;
+    descriptor.lodMinClamp           = 0;
+    descriptor.lodMaxClamp           = FLT_MAX;
+    id<MTLSamplerState> sampler = [self.device newSamplerStateWithDescriptor:descriptor];
+    [self.commandEncoder setFragmentSamplerState:sampler atIndex:0];
+    
+        [self.commandEncoder setVertexBuffer:axisVertexBuffer offset:0 atIndex:0];
+        [self.commandEncoder setVertexBuffer:uniformBuffer offset:0 atIndex:1];
+        [self.commandEncoder setFragmentBuffer:uniformBuffer offset:0 atIndex:0];
+        
+        [self.commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeLine
+                                        indexCount:6 * 3
+                                         indexType:MTLIndexTypeUInt16
+                                       indexBuffer:gridIndexBuffer
+                                 indexBufferOffset:0];
 }
 
 - (void)completeSavedImage:(UIImage *)_image didFinishSavingWithError:(NSError *)_error contextInfo:(void *)_contextInfo {

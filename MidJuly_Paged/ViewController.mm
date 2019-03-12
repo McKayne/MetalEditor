@@ -345,16 +345,19 @@ simd::float4 positionAt(float radius, float angle, float segmentAngle, float off
     if (indicesCount > 0) {
     self.vertexBuffer = [self.renderer newBufferWithBytes:self.bigVertices length:sizeof(Vertex) * self.totalIndices];
     self.selectionBuffer = [self.renderer newBufferWithBytes:self.selectedVertices length:sizeof(Vertex) * self.totalIndices];
-        self.gridVertexBuffer = [self.renderer newBufferWithBytes:self.gridLineVertices length:sizeof(Vertex) * 3 * 34];
-        self.axisVertexBuffer = [self.axisRenderer newBufferWithBytes:self.axisLineVertices length:sizeof(Vertex) * 3 * 3];
+        
     
     self.indexBuffer = [self.renderer newBufferWithBytes:self.bigIndices length:sizeof(IndexType) * self.totalIndices];
     
         self.lineVertexBuffer = [self.renderer newBufferWithBytes:self.bigLineVertices length:sizeof(Vertex) * self.totalIndices];
     self.lineIndexBuffer = [self.renderer newBufferWithBytes:self.bigLineIndices length:sizeof(uint16_t) * (self.totalIndices * 2)];
         
-        self.gridIndexBuffer = [self.renderer newBufferWithBytes:self.gridLineIndices length:sizeof(uint16_t) * 6 * 34];
+        
     }
+    
+    self.gridVertexBuffer = [self.renderer newBufferWithBytes:self.gridLineVertices length:sizeof(Vertex) * 3 * 34];
+    self.axisVertexBuffer = [self.axisRenderer newBufferWithBytes:self.axisLineVertices length:sizeof(Vertex) * 3 * 3];
+    self.gridIndexBuffer = [self.renderer newBufferWithBytes:self.gridLineIndices length:sizeof(uint16_t) * 6 * 34];
 }
 
 - (void)updateMotion

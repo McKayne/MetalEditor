@@ -318,17 +318,14 @@
                                indexBuffer:(id<MTLBuffer>)indexBuffer lineIndexBuffer:(id<MTLBuffer>)lineIndexBuffer gridIndexBuffer:(id<MTLBuffer>)gridIndexBuffer
                              uniformBuffer:(id<MTLBuffer>)uniformBuffer
                                 indexCount:(size_t)indexCount numberOfObjects:(int)numberOfObjects texture:(id<MTLTexture>) texture {
-    if (!positionBuffer || !indexBuffer || !uniformBuffer)
-    {
-        return;
-    }
     
-    if (!isSelectionMode) {
-        [self.commandEncoder setVertexBuffer:positionBuffer offset:0 atIndex:0];
-    } else {
-        [self.commandEncoder setVertexBuffer:selectionVertexBuffer offset:0 atIndex:0];
+    if (positionBuffer) {
+        if (!isSelectionMode) {
+            [self.commandEncoder setVertexBuffer:positionBuffer offset:0 atIndex:0];
+        } else {
+            [self.commandEncoder setVertexBuffer:selectionVertexBuffer offset:0 atIndex:0];
+        }
     }
-    
     [self.commandEncoder setVertexBuffer:uniformBuffer offset:0 atIndex:1];
     [self.commandEncoder setFragmentBuffer:uniformBuffer offset:0 atIndex:0];
     
@@ -425,7 +422,8 @@
 - (void)drawAxis:(id<MTLBuffer>)positionBuffer selectionVertexBuffer:(id<MTLBuffer>)selectionVertexBuffer lineVertexBuffer:(id<MTLBuffer>)lineVertexBuffer gridVertexBuffer:(id<MTLBuffer>)gridVertexBuffer axisVertexBuffer:(id<MTLBuffer>)axisVertexBuffer indexBuffer:(id<MTLBuffer>)indexBuffer lineIndexBuffer:(id<MTLBuffer>)lineIndexBuffer gridIndexBuffer:(id<MTLBuffer>)gridIndexBuffer
                              uniformBuffer:(id<MTLBuffer>)uniformBuffer
                                 indexCount:(size_t)indexCount numberOfObjects:(int)numberOfObjects texture:(id<MTLTexture>) texture {
-    if (!positionBuffer || !indexBuffer || !uniformBuffer)
+    
+    /*if (!positionBuffer || !indexBuffer || !uniformBuffer)
     {
         return;
     }
@@ -437,7 +435,7 @@
     }
     
     [self.commandEncoder setVertexBuffer:uniformBuffer offset:0 atIndex:1];
-    [self.commandEncoder setFragmentBuffer:uniformBuffer offset:0 atIndex:0];
+    [self.commandEncoder setFragmentBuffer:uniformBuffer offset:0 atIndex:0];*/
     
     
     

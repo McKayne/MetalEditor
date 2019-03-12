@@ -106,14 +106,19 @@ class RootViewController: UIViewController, UIPageViewControllerDelegate {
             }
         }
         
-        /*for pair in dictionary {
-            if pair.key.hasPrefix("MetalEditor") {
-                let scene = Scene(name: String(describing: pair.value), fromDatabase: true)
-                scene.prepareForRender()
+        for pair in dictionary {
+            if pair.key.hasPrefix("MetalEditor") && !pair.key.hasSuffix("Trash") {
+                //"MetalEditor Trash \(name)"
+                print("MetalEditor \(String(describing: pair.value)) Trash")
+                if UserDefaults.standard.object(forKey: "MetalEditor \(String(describing: pair.value)) Trash") == nil {
+                    let scene = Scene(name: String(describing: pair.value), fromDatabase: true)
+                    scene.prepareForRender()
+                    print(scene.name)
                 
-                RootViewController.scenes.append(scene)
+                    RootViewController.scenes.append(scene)
+                }
             }
-        }*/
+        }
         
         if RootViewController.scenes.count == 0 {
             let sceneNth = arc4random()
@@ -131,6 +136,15 @@ class RootViewController: UIViewController, UIPageViewControllerDelegate {
             scene.prepareForRender()
             RootViewController.scenes.append(scene)
         }
+        
+        /*RootViewController.currentScene = RootViewController.scenes.count - 1
+        RootViewController.sceneControllers[0].currentScene = RootViewController.currentScene
+        
+        RootViewController.sceneControllers[0].contr.setVertexArrays(RootViewController.scenes[RootViewController.currentScene].bigVertices, bigLineVertices: RootViewController.scenes[RootViewController.currentScene].bigLineVertices, selectedVertices:RootViewController.scenes[RootViewController.currentScene].selectionVertices, gridLineVertices: Grid.bigLineVertices, axisLineVertices: Axis.bigLineVertices, bigIndices: RootViewController.scenes[RootViewController.currentScene].bigIndices, bigLineIndices: RootViewController.scenes[RootViewController.currentScene].bigLineIndices, gridLineIndices: Grid.bigLineIndices)
+        
+        RootViewController.sceneControllers[0].contr.translateCamera(RootViewController.scenes[RootViewController.currentScene].x, y: RootViewController.scenes[RootViewController.currentScene].y, z: RootViewController.scenes[RootViewController.currentScene].z)
+        RootViewController.sceneControllers[0].contr.setAngle(RootViewController.scenes[RootViewController.currentScene].xAngle, y: RootViewController.scenes[RootViewController.currentScene].yAngle)
+        RootViewController.sceneControllers[0].contr.loadModel(Int32(RootViewController.scenes[RootViewController.currentScene].indicesCount))*/
         
         //scene.deleteDatabase()
         //scene2.deleteDatabase()

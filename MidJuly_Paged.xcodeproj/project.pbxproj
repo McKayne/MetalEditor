@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		7F054CC82237869D00DAF2E1 /* SceneChooserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F054CC72237869D00DAF2E1 /* SceneChooserController.swift */; };
+		7F054CCA2238038100DAF2E1 /* SceneTrashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F054CC92238038100DAF2E1 /* SceneTrashController.swift */; };
+		7F054CCC223812A200DAF2E1 /* ActionsHistoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F054CCB223812A200DAF2E1 /* ActionsHistoryController.swift */; };
 		7F0B54FD2189E4A000143D61 /* CubeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0B54FC2189E4A000143D61 /* CubeController.swift */; };
 		7F0B54FF2189F6CC00143D61 /* SurfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0B54FE2189F6CC00143D61 /* SurfaceController.swift */; };
 		7F0B55012189F88800143D61 /* Surface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0B55002189F88800143D61 /* Surface.swift */; };
@@ -170,6 +172,8 @@
 
 /* Begin PBXFileReference section */
 		7F054CC72237869D00DAF2E1 /* SceneChooserController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneChooserController.swift; sourceTree = "<group>"; };
+		7F054CC92238038100DAF2E1 /* SceneTrashController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneTrashController.swift; sourceTree = "<group>"; };
+		7F054CCB223812A200DAF2E1 /* ActionsHistoryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionsHistoryController.swift; sourceTree = "<group>"; };
 		7F0B54FC2189E4A000143D61 /* CubeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CubeController.swift; path = Objects/Controllers/CubeController.swift; sourceTree = "<group>"; };
 		7F0B54FE2189F6CC00143D61 /* SurfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SurfaceController.swift; path = Objects/Controllers/SurfaceController.swift; sourceTree = "<group>"; };
 		7F0B55002189F88800143D61 /* Surface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Surface.swift; path = Objects/Surface.swift; sourceTree = "<group>"; };
@@ -511,6 +515,8 @@
 				7F61E4572150DDF200F0AA29 /* Scene.swift */,
 				7F61E4532150D73300F0AA29 /* SceneObject.swift */,
 				7F054CC72237869D00DAF2E1 /* SceneChooserController.swift */,
+				7F054CC92238038100DAF2E1 /* SceneTrashController.swift */,
+				7F054CCB223812A200DAF2E1 /* ActionsHistoryController.swift */,
 				7F61E4552150D82300F0AA29 /* Cube.swift */,
 				7F61E45D215171A800F0AA29 /* Cone.swift */,
 				7FD324D5219F29E200A3D162 /* Gear.swift */,
@@ -781,6 +787,7 @@
 				7F39E9092148ACC000252FF6 /* zip.h in Sources */,
 				7F9AE578218771D1000A8143 /* Axis.swift in Sources */,
 				7F39E8EA2148AC7200252FF6 /* SSZipArchive.h in Sources */,
+				7F054CCA2238038100DAF2E1 /* SceneTrashController.swift in Sources */,
 				7F37AC262170A6180041425E /* AdditionContext.swift in Sources */,
 				7F39E8EB2148AC7200252FF6 /* SSZipArchive.m in Sources */,
 				7F39E8EC2148AC7200252FF6 /* SSZipCommon.h in Sources */,
@@ -793,6 +800,7 @@
 				7FEBAC0E20F7C47E00D99284 /* ModelController.swift in Sources */,
 				7FEFBCCF21893E7F00B0B465 /* ActionsDelegate.swift in Sources */,
 				7F61E46421518E6600F0AA29 /* Demo1.swift in Sources */,
+				7F054CCC223812A200DAF2E1 /* ActionsHistoryController.swift in Sources */,
 				7F76E63B219CD9CB006FF645 /* DiamondController.swift in Sources */,
 				7F68313C2104038200B8FC8E /* Vertex.swift in Sources */,
 				7F68312E21001DA700B8FC8E /* OBJModel.mm in Sources */,

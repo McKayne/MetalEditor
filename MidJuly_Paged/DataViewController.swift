@@ -1394,6 +1394,34 @@ struct Uniforms {
         pipelineState = try! device.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
         
         commandQueue = device.makeCommandQueue()*/
+        
+        let sceneNth = arc4random()
+        
+        let sceneName = "Scene \(sceneNth)"
+        let scene = Scene(name: sceneName, fromDatabase: false)
+        
+        scene.z = -4
+        scene.xAngle = -225
+        scene.yAngle = 45
+        
+        let dummy = Cube(x: 0, y: 0, z: 0, width: 0, height: 0, depth: 0, rgb: (0, 0, 0))
+        //scene.appendObjectWithoutUpdate(object: dummy)
+        
+        let cube = Cube(x: -0.5, y: -0.5, z: 0.5, width: 1.0, height: 1.0, depth: 1.0, rgb: (255, 0, 0))
+        //scene.appendObjectWithoutUpdate(object: cube)
+        
+        scene.prepareForRender()
+        RootViewController.scenes.append(scene)
+        //scenesListTableView.reloadData()
+        
+        RootViewController.currentScene = RootViewController.scenes.count - 1
+        currentScene = RootViewController.currentScene
+        
+        contr.setVertexArrays(RootViewController.scenes[RootViewController.currentScene].bigVertices, bigLineVertices: RootViewController.scenes[RootViewController.currentScene].bigLineVertices, selectedVertices:RootViewController.scenes[RootViewController.currentScene].selectionVertices, gridLineVertices: Grid.bigLineVertices, axisLineVertices: Axis.bigLineVertices, bigIndices: RootViewController.scenes[RootViewController.currentScene].bigIndices, bigLineIndices: RootViewController.scenes[RootViewController.currentScene].bigLineIndices, gridLineIndices: Grid.bigLineIndices)
+        
+        contr.translateCamera(scene.x, y: scene.y, z: scene.z)
+        contr.setAngle(RootViewController.scenes[RootViewController.currentScene].xAngle, y: RootViewController.scenes[RootViewController.currentScene].yAngle)
+        contr.loadModel(Int32(RootViewController.scenes[RootViewController.currentScene].indicesCount))
     }
 
     override func didReceiveMemoryWarning() {

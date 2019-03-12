@@ -33,8 +33,8 @@ import Foundation
         
         self.name = name
         if !fromDatabase {
-            //UserDefaults.standard.set("\(name)", forKey: "MetalEditor \(name)")
-            //createDatabase()
+            UserDefaults.standard.set("\(name)", forKey: "MetalEditor \(name)")
+            createDatabase()
         } else {
             readDatabase()
             print(x)
@@ -43,6 +43,10 @@ import Foundation
             print(xAngle)
             print(yAngle)
         }
+    }
+    
+    func moveToTrash() {
+        UserDefaults.standard.set("true", forKey: "MetalEditor \(name ?? "") Trash")
     }
     
     func createDatabase() {

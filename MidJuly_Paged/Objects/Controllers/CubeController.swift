@@ -18,6 +18,10 @@ class CubeController: UIViewController, UITableViewDelegate, UITableViewDataSour
     let rgbPicker = UIPickerView(), rgbPickerCell = UITableViewCell()
     var redCurrent = 0, greenCurrent = 0, blueCurrent = 0
     
+    let xPositionText = UITextField(), yPositionText = UITextField(), zPositionText = UITextField()
+    let xRotationText = UITextField(), yRotationText = UITextField(), zRotationText = UITextField()
+    let widthText = UITextField(), heightText = UITextField(), depthText = UITextField()
+    
     convenience init(mainController: RootViewController?) {
         self.init(nibName: nil, bundle: nil)
         self.mainController = mainController
@@ -61,24 +65,46 @@ class CubeController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch indexPath.row {
+        switch indexPath.section {
         case 0:
-            return 100.0
-        default:
             return 30.0
+        case 1:
+            return 30.0
+        case 2:
+            return 30.0
+        default:
+            return 100.0
         }
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 4
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        switch section {
+        case 0:
+            return 3
+        case 1:
+            return 3
+        case 2:
+            return 3
+        default:
+            return 1
+        }
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "RGB Color"
+        switch section {
+        case 0:
+            return "Position"
+        case 1:
+            return "Rotation"
+        case 2:
+            return "Dimensions"
+        default:
+            return "RGB Color"
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -86,19 +112,59 @@ class CubeController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         switch indexPath.section {
         case 0:
-            return rgbPickerCell
-        default:
-            cell.textLabel?.text = "Dummy"
-            //return rgbPickerCell
-        }
-        /*switch indexPath.row {
-        case 0:
-            cell.textLabel?.text = "RGB Color"
+            cell.backgroundColor = UIColor(red: 114.0 / 255.0, green: 114.0 / 255.0, blue: 114.0 / 255.0, alpha: 1.0)
+            cell.textLabel?.textColor = .white
+            switch indexPath.row {
+            case 0:
+                cell.textLabel?.text = "X = "
+                cell.contentView.addSubview(xPositionText)
+                RootViewController.performAutolayoutConstants(subview: xPositionText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
+            case 1:
+                cell.textLabel?.text = "Y = "
+                cell.contentView.addSubview(yPositionText)
+                RootViewController.performAutolayoutConstants(subview: yPositionText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
+            default:
+                cell.textLabel?.text = "Z = "
+                cell.contentView.addSubview(zPositionText)
+                RootViewController.performAutolayoutConstants(subview: zPositionText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
+            }
         case 1:
-            return rgbPickerCell
+            cell.backgroundColor = UIColor(red: 114.0 / 255.0, green: 114.0 / 255.0, blue: 114.0 / 255.0, alpha: 1.0)
+            cell.textLabel?.textColor = .white
+            switch indexPath.row {
+            case 0:
+                cell.textLabel?.text = "X = "
+                cell.contentView.addSubview(xRotationText)
+                RootViewController.performAutolayoutConstants(subview: xRotationText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
+            case 1:
+                cell.textLabel?.text = "Y = "
+                cell.contentView.addSubview(yRotationText)
+                RootViewController.performAutolayoutConstants(subview: yRotationText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
+            default:
+                cell.textLabel?.text = "Z = "
+                cell.contentView.addSubview(zRotationText)
+                RootViewController.performAutolayoutConstants(subview: zRotationText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
+            }
+        case 2:
+            cell.backgroundColor = UIColor(red: 114.0 / 255.0, green: 114.0 / 255.0, blue: 114.0 / 255.0, alpha: 1.0)
+            cell.textLabel?.textColor = .white
+            switch indexPath.row {
+            case 0:
+                cell.textLabel?.text = "Width = "
+                cell.contentView.addSubview(widthText)
+                RootViewController.performAutolayoutConstants(subview: widthText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
+            case 1:
+                cell.textLabel?.text = "Height = "
+                cell.contentView.addSubview(heightText)
+                RootViewController.performAutolayoutConstants(subview: heightText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
+            default:
+                cell.textLabel?.text = "Depth = "
+                cell.contentView.addSubview(depthText)
+                RootViewController.performAutolayoutConstants(subview: depthText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
+            }
         default:
-            cell.textLabel?.text = "Dummy"
-        }*/
+            return rgbPickerCell
+        }
         
         return cell
     }
@@ -114,6 +180,57 @@ class CubeController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let applyButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(popToScene(sender:)))
         navigationItem.rightBarButtonItem = applyButton
         navigationItem.title = "Cube"
+        
+        // position
+        xPositionText.borderStyle = .roundedRect
+        yPositionText.borderStyle = .roundedRect
+        zPositionText.borderStyle = .roundedRect
+        
+        xPositionText.textAlignment = .center
+        yPositionText.textAlignment = .center
+        zPositionText.textAlignment = .center
+        
+        xPositionText.backgroundColor = UIColor(red: CGFloat(165.0 / 255.0), green: CGFloat(165.0 / 255.0), blue: CGFloat(165.0 / 255.0), alpha: 1.0)
+        yPositionText.backgroundColor = UIColor(red: CGFloat(165.0 / 255.0), green: CGFloat(165.0 / 255.0), blue: CGFloat(165.0 / 255.0), alpha: 1.0)
+        zPositionText.backgroundColor = UIColor(red: CGFloat(165.0 / 255.0), green: CGFloat(165.0 / 255.0), blue: CGFloat(165.0 / 255.0), alpha: 1.0)
+        
+        xPositionText.text = "0.0"
+        yPositionText.text = "0.0"
+        zPositionText.text = "0.0"
+        
+        // rotation
+        xRotationText.borderStyle = .roundedRect
+        yRotationText.borderStyle = .roundedRect
+        zRotationText.borderStyle = .roundedRect
+        
+        xRotationText.textAlignment = .center
+        yRotationText.textAlignment = .center
+        zRotationText.textAlignment = .center
+        
+        xRotationText.backgroundColor = UIColor(red: CGFloat(165.0 / 255.0), green: CGFloat(165.0 / 255.0), blue: CGFloat(165.0 / 255.0), alpha: 1.0)
+        yRotationText.backgroundColor = UIColor(red: CGFloat(165.0 / 255.0), green: CGFloat(165.0 / 255.0), blue: CGFloat(165.0 / 255.0), alpha: 1.0)
+        zRotationText.backgroundColor = UIColor(red: CGFloat(165.0 / 255.0), green: CGFloat(165.0 / 255.0), blue: CGFloat(165.0 / 255.0), alpha: 1.0)
+        
+        xRotationText.text = "0.0"
+        yRotationText.text = "0.0"
+        zRotationText.text = "0.0"
+        
+        // dimensions
+        widthText.borderStyle = .roundedRect
+        heightText.borderStyle = .roundedRect
+        depthText.borderStyle = .roundedRect
+        
+        widthText.textAlignment = .center
+        heightText.textAlignment = .center
+        depthText.textAlignment = .center
+        
+        widthText.backgroundColor = UIColor(red: CGFloat(165.0 / 255.0), green: CGFloat(165.0 / 255.0), blue: CGFloat(165.0 / 255.0), alpha: 1.0)
+        heightText.backgroundColor = UIColor(red: CGFloat(165.0 / 255.0), green: CGFloat(165.0 / 255.0), blue: CGFloat(165.0 / 255.0), alpha: 1.0)
+        depthText.backgroundColor = UIColor(red: CGFloat(165.0 / 255.0), green: CGFloat(165.0 / 255.0), blue: CGFloat(165.0 / 255.0), alpha: 1.0)
+        
+        widthText.text = "0.0"
+        heightText.text = "0.0"
+        depthText.text = "0.0"
         
         rgbPicker.backgroundColor = UIColor(red: 114.0 / 255.0, green: 114.0 / 255.0, blue: 114.0 / 255.0, alpha: 1.0)
         rgbPicker.delegate = self
@@ -134,21 +251,15 @@ class CubeController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func popToScene(sender: UIBarButtonItem) {
         
-        let cube = Cube(x: -0.5, y: 0, z: 0.5, width: 1, height: 1, depth: 1, rgb: (redCurrent, greenCurrent, blueCurrent))
-        
-        /*cube.subdivide()
-        cube.subdivide()
-        cube.subdivide()
-        cube.subdivide()*/
-        //cube.subdivide()
-        
-        /*for _ in 0..<1 {
-            cube.split()
+        if let xPositionText = xPositionText.text, let yPositionText = yPositionText.text, let zPositionText = zPositionText.text {
+            if let xPosition = Float(xPositionText), let yPosition = Float(yPositionText), let zPosition = Float(zPositionText) {
+                let cube = Cube(x: xPosition, y: yPosition, z: zPosition, width: 1, height: 1, depth: 1, rgb: (redCurrent, greenCurrent, blueCurrent))
+                RootViewController.scenes[RootViewController.currentScene].appendObjectWithoutUpdate(object: cube)
+            }
         }
         
-        cube.bendAround(center: (0, 1, 0), zAngle: 15)*/
+        //let xPosition = xPositionText.text
         
-        RootViewController.scenes[RootViewController.currentScene].appendObjectWithoutUpdate(object: cube)
         
         RootViewController.scenes[RootViewController.currentScene].prepareForRender()
         RootViewController.sceneControllers[0].contr.loadModel(Int32(RootViewController.scenes[RootViewController.currentScene].indicesCount))

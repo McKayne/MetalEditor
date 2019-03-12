@@ -14,7 +14,7 @@ class ActionsDelegate: NSObject, UITableViewDelegate, UITableViewDataSource {
     var mainController: RootViewController?
     let controller: ActionsController
     
-    private let actionsList = ["Undo or redo", "New Scene", "Switch scene", "Duplicate scene", "Delete scene", "Add Object", "Translate", "Rotate", "Scale object", "Mirror", "Bend", "Subdivide", "Face Split", "Warp", "Copy objects", "Paste objects", "Attach", "Remove", "Import or export", "Textures library", "About"]
+    private let actionsList = ["Undo or redo", "New Scene", "Switch Scene", "Duplicate scene", "Delete scene", "Add Object", "Translate", "Rotate", "Scale object", "Mirror", "Bend", "Subdivide", "Face Split", "Warp", "Copy objects", "Paste objects", "Attach", "Remove", "Import or export", "Textures library", "About"]
     
     init(mainController: RootViewController?, controller: ActionsController) {
         self.mainController = mainController
@@ -47,11 +47,19 @@ class ActionsDelegate: NSObject, UITableViewDelegate, UITableViewDataSource {
         switch actionsList[indexPath.row] {
         case "New Scene":
             createAndPresentScene()
+        case "Switch Scene":
+            toSceneChooser()
         case "Add Object":
             presentAdditionList()
         default:
             print("Dummy")
         }
+    }
+    
+    func toSceneChooser() {
+        let chooser = SceneChooserController()
+        chooser.mainController = mainController
+        controller.navigationController?.pushViewController(chooser, animated: true)
     }
     
     func createAndPresentScene() {

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7F054CC82237869D00DAF2E1 /* SceneChooserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F054CC72237869D00DAF2E1 /* SceneChooserController.swift */; };
 		7F0B54FD2189E4A000143D61 /* CubeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0B54FC2189E4A000143D61 /* CubeController.swift */; };
 		7F0B54FF2189F6CC00143D61 /* SurfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0B54FE2189F6CC00143D61 /* SurfaceController.swift */; };
 		7F0B55012189F88800143D61 /* Surface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0B55002189F88800143D61 /* Surface.swift */; };
@@ -168,6 +169,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7F054CC72237869D00DAF2E1 /* SceneChooserController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneChooserController.swift; sourceTree = "<group>"; };
 		7F0B54FC2189E4A000143D61 /* CubeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CubeController.swift; path = Objects/Controllers/CubeController.swift; sourceTree = "<group>"; };
 		7F0B54FE2189F6CC00143D61 /* SurfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SurfaceController.swift; path = Objects/Controllers/SurfaceController.swift; sourceTree = "<group>"; };
 		7F0B55002189F88800143D61 /* Surface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Surface.swift; path = Objects/Surface.swift; sourceTree = "<group>"; };
@@ -508,6 +510,7 @@
 				7F61E45B2151664200F0AA29 /* Face.swift */,
 				7F61E4572150DDF200F0AA29 /* Scene.swift */,
 				7F61E4532150D73300F0AA29 /* SceneObject.swift */,
+				7F054CC72237869D00DAF2E1 /* SceneChooserController.swift */,
 				7F61E4552150D82300F0AA29 /* Cube.swift */,
 				7F61E45D215171A800F0AA29 /* Cone.swift */,
 				7FD324D5219F29E200A3D162 /* Gear.swift */,
@@ -720,6 +723,7 @@
 				7F0B54FF2189F6CC00143D61 /* SurfaceController.swift in Sources */,
 				7F39E9272148ACE900252FF6 /* brg_types.h in Sources */,
 				7F7F7C84218A4E200084EDB8 /* HeightMap.swift in Sources */,
+				7F054CC82237869D00DAF2E1 /* SceneChooserController.swift in Sources */,
 				7F0BA6FD219590A600ACF310 /* BezierCurveController.swift in Sources */,
 				7F61E45C2151664200F0AA29 /* Face.swift in Sources */,
 				7F558529219D880C00572941 /* CurvedPipeController.swift in Sources */,

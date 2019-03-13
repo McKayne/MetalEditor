@@ -131,7 +131,7 @@ class RootViewController: UIViewController, UIPageViewControllerDelegate {
             scene.yAngle = 45
             
             let cube = Cube(x: -0.5, y: -0.5, z: 0.5, width: 1.0, height: 1.0, depth: 1.0, rgb: (255, 0, 0))
-            scene.appendObjectWithoutUpdate(object: cube)
+            scene.appendObject(object: cube, skipActionHistory: true)
             
             scene.prepareForRender()
             RootViewController.scenes.append(scene)

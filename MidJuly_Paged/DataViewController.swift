@@ -1395,7 +1395,7 @@ struct Uniforms {
         
         commandQueue = device.makeCommandQueue()*/
         
-        let sceneNth = arc4random()
+        /*let sceneNth = arc4random()
         
         let sceneName = "Scene \(sceneNth)"
         let scene = Scene(name: sceneName, fromDatabase: false)
@@ -1421,7 +1421,7 @@ struct Uniforms {
         
         contr.translateCamera(scene.x, y: scene.y, z: scene.z)
         contr.setAngle(RootViewController.scenes[RootViewController.currentScene].xAngle, y: RootViewController.scenes[RootViewController.currentScene].yAngle)
-        contr.loadModel(Int32(RootViewController.scenes[RootViewController.currentScene].indicesCount))
+        contr.loadModel(Int32(RootViewController.scenes[RootViewController.currentScene].indicesCount))*/
     }
 
     override func didReceiveMemoryWarning() {

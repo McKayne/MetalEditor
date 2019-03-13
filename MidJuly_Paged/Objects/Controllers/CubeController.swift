@@ -254,7 +254,8 @@ class CubeController: UIViewController, UITableViewDelegate, UITableViewDataSour
         if let xPositionText = xPositionText.text, let yPositionText = yPositionText.text, let zPositionText = zPositionText.text {
             if let xPosition = Float(xPositionText), let yPosition = Float(yPositionText), let zPosition = Float(zPositionText) {
                 let cube = Cube(x: xPosition, y: yPosition, z: zPosition, width: 1, height: 1, depth: 1, rgb: (redCurrent, greenCurrent, blueCurrent))
-                RootViewController.scenes[RootViewController.currentScene].appendObjectWithoutUpdate(object: cube)
+                cube.name = "Cube"
+                RootViewController.scenes[RootViewController.currentScene].appendObject(object: cube)
             }
         }
         

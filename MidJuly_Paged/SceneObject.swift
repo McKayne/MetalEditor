@@ -10,6 +10,8 @@ import Foundation
 
 class SceneObject {
     
+    var name: String?
+    
     var isSelected = false
     
     var vertices: [Vertex] = []

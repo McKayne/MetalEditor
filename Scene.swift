@@ -63,7 +63,7 @@ import Foundation
     
     func createHistoryDatabase() {
         // create tables
-        if sqlite3_exec(db, "CREATE TABLE actions_history(id integer, name text)", nil, nil, nil) != SQLITE_OK {
+        if sqlite3_exec(db, "CREATE TABLE actions_history(id integer, name text, type text)", nil, nil, nil) != SQLITE_OK {
             let errmsg = String(cString: sqlite3_errmsg(db)!)
             print("error creating table: \(errmsg)")
         }
@@ -472,32 +472,9 @@ import Foundation
         //updateDatabase()
     }
     
-    func appendObject(object: SceneObject) {
-        objects.append(object)
-        updateDatabase()
-        
-        var stmt: OpaquePointer?
-        
-        let queryString = "select nth from scene_objects"
-        
-        sqlite3_prepare(db, queryString, -1, &stmt, nil)
-        
-        var id = 0
-        while sqlite3_step(stmt) == SQLITE_ROW {
-            id = Int(sqlite3_column_int(stmt, 0))
-        }
-        print("Scene ID \(id)")
-        
-        sqlite3_finalize(stmt)
-        
-        updateHistory(id: id, msg: "Add \(object.name ?? "")")
-        UserDefaults.standard.set("0", forKey: "NthAction \(name ?? "")")
-        
-        
-        
-        
+    func appendHistoryObject(id: Int, object: SceneObject) {
         for j in 0..<object.vertices.count {
-        
+            
             //creating a statement
             var stmt: OpaquePointer?
             
@@ -562,18 +539,41 @@ import Foundation
             
             sqlite3_finalize(stmt)
         }
+    }
+    
+    func appendObject(object: SceneObject) {
+        objects.append(object)
+        updateDatabase()
         
+        var stmt: OpaquePointer?
+        
+        let queryString = "select nth from scene_objects"
+        
+        sqlite3_prepare(db, queryString, -1, &stmt, nil)
+        
+        var id = 0
+        while sqlite3_step(stmt) == SQLITE_ROW {
+            id = Int(sqlite3_column_int(stmt, 0))
+        }
+        print("Scene ID \(id)")
+        
+        sqlite3_finalize(stmt)
+        
+        updateHistory(id: id, msg: "Add \(object.name ?? "")", type: .addition)
+        UserDefaults.standard.set("0", forKey: "NthAction \(name ?? "")")
+        
+        appendHistoryObject(id: id, object: object)
     }
     
     func appendObject(object: SceneObject, skipActionHistory: Bool) {
         objects.append(object)
         if !skipActionHistory {
-            updateHistory(id: 0, msg: "Add \(object.name ?? "")")
+            updateHistory(id: 0, msg: "Add \(object.name ?? "")", type: .addition)
         }
         updateDatabase()
     }
     
-    func updateHistory(id: Int, msg: String) {
+    func updateHistory(id: Int, msg: String, type: ActionType) {
         
         
         let value = UserDefaults.standard.value(forKey: "NthAction Undo \(name ?? "")")
@@ -600,7 +600,7 @@ import Foundation
         
         //CREATE TABLE actions_history(id integer primary key autoincrement, name text)
         //the insert query
-        let queryString = "insert into actions_history(id, name) values(?, ?)"
+        let queryString = "insert into actions_history(id, name, type) values(?, ?, ?)"
         
         //preparing the query
         if sqlite3_prepare(db, queryString, -1, &stmt, nil) != SQLITE_OK{
@@ -617,6 +617,20 @@ import Foundation
         }
         
         if sqlite3_bind_text(stmt, 2, (msg as NSString).utf8String, -1, nil) != SQLITE_OK {
+            let errmsg = String(cString: sqlite3_errmsg(db)!)
+            print("failure binding name: \(errmsg)")
+            sqlite3_finalize(stmt)
+            return
+        }
+        
+        let typeStr: String
+        switch type {
+        case .addition:
+            typeStr = "addition"
+        case .deletion:
+            typeStr = "deletion"
+        }
+        if sqlite3_bind_text(stmt, 3, (typeStr as NSString).utf8String, -1, nil) != SQLITE_OK {
             let errmsg = String(cString: sqlite3_errmsg(db)!)
             print("failure binding name: \(errmsg)")
             sqlite3_finalize(stmt)

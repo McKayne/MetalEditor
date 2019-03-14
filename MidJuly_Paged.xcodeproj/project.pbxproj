@@ -10,6 +10,7 @@
 		7F054CC82237869D00DAF2E1 /* SceneChooserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F054CC72237869D00DAF2E1 /* SceneChooserController.swift */; };
 		7F054CCA2238038100DAF2E1 /* SceneTrashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F054CC92238038100DAF2E1 /* SceneTrashController.swift */; };
 		7F054CCC223812A200DAF2E1 /* ActionsHistoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F054CCB223812A200DAF2E1 /* ActionsHistoryController.swift */; };
+		7F054CCE223A3B8700DAF2E1 /* ActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F054CCD223A3B8700DAF2E1 /* ActionType.swift */; };
 		7F0B54FD2189E4A000143D61 /* CubeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0B54FC2189E4A000143D61 /* CubeController.swift */; };
 		7F0B54FF2189F6CC00143D61 /* SurfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0B54FE2189F6CC00143D61 /* SurfaceController.swift */; };
 		7F0B55012189F88800143D61 /* Surface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0B55002189F88800143D61 /* Surface.swift */; };
@@ -174,6 +175,7 @@
 		7F054CC72237869D00DAF2E1 /* SceneChooserController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneChooserController.swift; sourceTree = "<group>"; };
 		7F054CC92238038100DAF2E1 /* SceneTrashController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneTrashController.swift; sourceTree = "<group>"; };
 		7F054CCB223812A200DAF2E1 /* ActionsHistoryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionsHistoryController.swift; sourceTree = "<group>"; };
+		7F054CCD223A3B8700DAF2E1 /* ActionType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionType.swift; sourceTree = "<group>"; };
 		7F0B54FC2189E4A000143D61 /* CubeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CubeController.swift; path = Objects/Controllers/CubeController.swift; sourceTree = "<group>"; };
 		7F0B54FE2189F6CC00143D61 /* SurfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SurfaceController.swift; path = Objects/Controllers/SurfaceController.swift; sourceTree = "<group>"; };
 		7F0B55002189F88800143D61 /* Surface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Surface.swift; path = Objects/Surface.swift; sourceTree = "<group>"; };
@@ -513,6 +515,7 @@
 				7F68313621001DE400B8FC8E /* ViewController.mm */,
 				7F61E45B2151664200F0AA29 /* Face.swift */,
 				7F61E4572150DDF200F0AA29 /* Scene.swift */,
+				7F054CCD223A3B8700DAF2E1 /* ActionType.swift */,
 				7F61E4532150D73300F0AA29 /* SceneObject.swift */,
 				7F054CC72237869D00DAF2E1 /* SceneChooserController.swift */,
 				7F054CC92238038100DAF2E1 /* SceneTrashController.swift */,
@@ -763,6 +766,7 @@
 				7F39E8FD2148ACC000252FF6 /* crypt.h in Sources */,
 				7F39E8FE2148ACC000252FF6 /* ioapi_buf.c in Sources */,
 				7F39E8FF2148ACC000252FF6 /* ioapi_buf.h in Sources */,
+				7F054CCE223A3B8700DAF2E1 /* ActionType.swift in Sources */,
 				7F39E9002148ACC000252FF6 /* ioapi_mem.c in Sources */,
 				7F39E9012148ACC000252FF6 /* ioapi_mem.h in Sources */,
 				7F39E9022148ACC000252FF6 /* ioapi.c in Sources */,

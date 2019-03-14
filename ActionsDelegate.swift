@@ -14,7 +14,7 @@ class ActionsDelegate: NSObject, UITableViewDelegate, UITableViewDataSource {
     var mainController: RootViewController?
     let controller: ActionsController
     
-    private let actionsList = ["Undo or Redo", "New Scene", "Switch Scene", "Duplicate scene", "Move Scene to Trash", "Add Object", "Translate", "Rotate", "Scale object", "Mirror", "Bend", "Subdivide", "Face Split", "Warp", "Copy objects", "Paste objects", "Attach", "Remove", "Import or export", "Textures library", "Trash Bin", "About"]
+    private let actionsList = ["Undo or Redo", "New Scene", "Switch Scene", "Duplicate Scene", "Move Scene to Trash", "Add Object", "Translate", "Rotate", "Scale object", "Mirror", "Bend", "Subdivide", "Face Split", "Warp", "Copy objects", "Paste objects", "Attach", "Remove", "Import or export", "Textures library", "Trash Bin", "About"]
     
     init(mainController: RootViewController?, controller: ActionsController) {
         self.mainController = mainController
@@ -51,14 +51,199 @@ class ActionsDelegate: NSObject, UITableViewDelegate, UITableViewDataSource {
             createAndPresentScene()
         case "Switch Scene":
             toSceneChooser()
+        case "Duplicate Scene":
+            duplicateScene()
         case "Move Scene to Trash":
             trashScene()
         case "Add Object":
             presentAdditionList()
+        case "Remove":
+            removeAction()
         case "Trash Bin":
             toTrash()
         default:
             print("Dummy")
+        }
+    }
+    
+    func removeAction() {
+        var isAnyObjectSelected = false
+        // TODO fix multiple selection
+        for i in 0..<RootViewController.scenes[RootViewController.currentScene].objects.count {
+            if RootViewController.scenes[RootViewController.currentScene].objects[i].isSelected {
+                
+                RootViewController.scenes[RootViewController.currentScene].updateHistory(id: i, msg: "Delete object", type: .deletion)
+                RootViewController.scenes[RootViewController.currentScene].appendHistoryObject(id: i, object: RootViewController.scenes[RootViewController.currentScene].objects[i])
+                
+                isAnyObjectSelected = true
+                RootViewController.scenes[RootViewController.currentScene].removeObject(nth: i)
+                break
+            }
+        }
+        
+        if !isAnyObjectSelected {
+            RootViewController.scenes[RootViewController.currentScene].removeAll(nth: 0)
+        }
+        
+        RootViewController.scenes[RootViewController.currentScene].prepareForRender()
+        RootViewController.sceneControllers[0].contr.loadModel(Int32(RootViewController.scenes[RootViewController.currentScene].indicesCount))
+        
+        //hideActions()
+        if let main = mainController {
+            _ = controller.navigationController?.popToViewController(main, animated: true)
+        } else {
+            print("Nil controller")
+        }
+    }
+    
+    func duplicateScene() {
+        let sceneNth = arc4random()
+        
+        let sceneName = "Scene \(sceneNth)"
+        let scene = Scene(name: sceneName, fromDatabase: false)
+        
+        scene.x = RootViewController.scenes[RootViewController.currentScene].x
+        scene.y = RootViewController.scenes[RootViewController.currentScene].y
+        scene.z = RootViewController.scenes[RootViewController.currentScene].z
+        
+        scene.xAngle = RootViewController.scenes[RootViewController.currentScene].xAngle
+        scene.yAngle = RootViewController.scenes[RootViewController.currentScene].yAngle
+        //scene.zAngle = RootViewController.scenes[RootViewController.currentScene].zAngle
+        
+        for object in RootViewController.scenes[RootViewController.currentScene].objects {
+            scene.appendObject(object: object, skipActionHistory: true)
+        }
+        
+        scene.prepareForRender()
+        
+        var stmt: OpaquePointer?
+        
+        var prevSceneQuery = "select * from actions_history"
+        
+        if sqlite3_prepare(RootViewController.scenes[RootViewController.currentScene].db, prevSceneQuery, -1, &stmt, nil) != SQLITE_OK {
+            let errmsg = String(cString: sqlite3_errmsg(RootViewController.scenes[RootViewController.currentScene].db)!)
+            print("error preparing insert: \(errmsg)")
+            return
+        }
+        
+        var prevHistoryIDs: [Int] = []
+        var prevHistoryActions: [String] = []
+        while sqlite3_step(stmt) == SQLITE_ROW {
+            prevHistoryIDs.append(Int(sqlite3_column_int(stmt, 0)))
+            prevHistoryActions.append(String(cString: sqlite3_column_text(stmt, 1)))
+        }
+        
+        sqlite3_finalize(stmt)
+        
+        prevSceneQuery = "select * from history_scene_objects"
+        
+        if sqlite3_prepare(RootViewController.scenes[RootViewController.currentScene].db, prevSceneQuery, -1, &stmt, nil) != SQLITE_OK {
+            print(String(cString: sqlite3_errmsg(RootViewController.scenes[RootViewController.currentScene].db)!))
+        }
+        
+        var prevHistorySceneObjects: [(id: Int, x: Float, y: Float, z: Float, red: Float, green: Float, blue: Float, alpha: Float)] = []
+        //history_scene_objects(id, x, y, z, red, green, blue, alpha)
+        while sqlite3_step(stmt) == SQLITE_ROW {
+            let id = Int(sqlite3_column_int(stmt, 0))
+            let x = Float(sqlite3_column_double(stmt, 1))
+            let y = Float(sqlite3_column_double(stmt, 2))
+            let z = Float(sqlite3_column_double(stmt, 3))
+            let red = Float(sqlite3_column_double(stmt, 4))
+            let green = Float(sqlite3_column_double(stmt, 5))
+            let blue = Float(sqlite3_column_double(stmt, 6))
+            let alpha = Float(sqlite3_column_double(stmt, 7))
+            
+            prevHistorySceneObjects.append((id, x, y, z,
+                                            red, green, blue, alpha))
+        }
+        
+        var nextSceneQuery = "insert into actions_history(id, name) values(?, ?)"
+        
+        for i in 0..<prevHistoryIDs.count {
+            var stmt: OpaquePointer?
+            
+            if sqlite3_prepare(scene.db, nextSceneQuery, -1, &stmt, nil) != SQLITE_OK {
+                print(String(cString: sqlite3_errmsg(scene.db)!))
+            }
+            
+            if sqlite3_bind_int(stmt, 1, Int32(prevHistoryIDs[i])) != SQLITE_OK {
+                print(String(cString: sqlite3_errmsg(scene.db)!))
+            }
+            
+            if sqlite3_bind_text(stmt, 2, (prevHistoryActions[i] as NSString).utf8String, -1, nil) != SQLITE_OK {
+                print(String(cString: sqlite3_errmsg(scene.db)!))
+            }
+            
+            if sqlite3_step(stmt) != SQLITE_DONE {
+                print(String(cString: sqlite3_errmsg(scene.db)!))
+            }
+            
+            sqlite3_finalize(stmt)
+        }
+        
+        nextSceneQuery = "insert into history_scene_objects(id, x, y, z, red, green, blue, alpha) values(?, ?, ?, ?, ?, ?, ?, ?)"
+        
+        for i in 0..<prevHistoryIDs.count {
+            var stmt: OpaquePointer?
+            
+            if sqlite3_prepare(scene.db, nextSceneQuery, -1, &stmt, nil) != SQLITE_OK {
+                print(String(cString: sqlite3_errmsg(scene.db)!))
+            }
+            
+            if sqlite3_bind_int(stmt, 1, Int32(prevHistorySceneObjects[i].id)) != SQLITE_OK {
+                print(String(cString: sqlite3_errmsg(scene.db)!))
+            }
+            
+            if sqlite3_bind_double(stmt, 2, Double(prevHistorySceneObjects[i].x)) != SQLITE_OK {
+                print(String(cString: sqlite3_errmsg(scene.db)!))
+            }
+            
+            if sqlite3_bind_double(stmt, 3, Double(prevHistorySceneObjects[i].y)) != SQLITE_OK {
+                print(String(cString: sqlite3_errmsg(scene.db)!))
+            }
+            
+            if sqlite3_bind_double(stmt, 4, Double(prevHistorySceneObjects[i].z)) != SQLITE_OK {
+                print(String(cString: sqlite3_errmsg(scene.db)!))
+            }
+            
+            if sqlite3_bind_double(stmt, 5, Double(prevHistorySceneObjects[i].red)) != SQLITE_OK {
+                print(String(cString: sqlite3_errmsg(scene.db)!))
+            }
+            
+            if sqlite3_bind_double(stmt, 6, Double(prevHistorySceneObjects[i].green)) != SQLITE_OK {
+                print(String(cString: sqlite3_errmsg(scene.db)!))
+            }
+            
+            if sqlite3_bind_double(stmt, 7, Double(prevHistorySceneObjects[i].blue)) != SQLITE_OK {
+                print(String(cString: sqlite3_errmsg(scene.db)!))
+            }
+            
+            if sqlite3_bind_double(stmt, 8, Double(prevHistorySceneObjects[i].alpha)) != SQLITE_OK {
+                print(String(cString: sqlite3_errmsg(scene.db)!))
+            }
+            
+            if sqlite3_step(stmt) != SQLITE_DONE {
+                print(String(cString: sqlite3_errmsg(scene.db)!))
+            }
+        }
+        
+        RootViewController.scenes.append(scene)
+        //scenesListTableView.reloadData()
+        
+        RootViewController.currentScene = RootViewController.scenes.count - 1
+        RootViewController.sceneControllers[0].currentScene = RootViewController.currentScene
+        
+        RootViewController.sceneControllers[0].contr.setVertexArrays(RootViewController.scenes[RootViewController.currentScene].bigVertices, bigLineVertices: RootViewController.scenes[RootViewController.currentScene].bigLineVertices, selectedVertices:RootViewController.scenes[RootViewController.currentScene].selectionVertices, gridLineVertices: Grid.bigLineVertices, axisLineVertices: Axis.bigLineVertices, bigIndices: RootViewController.scenes[RootViewController.currentScene].bigIndices, bigLineIndices: RootViewController.scenes[RootViewController.currentScene].bigLineIndices, gridLineIndices: Grid.bigLineIndices)
+        
+        RootViewController.sceneControllers[0].contr.translateCamera(scene.x, y: scene.y, z: scene.z)
+        RootViewController.sceneControllers[0].contr.setAngle(RootViewController.scenes[RootViewController.currentScene].xAngle, y: RootViewController.scenes[RootViewController.currentScene].yAngle)
+        RootViewController.sceneControllers[0].contr.loadModel(Int32(RootViewController.scenes[RootViewController.currentScene].indicesCount))
+        mainController?.navigationItem.title = RootViewController.scenes[RootViewController.currentScene].name
+        
+        if let main = mainController {
+            _ = controller.navigationController?.popToViewController(main, animated: true)
+        } else {
+            print("Nil controller")
         }
     }
     

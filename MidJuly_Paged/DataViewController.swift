@@ -1216,28 +1216,46 @@ struct Uniforms {
     
     func accHandler(x: Float, y: Float, z: Float) {
         
-        //print(x)
-        //print(y)
-        //print(z)
+        if RootViewController.moveByAccelerometer {
         
-        let lockZ = true
-        
-        if abs(x) >= 0.1 {
-            RootViewController.scenes[currentScene].x += (x * 0.01)
-        }
-        if abs(y) >= 0.1 {
-            RootViewController.scenes[currentScene].y += (y * 0.01)
-        }
-        
-        if !lockZ {
-            if abs(z + 1.0) >= 0.1 {
-                RootViewController.scenes[currentScene].z += ((z + 1.0) * 0.01)
+            let lockZ = true
+            
+            if abs(x) >= 0.1 {
+                RootViewController.scenes[currentScene].x += (x * 0.01)
             }
-        }
+            if abs(y) >= 0.1 {
+                RootViewController.scenes[currentScene].y += (y * 0.01)
+            }
+            
+            if !lockZ {
+                if abs(z + 1.0) >= 0.1 {
+                    RootViewController.scenes[currentScene].z += ((z + 1.0) * 0.01)
+                }
+            }
+                //
+            
+            contr.translateCamera(RootViewController.scenes[currentScene].x, y: RootViewController.scenes[currentScene].y, z: RootViewController.scenes[currentScene].z)
+            contr.setAngle(RootViewController.scenes[currentScene].xAngle, y: RootViewController.scenes[currentScene].yAngle)
+        } else if RootViewController.rotateByAccelerometer {
+            let lockZ = true
+            
+            if abs(x) >= 0.1 {
+                RootViewController.scenes[currentScene].xAngle += (x * 0.1)
+            }
+            if abs(y) >= 0.1 {
+                RootViewController.scenes[currentScene].yAngle += (y * 0.1)
+            }
+            
+            /*if !lockZ {
+                if abs(z + 1.0) >= 0.1 {
+                    RootViewController.scenes[currentScene].z += ((z + 1.0) * 0.01)
+                }
+            }*/
             //
-        
-        contr.translateCamera(RootViewController.scenes[currentScene].x, y: RootViewController.scenes[currentScene].y, z: RootViewController.scenes[currentScene].z)
-        contr.setAngle(RootViewController.scenes[currentScene].xAngle, y: RootViewController.scenes[currentScene].yAngle)
+            
+            contr.translateCamera(RootViewController.scenes[currentScene].x, y: RootViewController.scenes[currentScene].y, z: RootViewController.scenes[currentScene].z)
+            contr.setAngle(RootViewController.scenes[currentScene].xAngle, y: RootViewController.scenes[currentScene].yAngle)
+        }
     }
     
     override func viewDidLoad() {

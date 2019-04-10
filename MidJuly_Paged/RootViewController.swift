@@ -16,6 +16,9 @@ extension UINavigationController {
 }
 
 class RootViewController: UIViewController, UIPageViewControllerDelegate {
+    
+    static var moveByAccelerometer = false
+    static var rotateByAccelerometer = true
 
     static var sceneControllers: [DataViewController] = []
     static var currentScene: Int = 0
@@ -70,6 +73,26 @@ class RootViewController: UIViewController, UIPageViewControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let accelerometerStatus = UserDefaults.standard.value(forKey: "MoveByAccelerometer") {
+            if accelerometerStatus as! String == "true" {
+                RootViewController.moveByAccelerometer = true
+            } else {
+                RootViewController.moveByAccelerometer = false
+            }
+        } else {
+            RootViewController.moveByAccelerometer = false
+        }
+        
+        if let accelerometerStatus = UserDefaults.standard.value(forKey: "RotateByAccelerometer") {
+            if accelerometerStatus as! String == "true" {
+                RootViewController.rotateByAccelerometer = true
+            } else {
+                RootViewController.rotateByAccelerometer = false
+            }
+        } else {
+            RootViewController.rotateByAccelerometer = true
+        }
 
         initObjects()
         

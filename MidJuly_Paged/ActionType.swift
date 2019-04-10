@@ -11,4 +11,8 @@ import Foundation
 enum ActionType {
     case addition
     case deletion
+    case translation
+    case rotation
+    case scaling
+    case mirror
 }

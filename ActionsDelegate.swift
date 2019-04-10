@@ -14,7 +14,7 @@ class ActionsDelegate: NSObject, UITableViewDelegate, UITableViewDataSource {
     var mainController: RootViewController?
     let controller: ActionsController
     
-    private let actionsList = ["Undo or Redo", "New Scene", "Switch Scene", "Duplicate Scene", "Move Scene to Trash", "Add Object", "Translate", "Rotate", "Scale object", "Mirror", "Bend", "Subdivide", "Face Split", "Warp", "Copy objects", "Paste objects", "Attach", "Remove", "Import or export", "Textures library", "Trash Bin", "About"]
+    private let actionsList = ["Move by accelerometer", "Rotate by accelerometer", "Undo or Redo", "New Scene", "Switch Scene", "Duplicate Scene", "Move Scene to Trash", "Add Object", "Translate", "Rotate", "Scale Object", "Mirror", "Bend", "Subdivide", "Face Split", "Warp", "Copy objects", "Paste objects", "Attach", "Remove", "Import or export", "Textures library", "Trash Bin", "About"]
     
     init(mainController: RootViewController?, controller: ActionsController) {
         self.mainController = mainController
@@ -38,9 +38,43 @@ class ActionsDelegate: NSObject, UITableViewDelegate, UITableViewDataSource {
         
         if actionsList[indexPath.row] == "Add Object" {
             cell.accessoryType = .disclosureIndicator
+        } else if actionsList[indexPath.row] == "Move by accelerometer" {
+            let sw = UISwitch()
+            sw.addTarget(self, action: #selector(toggleAccelerometer(sender:)), for: .valueChanged)
+            sw.isOn = RootViewController.moveByAccelerometer
+            cell.accessoryView = sw
+        } else if actionsList[indexPath.row] == "Rotate by accelerometer" {
+            let sw = UISwitch()
+            sw.addTarget(self, action: #selector(toggleAccelerometerRotation(sender:)), for: .valueChanged)
+            sw.isOn = RootViewController.rotateByAccelerometer
+            cell.accessoryView = sw
         }
         
         return cell
+    }
+    
+    func toggleAccelerometer(sender: UISwitch) {
+        RootViewController.moveByAccelerometer = sender.isOn
+        if sender.isOn {
+            UserDefaults.standard.set("true", forKey: "MoveByAccelerometer")
+            UserDefaults.standard.set("false", forKey: "RotateByAccelerometer")
+            RootViewController.rotateByAccelerometer = false
+            controller.actionsTableView.reloadData()
+        } else {
+            UserDefaults.standard.set("false", forKey: "MoveByAccelerometer")
+        }
+    }
+    
+    func toggleAccelerometerRotation(sender: UISwitch) {
+        RootViewController.rotateByAccelerometer = sender.isOn
+        if sender.isOn {
+            UserDefaults.standard.set("false", forKey: "MoveByAccelerometer")
+            RootViewController.moveByAccelerometer = false
+            UserDefaults.standard.set("true", forKey: "RotateByAccelerometer")
+            controller.actionsTableView.reloadData()
+        } else {
+            UserDefaults.standard.set("false", forKey: "RotateByAccelerometer")
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -57,12 +91,98 @@ class ActionsDelegate: NSObject, UITableViewDelegate, UITableViewDataSource {
             trashScene()
         case "Add Object":
             presentAdditionList()
+        case "Translate":
+            toTranslate()
+        case "Rotate":
+            toRotation()
+        case "Scale Object":
+            toScaling()
+        case "Mirror":
+            mirrorAction()
         case "Remove":
             removeAction()
         case "Trash Bin":
             toTrash()
         default:
             print("Dummy")
+        }
+    }
+    
+    func toScaling() {
+        let scale = ScalingController()
+        scale.mainController = mainController
+        controller.navigationController?.pushViewController(scale, animated: true)
+    }
+    
+    func toRotation() {
+        let rotate = RotationController()
+        rotate.mainController = mainController
+        controller.navigationController?.pushViewController(rotate, animated: true)
+    }
+    
+    func mirrorAction() {
+        var isAnyObjectSelected = false
+        // TODO fix multiple selection
+        for i in 0..<RootViewController.scenes[RootViewController.currentScene].objects.count {
+            if RootViewController.scenes[RootViewController.currentScene].objects[i].isSelected {
+                
+                RootViewController.scenes[RootViewController.currentScene].updateHistory(id: i, msg: "Mirror object", type: .deletion)
+                //RootViewController.scenes[RootViewController.currentScene].appendHistoryObject(id: i, object: RootViewController.scenes[RootViewController.currentScene].objects[i])
+                
+                isAnyObjectSelected = true
+                RootViewController.scenes[RootViewController.currentScene].objects[i].mirrorX()
+                break
+            }
+        }
+        
+        if !isAnyObjectSelected {
+            RootViewController.scenes[RootViewController.currentScene].removeAll(nth: 0)
+        }
+        
+        RootViewController.scenes[RootViewController.currentScene].prepareForRender()
+        RootViewController.sceneControllers[0].contr.loadModel(Int32(RootViewController.scenes[RootViewController.currentScene].indicesCount))
+        
+        //hideActions()
+        if let main = mainController {
+            _ = controller.navigationController?.popToViewController(main, animated: true)
+        } else {
+            print("Nil controller")
+        }
+    }
+    
+    func toTranslate() {
+        let translate = TranslationController()
+        translate.mainController = mainController
+        controller.navigationController?.pushViewController(translate, animated: true)
+    }
+    
+    func translateAction() {
+        var isAnyObjectSelected = false
+        // TODO fix multiple selection
+        for i in 0..<RootViewController.scenes[RootViewController.currentScene].objects.count {
+            if RootViewController.scenes[RootViewController.currentScene].objects[i].isSelected {
+                
+                RootViewController.scenes[RootViewController.currentScene].updateHistory(id: i, msg: "Delete object", type: .deletion)
+                RootViewController.scenes[RootViewController.currentScene].appendHistoryObject(id: i, object: RootViewController.scenes[RootViewController.currentScene].objects[i])
+                
+                isAnyObjectSelected = true
+                RootViewController.scenes[RootViewController.currentScene].removeObject(nth: i)
+                break
+            }
+        }
+        
+        if !isAnyObjectSelected {
+            RootViewController.scenes[RootViewController.currentScene].removeAll(nth: 0)
+        }
+        
+        RootViewController.scenes[RootViewController.currentScene].prepareForRender()
+        RootViewController.sceneControllers[0].contr.loadModel(Int32(RootViewController.scenes[RootViewController.currentScene].indicesCount))
+        
+        //hideActions()
+        if let main = mainController {
+            _ = controller.navigationController?.popToViewController(main, animated: true)
+        } else {
+            print("Nil controller")
         }
     }
     

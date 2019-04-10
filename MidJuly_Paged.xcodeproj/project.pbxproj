@@ -11,6 +11,9 @@
 		7F054CCA2238038100DAF2E1 /* SceneTrashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F054CC92238038100DAF2E1 /* SceneTrashController.swift */; };
 		7F054CCC223812A200DAF2E1 /* ActionsHistoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F054CCB223812A200DAF2E1 /* ActionsHistoryController.swift */; };
 		7F054CCE223A3B8700DAF2E1 /* ActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F054CCD223A3B8700DAF2E1 /* ActionType.swift */; };
+		7F054CD0223A573600DAF2E1 /* TranslationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F054CCF223A573600DAF2E1 /* TranslationController.swift */; };
+		7F054CD2223BA06D00DAF2E1 /* RotationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F054CD1223BA06C00DAF2E1 /* RotationController.swift */; };
+		7F054CD4223BA53C00DAF2E1 /* ScalingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F054CD3223BA53C00DAF2E1 /* ScalingController.swift */; };
 		7F0B54FD2189E4A000143D61 /* CubeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0B54FC2189E4A000143D61 /* CubeController.swift */; };
 		7F0B54FF2189F6CC00143D61 /* SurfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0B54FE2189F6CC00143D61 /* SurfaceController.swift */; };
 		7F0B55012189F88800143D61 /* Surface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0B55002189F88800143D61 /* Surface.swift */; };
@@ -176,6 +179,9 @@
 		7F054CC92238038100DAF2E1 /* SceneTrashController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneTrashController.swift; sourceTree = "<group>"; };
 		7F054CCB223812A200DAF2E1 /* ActionsHistoryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionsHistoryController.swift; sourceTree = "<group>"; };
 		7F054CCD223A3B8700DAF2E1 /* ActionType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionType.swift; sourceTree = "<group>"; };
+		7F054CCF223A573600DAF2E1 /* TranslationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TranslationController.swift; sourceTree = "<group>"; };
+		7F054CD1223BA06C00DAF2E1 /* RotationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RotationController.swift; sourceTree = "<group>"; };
+		7F054CD3223BA53C00DAF2E1 /* ScalingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScalingController.swift; sourceTree = "<group>"; };
 		7F0B54FC2189E4A000143D61 /* CubeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CubeController.swift; path = Objects/Controllers/CubeController.swift; sourceTree = "<group>"; };
 		7F0B54FE2189F6CC00143D61 /* SurfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SurfaceController.swift; path = Objects/Controllers/SurfaceController.swift; sourceTree = "<group>"; };
 		7F0B55002189F88800143D61 /* Surface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Surface.swift; path = Objects/Surface.swift; sourceTree = "<group>"; };
@@ -520,6 +526,9 @@
 				7F054CC72237869D00DAF2E1 /* SceneChooserController.swift */,
 				7F054CC92238038100DAF2E1 /* SceneTrashController.swift */,
 				7F054CCB223812A200DAF2E1 /* ActionsHistoryController.swift */,
+				7F054CCF223A573600DAF2E1 /* TranslationController.swift */,
+				7F054CD1223BA06C00DAF2E1 /* RotationController.swift */,
+				7F054CD3223BA53C00DAF2E1 /* ScalingController.swift */,
 				7F61E4552150D82300F0AA29 /* Cube.swift */,
 				7F61E45D215171A800F0AA29 /* Cone.swift */,
 				7FD324D5219F29E200A3D162 /* Gear.swift */,
@@ -760,6 +769,7 @@
 				7F5386EC218B5E70000B3D8F /* SurfaceOfRevolutionController.swift in Sources */,
 				7F61E45E215171A800F0AA29 /* Cone.swift in Sources */,
 				7F39E8FC2148ACC000252FF6 /* crypt.c in Sources */,
+				7F054CD0223A573600DAF2E1 /* TranslationController.swift in Sources */,
 				7FD324DE219F8C3100A3D162 /* Capsule.swift in Sources */,
 				7F558525219D7BFF00572941 /* ConeController.swift in Sources */,
 				7F61E46221517AC800F0AA29 /* Cylinder.swift in Sources */,
@@ -784,6 +794,7 @@
 				7F39E9062148ACC000252FF6 /* unzip.c in Sources */,
 				7FB5B94D219B1D62006629C8 /* NURBSSurface.swift in Sources */,
 				7F39E9072148ACC000252FF6 /* unzip.h in Sources */,
+				7F054CD4223BA53C00DAF2E1 /* ScalingController.swift in Sources */,
 				7FAA9DF9219E3BB1000285BF /* Ladder.swift in Sources */,
 				7F8230DC214C0CD900BD262C /* ActionsTableViewDataSource.swift in Sources */,
 				7F39E9082148ACC000252FF6 /* zip.c in Sources */,
@@ -799,6 +810,7 @@
 				7FEBAC0A20F7C47E00D99284 /* RootViewController.swift in Sources */,
 				7FEFBCD32189486000B0B465 /* AdditionDelegate.swift in Sources */,
 				7FEBAC4A20F9793000D99284 /* Triangle.swift in Sources */,
+				7F054CD2223BA06D00DAF2E1 /* RotationController.swift in Sources */,
 				7F6D9746219C79F8008ED7FD /* Spline2DController.swift in Sources */,
 				7F68312F21001DA700B8FC8E /* Renderer.m in Sources */,
 				7FEBAC0E20F7C47E00D99284 /* ModelController.swift in Sources */,

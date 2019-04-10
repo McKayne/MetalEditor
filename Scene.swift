@@ -72,6 +72,11 @@ import Foundation
             let errmsg = String(cString: sqlite3_errmsg(db)!)
             print("error creating table: \(errmsg)")
         }
+        
+        if sqlite3_exec(db, "CREATE TABLE history_actions_properties(id integer, x real, y real, z real)", nil, nil, nil) != SQLITE_OK {
+            let errmsg = String(cString: sqlite3_errmsg(db)!)
+            print("error creating table: \(errmsg)")
+        }
     }
     
     func createDatabase() {
@@ -472,6 +477,58 @@ import Foundation
         //updateDatabase()
     }
     
+    func appendHistoryObjectProperties(id: Int, x: Float, y: Float, z: Float) {
+        //history_actions_properties
+        //creating a statement
+        var stmt: OpaquePointer?
+        
+        //the insert query
+        let queryString = "insert into history_actions_properties(id, x, y, z) values(?, ?, ?, ?)"
+        
+        //preparing the query
+        if sqlite3_prepare(db, queryString, -1, &stmt, nil) != SQLITE_OK{
+            let errmsg = String(cString: sqlite3_errmsg(db)!)
+            print("error preparing insert: \(errmsg)")
+            return
+        }
+        
+        //binding the parameters
+        if sqlite3_bind_int(stmt, 1, Int32(id)) != SQLITE_OK{
+            let errmsg = String(cString: sqlite3_errmsg(db)!)
+            print("failure binding name: \(errmsg)")
+            return
+        }
+        
+        if sqlite3_bind_double(stmt, 2, Double(x)) != SQLITE_OK{
+            let errmsg = String(cString: sqlite3_errmsg(db)!)
+            print("failure binding name: \(errmsg)")
+            return
+        }
+        
+        if sqlite3_bind_double(stmt, 3, Double(y)) != SQLITE_OK{
+            let errmsg = String(cString: sqlite3_errmsg(db)!)
+            print("failure binding name: \(errmsg)")
+            return
+        }
+        
+        if sqlite3_bind_double(stmt, 4, Double(z)) != SQLITE_OK{
+            let errmsg = String(cString: sqlite3_errmsg(db)!)
+            print("failure binding name: \(errmsg)")
+            return
+        }
+        
+        //executing the query to insert values
+        if sqlite3_step(stmt) != SQLITE_DONE {
+            let errmsg = String(cString: sqlite3_errmsg(db)!)
+            print("failure inserting hero: \(errmsg)")
+            return
+        }
+        
+        sqlite3_finalize(stmt)
+        
+        
+    }
+    
     func appendHistoryObject(id: Int, object: SceneObject) {
         for j in 0..<object.vertices.count {
             
@@ -629,6 +686,14 @@ import Foundation
             typeStr = "addition"
         case .deletion:
             typeStr = "deletion"
+        case .translation:
+            typeStr = "translation"
+        case .rotation:
+            typeStr = "rotation"
+        case .scaling:
+            typeStr = "scaling"
+        case .mirror:
+            typeStr = "mirror"
         }
         if sqlite3_bind_text(stmt, 3, (typeStr as NSString).utf8String, -1, nil) != SQLITE_OK {
             let errmsg = String(cString: sqlite3_errmsg(db)!)

@@ -1,14 +1,15 @@
 //
-//  SphereController.swift
+//  TranslationController.swift
 //  MidJuly_Paged
 //
-//  Created by для интернета on 16.11.18.
-//  Copyright © 2018 для интернета. All rights reserved.
+//  Created by для интернета on 14.03.19.
+//  Copyright © 2019 для интернета. All rights reserved.
 //
 
+import Foundation
 import UIKit
 
-class SphereController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource {
+class TranslationController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource {
     
     var mainController: RootViewController?
     
@@ -20,6 +21,7 @@ class SphereController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     let xPositionText = UITextField(), yPositionText = UITextField(), zPositionText = UITextField()
     let xRotationText = UITextField(), yRotationText = UITextField(), zRotationText = UITextField()
+    let widthText = UITextField(), heightText = UITextField(), depthText = UITextField()
     
     convenience init(mainController: RootViewController?) {
         self.init(nibName: nil, bundle: nil)
@@ -69,13 +71,15 @@ class SphereController: UIViewController, UITableViewDelegate, UITableViewDataSo
             return 30.0
         case 1:
             return 30.0
+        case 2:
+            return 30.0
         default:
             return 100.0
         }
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -83,6 +87,8 @@ class SphereController: UIViewController, UITableViewDelegate, UITableViewDataSo
         case 0:
             return 3
         case 1:
+            return 3
+        case 2:
             return 3
         default:
             return 1
@@ -92,9 +98,11 @@ class SphereController: UIViewController, UITableViewDelegate, UITableViewDataSo
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return "Position"
+            return "Translate at"
         case 1:
             return "Rotation"
+        case 2:
+            return "Dimensions"
         default:
             return "RGB Color"
         }
@@ -111,15 +119,15 @@ class SphereController: UIViewController, UITableViewDelegate, UITableViewDataSo
             case 0:
                 cell.textLabel?.text = "X = "
                 cell.contentView.addSubview(xPositionText)
-                RootViewController.performAutolayoutConstants(subview: xPositionText, view: cell.contentView, left: 50, right: -15, top: 0, bottom: 0)
+                RootViewController.performAutolayoutConstants(subview: xPositionText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
             case 1:
                 cell.textLabel?.text = "Y = "
                 cell.contentView.addSubview(yPositionText)
-                RootViewController.performAutolayoutConstants(subview: yPositionText, view: cell.contentView, left: 50, right: -15, top: 0, bottom: 0)
+                RootViewController.performAutolayoutConstants(subview: yPositionText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
             default:
                 cell.textLabel?.text = "Z = "
                 cell.contentView.addSubview(zPositionText)
-                RootViewController.performAutolayoutConstants(subview: zPositionText, view: cell.contentView, left: 50, right: -15, top: 0, bottom: 0)
+                RootViewController.performAutolayoutConstants(subview: zPositionText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
             }
         case 1:
             cell.backgroundColor = UIColor(red: 114.0 / 255.0, green: 114.0 / 255.0, blue: 114.0 / 255.0, alpha: 1.0)
@@ -128,15 +136,32 @@ class SphereController: UIViewController, UITableViewDelegate, UITableViewDataSo
             case 0:
                 cell.textLabel?.text = "X = "
                 cell.contentView.addSubview(xRotationText)
-                RootViewController.performAutolayoutConstants(subview: xRotationText, view: cell.contentView, left: 50, right: -15, top: 0, bottom: 0)
+                RootViewController.performAutolayoutConstants(subview: xRotationText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
             case 1:
                 cell.textLabel?.text = "Y = "
                 cell.contentView.addSubview(yRotationText)
-                RootViewController.performAutolayoutConstants(subview: yRotationText, view: cell.contentView, left: 50, right: -15, top: 0, bottom: 0)
+                RootViewController.performAutolayoutConstants(subview: yRotationText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
             default:
                 cell.textLabel?.text = "Z = "
                 cell.contentView.addSubview(zRotationText)
-                RootViewController.performAutolayoutConstants(subview: zRotationText, view: cell.contentView, left: 50, right: -15, top: 0, bottom: 0)
+                RootViewController.performAutolayoutConstants(subview: zRotationText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
+            }
+        case 2:
+            cell.backgroundColor = UIColor(red: 114.0 / 255.0, green: 114.0 / 255.0, blue: 114.0 / 255.0, alpha: 1.0)
+            cell.textLabel?.textColor = .white
+            switch indexPath.row {
+            case 0:
+                cell.textLabel?.text = "Width = "
+                cell.contentView.addSubview(widthText)
+                RootViewController.performAutolayoutConstants(subview: widthText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
+            case 1:
+                cell.textLabel?.text = "Height = "
+                cell.contentView.addSubview(heightText)
+                RootViewController.performAutolayoutConstants(subview: heightText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
+            default:
+                cell.textLabel?.text = "Depth = "
+                cell.contentView.addSubview(depthText)
+                RootViewController.performAutolayoutConstants(subview: depthText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
             }
         default:
             return rgbPickerCell
@@ -155,8 +180,9 @@ class SphereController: UIViewController, UITableViewDelegate, UITableViewDataSo
     override func viewDidLoad() {
         let applyButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(popToScene(sender:)))
         navigationItem.rightBarButtonItem = applyButton
-        navigationItem.title = "Sphere"
+        navigationItem.title = "Translate"
         
+        // position
         xPositionText.borderStyle = .roundedRect
         yPositionText.borderStyle = .roundedRect
         zPositionText.borderStyle = .roundedRect
@@ -190,6 +216,23 @@ class SphereController: UIViewController, UITableViewDelegate, UITableViewDataSo
         yRotationText.text = "0.0"
         zRotationText.text = "0.0"
         
+        // dimensions
+        widthText.borderStyle = .roundedRect
+        heightText.borderStyle = .roundedRect
+        depthText.borderStyle = .roundedRect
+        
+        widthText.textAlignment = .center
+        heightText.textAlignment = .center
+        depthText.textAlignment = .center
+        
+        widthText.backgroundColor = UIColor(red: CGFloat(165.0 / 255.0), green: CGFloat(165.0 / 255.0), blue: CGFloat(165.0 / 255.0), alpha: 1.0)
+        heightText.backgroundColor = UIColor(red: CGFloat(165.0 / 255.0), green: CGFloat(165.0 / 255.0), blue: CGFloat(165.0 / 255.0), alpha: 1.0)
+        depthText.backgroundColor = UIColor(red: CGFloat(165.0 / 255.0), green: CGFloat(165.0 / 255.0), blue: CGFloat(165.0 / 255.0), alpha: 1.0)
+        
+        widthText.text = "0.0"
+        heightText.text = "0.0"
+        depthText.text = "0.0"
+        
         rgbPicker.backgroundColor = UIColor(red: 114.0 / 255.0, green: 114.0 / 255.0, blue: 114.0 / 255.0, alpha: 1.0)
         rgbPicker.delegate = self
         rgbPicker.dataSource = self
@@ -211,10 +254,32 @@ class SphereController: UIViewController, UITableViewDelegate, UITableViewDataSo
         
         if let xPositionText = xPositionText.text, let yPositionText = yPositionText.text, let zPositionText = zPositionText.text {
             if let xPosition = Float(xPositionText), let yPosition = Float(yPositionText), let zPosition = Float(zPositionText) {
-                let sphere = Sphere(x: xPosition, y: yPosition, z: zPosition, radius: 1, height: 2, segments: 50, rgb: (redCurrent, greenCurrent, blueCurrent))
-                RootViewController.scenes[RootViewController.currentScene].appendObjectWithoutUpdate(object: sphere)
+                
+                var isAnyObjectSelected = false
+                // TODO fix multiple selection
+                for i in 0..<RootViewController.scenes[RootViewController.currentScene].objects.count {
+                    if RootViewController.scenes[RootViewController.currentScene].objects[i].isSelected {
+                        
+                        RootViewController.scenes[RootViewController.currentScene].updateHistory(id: i, msg: "Translate object", type: .translation)
+                        RootViewController.scenes[RootViewController.currentScene].appendHistoryObjectProperties(id: i, x: xPosition, y: yPosition, z: zPosition)
+                        
+                        isAnyObjectSelected = true
+                        RootViewController.scenes[RootViewController.currentScene].objects[i].translateTo(xTranslate: xPosition, yTranslate: yPosition, zTranslate: zPosition)  //.removeObject(nth: i)
+                        break
+                    }
+                }
+                
+                if !isAnyObjectSelected {
+                    RootViewController.scenes[RootViewController.currentScene].removeAll(nth: 0)
+                }
+                
+                RootViewController.scenes[RootViewController.currentScene].prepareForRender()
+                RootViewController.sceneControllers[0].contr.loadModel(Int32(RootViewController.scenes[RootViewController.currentScene].indicesCount))
+                
             }
         }
+        
+        //let xPosition = xPositionText.text
         
         
         RootViewController.scenes[RootViewController.currentScene].prepareForRender()

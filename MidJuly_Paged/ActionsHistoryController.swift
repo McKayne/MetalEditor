@@ -128,6 +128,8 @@ class ActionsHistoryController: UIViewController, UITableViewDelegate, UITableVi
         name = "NthAction Undo \(RootViewController.scenes[RootViewController.currentScene].name ?? "")"
         UserDefaults.standard.set(String(indexPath.row + 1), forKey: name)
         
+        print(typeList[indexPath.row])
+        
         switch typeList[indexPath.row] {
         case "addition":
             print(objectIDs[indexPath.row])
@@ -145,7 +147,7 @@ class ActionsHistoryController: UIViewController, UITableViewDelegate, UITableVi
             if let main = mainController {
                 _ = main.navigationController?.popToViewController(main, animated: true)
             }
-        default:
+        case "deletion":
             let object = SceneObject()
             //objects.append(SceneObject())
             
@@ -210,6 +212,129 @@ class ActionsHistoryController: UIViewController, UITableViewDelegate, UITableVi
             
             if let main = mainController {
                 _ = main.navigationController?.popToViewController(main, animated: true)
+            }
+        case "translation":
+            //"insert into history_actions_properties(id, x, y, z) values(?, ?, ?, ?)"
+            var stmt: OpaquePointer?
+            
+            let queryString = "SELECT * FROM history_actions_properties where id = \(objectIDs[indexPath.row])"
+            
+            //statement pointer
+            //stmt:OpaquePointer?
+            
+            //preparing the query
+            if sqlite3_prepare(RootViewController.scenes[RootViewController.currentScene].db, queryString, -1, &stmt, nil) != SQLITE_OK{
+                let errmsg = String(cString: sqlite3_errmsg(RootViewController.scenes[RootViewController.currentScene].db)!)
+                print("error preparing insert: \(errmsg)")
+                return
+            }
+            
+            if sqlite3_step(stmt) == SQLITE_ROW {
+                let x = Float(sqlite3_column_double(stmt, 1))
+                let y = Float(sqlite3_column_double(stmt, 2))
+                let z = Float(sqlite3_column_double(stmt, 3))
+                
+                RootViewController.scenes[RootViewController.currentScene].objects[objectIDs[indexPath.row]].translateTo(xTranslate: -x, yTranslate: -y, zTranslate: -z)
+                
+                RootViewController.scenes[RootViewController.currentScene].updateDatabase()
+                RootViewController.scenes[RootViewController.currentScene].prepareForRender()
+                
+                RootViewController.sceneControllers[0].contr.setVertexArrays(RootViewController.scenes[RootViewController.currentScene].bigVertices, bigLineVertices: RootViewController.scenes[RootViewController.currentScene].bigLineVertices, selectedVertices:RootViewController.scenes[RootViewController.currentScene].selectionVertices, gridLineVertices: Grid.bigLineVertices, axisLineVertices: Axis.bigLineVertices, bigIndices: RootViewController.scenes[RootViewController.currentScene].bigIndices, bigLineIndices: RootViewController.scenes[RootViewController.currentScene].bigLineIndices, gridLineIndices: Grid.bigLineIndices)
+                
+                RootViewController.sceneControllers[0].contr.translateCamera(RootViewController.scenes[RootViewController.currentScene].x, y: RootViewController.scenes[RootViewController.currentScene].y, z: RootViewController.scenes[RootViewController.currentScene].z)
+                RootViewController.sceneControllers[0].contr.setAngle(RootViewController.scenes[RootViewController.currentScene].xAngle, y: RootViewController.scenes[RootViewController.currentScene].yAngle)
+                RootViewController.sceneControllers[0].contr.loadModel(Int32(RootViewController.scenes[RootViewController.currentScene].indicesCount))
+                
+                if let main = mainController {
+                    _ = main.navigationController?.popToViewController(main, animated: true)
+                }
+            }
+        case "mirror":
+            RootViewController.scenes[RootViewController.currentScene].objects[objectIDs[indexPath.row]].mirrorX()
+            
+            RootViewController.scenes[RootViewController.currentScene].updateDatabase()
+            RootViewController.scenes[RootViewController.currentScene].prepareForRender()
+            
+            RootViewController.sceneControllers[0].contr.setVertexArrays(RootViewController.scenes[RootViewController.currentScene].bigVertices, bigLineVertices: RootViewController.scenes[RootViewController.currentScene].bigLineVertices, selectedVertices:RootViewController.scenes[RootViewController.currentScene].selectionVertices, gridLineVertices: Grid.bigLineVertices, axisLineVertices: Axis.bigLineVertices, bigIndices: RootViewController.scenes[RootViewController.currentScene].bigIndices, bigLineIndices: RootViewController.scenes[RootViewController.currentScene].bigLineIndices, gridLineIndices: Grid.bigLineIndices)
+            
+            RootViewController.sceneControllers[0].contr.translateCamera(RootViewController.scenes[RootViewController.currentScene].x, y: RootViewController.scenes[RootViewController.currentScene].y, z: RootViewController.scenes[RootViewController.currentScene].z)
+            RootViewController.sceneControllers[0].contr.setAngle(RootViewController.scenes[RootViewController.currentScene].xAngle, y: RootViewController.scenes[RootViewController.currentScene].yAngle)
+            RootViewController.sceneControllers[0].contr.loadModel(Int32(RootViewController.scenes[RootViewController.currentScene].indicesCount))
+            
+            if let main = mainController {
+                _ = main.navigationController?.popToViewController(main, animated: true)
+            }
+        case "rotation":
+            //"insert into history_actions_properties(id, x, y, z) values(?, ?, ?, ?)"
+            var stmt: OpaquePointer?
+            
+            let queryString = "SELECT * FROM history_actions_properties where id = \(objectIDs[indexPath.row])"
+            
+            //statement pointer
+            //stmt:OpaquePointer?
+            
+            //preparing the query
+            if sqlite3_prepare(RootViewController.scenes[RootViewController.currentScene].db, queryString, -1, &stmt, nil) != SQLITE_OK{
+                let errmsg = String(cString: sqlite3_errmsg(RootViewController.scenes[RootViewController.currentScene].db)!)
+                print("error preparing insert: \(errmsg)")
+                return
+            }
+            
+            if sqlite3_step(stmt) == SQLITE_ROW {
+                let x = Float(sqlite3_column_double(stmt, 1))
+                let y = Float(sqlite3_column_double(stmt, 2))
+                let z = Float(sqlite3_column_double(stmt, 3))
+                
+                RootViewController.scenes[RootViewController.currentScene].objects[objectIDs[indexPath.row]].rotate(xAngle: -x, yAngle: -y, zAngle: -z)
+                
+                RootViewController.scenes[RootViewController.currentScene].updateDatabase()
+                RootViewController.scenes[RootViewController.currentScene].prepareForRender()
+                
+                RootViewController.sceneControllers[0].contr.setVertexArrays(RootViewController.scenes[RootViewController.currentScene].bigVertices, bigLineVertices: RootViewController.scenes[RootViewController.currentScene].bigLineVertices, selectedVertices:RootViewController.scenes[RootViewController.currentScene].selectionVertices, gridLineVertices: Grid.bigLineVertices, axisLineVertices: Axis.bigLineVertices, bigIndices: RootViewController.scenes[RootViewController.currentScene].bigIndices, bigLineIndices: RootViewController.scenes[RootViewController.currentScene].bigLineIndices, gridLineIndices: Grid.bigLineIndices)
+                
+                RootViewController.sceneControllers[0].contr.translateCamera(RootViewController.scenes[RootViewController.currentScene].x, y: RootViewController.scenes[RootViewController.currentScene].y, z: RootViewController.scenes[RootViewController.currentScene].z)
+                RootViewController.sceneControllers[0].contr.setAngle(RootViewController.scenes[RootViewController.currentScene].xAngle, y: RootViewController.scenes[RootViewController.currentScene].yAngle)
+                RootViewController.sceneControllers[0].contr.loadModel(Int32(RootViewController.scenes[RootViewController.currentScene].indicesCount))
+                
+                if let main = mainController {
+                    _ = main.navigationController?.popToViewController(main, animated: true)
+                }
+            }
+        default:
+            //"insert into history_actions_properties(id, x, y, z) values(?, ?, ?, ?)"
+            var stmt: OpaquePointer?
+            
+            let queryString = "SELECT * FROM history_actions_properties where id = \(objectIDs[indexPath.row])"
+            
+            //statement pointer
+            //stmt:OpaquePointer?
+            
+            //preparing the query
+            if sqlite3_prepare(RootViewController.scenes[RootViewController.currentScene].db, queryString, -1, &stmt, nil) != SQLITE_OK{
+                let errmsg = String(cString: sqlite3_errmsg(RootViewController.scenes[RootViewController.currentScene].db)!)
+                print("error preparing insert: \(errmsg)")
+                return
+            }
+            
+            if sqlite3_step(stmt) == SQLITE_ROW {
+                let x = Float(sqlite3_column_double(stmt, 1))
+                let y = Float(sqlite3_column_double(stmt, 2))
+                let z = Float(sqlite3_column_double(stmt, 3))
+                
+                RootViewController.scenes[RootViewController.currentScene].objects[objectIDs[indexPath.row]].scaleBy(widthMultiplier: 1.0 / x, heightMultiplier: 1.0 / y, depthMultiplier: 1.0 / z)
+                
+                RootViewController.scenes[RootViewController.currentScene].updateDatabase()
+                RootViewController.scenes[RootViewController.currentScene].prepareForRender()
+                
+                RootViewController.sceneControllers[0].contr.setVertexArrays(RootViewController.scenes[RootViewController.currentScene].bigVertices, bigLineVertices: RootViewController.scenes[RootViewController.currentScene].bigLineVertices, selectedVertices:RootViewController.scenes[RootViewController.currentScene].selectionVertices, gridLineVertices: Grid.bigLineVertices, axisLineVertices: Axis.bigLineVertices, bigIndices: RootViewController.scenes[RootViewController.currentScene].bigIndices, bigLineIndices: RootViewController.scenes[RootViewController.currentScene].bigLineIndices, gridLineIndices: Grid.bigLineIndices)
+                
+                RootViewController.sceneControllers[0].contr.translateCamera(RootViewController.scenes[RootViewController.currentScene].x, y: RootViewController.scenes[RootViewController.currentScene].y, z: RootViewController.scenes[RootViewController.currentScene].z)
+                RootViewController.sceneControllers[0].contr.setAngle(RootViewController.scenes[RootViewController.currentScene].xAngle, y: RootViewController.scenes[RootViewController.currentScene].yAngle)
+                RootViewController.sceneControllers[0].contr.loadModel(Int32(RootViewController.scenes[RootViewController.currentScene].indicesCount))
+                
+                if let main = mainController {
+                    _ = main.navigationController?.popToViewController(main, animated: true)
+                }
             }
         }
     }

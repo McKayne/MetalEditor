@@ -73,7 +73,11 @@ class CubeController: UIViewController, UITableViewDelegate, UITableViewDataSour
         case 2:
             return 30.0
         default:
-            return 100.0
+            if indexPath.row == 1 {
+                return 100.0
+            } else {
+                return 30.0
+            }
         }
     }
     
@@ -90,7 +94,7 @@ class CubeController: UIViewController, UITableViewDelegate, UITableViewDataSour
         case 2:
             return 3
         default:
-            return 1
+            return 2
         }
     }
     
@@ -109,6 +113,8 @@ class CubeController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
+        cell.backgroundColor = UIColor(red: 114.0 / 255.0, green: 114.0 / 255.0, blue: 114.0 / 255.0, alpha: 1.0)
+        cell.textLabel?.textColor = .white
         
         switch indexPath.section {
         case 0:
@@ -163,7 +169,12 @@ class CubeController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 RootViewController.performAutolayoutConstants(subview: depthText, view: cell.contentView, left: 100, right: -15, top: 0, bottom: 0)
             }
         default:
-            return rgbPickerCell
+            if indexPath.row == 0 {
+                cell.textLabel?.textColor = .green
+                cell.textLabel?.text = "Pick random color"
+            } else {
+                return rgbPickerCell
+            }
         }
         
         return cell
@@ -173,6 +184,19 @@ class CubeController: UIViewController, UITableViewDelegate, UITableViewDataSour
         if let header = view as? UITableViewHeaderFooterView {
             header.contentView.backgroundColor = UIColor(red: 114.0 / 255.0, green: 114.0 / 255.0, blue: 114.0 / 255.0, alpha: 1.0)
             header.textLabel?.textColor = .white
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.section == 3 && indexPath.row == 0 {
+            redCurrent = Int(arc4random_uniform(256))
+            greenCurrent = Int(arc4random_uniform(256))
+            blueCurrent = Int(arc4random_uniform(256))
+            
+            rgbPicker.selectRow(redCurrent, inComponent: 0, animated: true)
+            rgbPicker.selectRow(greenCurrent, inComponent: 1, animated: true)
+            rgbPicker.selectRow(blueCurrent, inComponent: 2, animated: true)
         }
     }
     
@@ -239,7 +263,7 @@ class CubeController: UIViewController, UITableViewDelegate, UITableViewDataSour
         RootViewController.performAutolayoutConstants(subview: rgbPicker, view: rgbPickerCell.contentView, left: 0, right: 0, top: 0, bottom: 0)
         
         cubePropertiesTableView.separatorStyle = .none
-        cubePropertiesTableView.allowsSelection = false
+        //cubePropertiesTableView.allowsSelection = false
         cubePropertiesTableView.backgroundColor = UIColor(red: 114.0 / 255.0, green: 114.0 / 255.0, blue: 114.0 / 255.0, alpha: 1.0)
         cubePropertiesTableView.tableFooterView = UIView(frame: .zero)
         //actionsDelegate = ActionsDelegate(controller: self)
